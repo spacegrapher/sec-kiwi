@@ -22,8 +22,11 @@
   <!-- Configure java.util.logging -->
   <system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+    <property name="css_path" value="" />
   </system-properties>
 
+	<ssl-enabled>true</ssl-enabled>
+	<sessions-enabled>true</sessions-enabled>
   <!--
     HTTP Sessions are disabled by default. To enable HTTP sessions specify:
 

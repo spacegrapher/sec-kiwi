@@ -11,9 +11,19 @@
     <url-pattern>/bubbleappengine/greet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>BubbleServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>BubbleServlet</servlet-name>
+  	<url-pattern>/index</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
-    <welcome-file>BubbleAppEngine.html</welcome-file>
+    <welcome-file>index</welcome-file>
   </welcome-file-list>
 
   <servlet>
