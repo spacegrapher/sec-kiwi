@@ -1,6 +1,7 @@
 package com.kiwi.bubble.appengine.server;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
-public class HelloWorldServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -22,9 +23,19 @@ public class HelloWorldServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		String email = req.getParameter("email");
+		String password = req.getParameter("password");
 		
-		String msg = "Welcome " + req.getParameter("text") + "!";
-		System.out.println(msg);
+		List<UserInfo> userInfo = UserInfoJDOWrapper.getUserByEmailAndPassword(email, password);
+		
+		String msg = new String();
+		if(userInfo.isEmpty()) {
+			msg = "User does not exist";
+		} else {
+			msg = "Welcome " + userInfo.get(0).getName() + "!";
+		}
+		
+		System.out.println("[LoginServlet] " + msg);
 		resp.getWriter().print(msg);
 	}
 

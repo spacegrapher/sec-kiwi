@@ -11,26 +11,43 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
+            android:id="@+id/textViewWelcome"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:padding="@dimen/padding_medium"
             android:text="@string/hello_world"
-            tools:context=".MainActivity" />
+            tools:context=".MainActivity">
+            			    <requestFocus /> 
+          </TextView>
+
 
         <EditText
-            android:id="@+id/editText1"
+            android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter your name" >
+            android:hint="Email address"
+            android:inputType="textEmailAddress" >
+
+
         </EditText>
-
-        <Button
-            android:id="@+id/button1"
+        <EditText
+            android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Test" />
-
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword" />
+        <Button
+            android:id="@+id/buttonLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log in" />
+        <Button
+            android:id="@+id/buttonSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClickSignup"
+            android:text="Sign up" />
     </LinearLayout>
-
 </RelativeLayout>
