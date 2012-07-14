@@ -36,25 +36,32 @@ public class SignupActivity extends Activity {
 		String strName = editTextName.getText().toString();
 		String strPassword = editTextPassword.getText().toString();
 		
-		HttpPostUtil util = new HttpPostUtil();
-		HashMap result = new HashMap();
-		String resultStr = new String();
-		Map<String, String> param = new HashMap<String, String>();
-		param.put("email", strEmail);
-		param.put("name", strName);
-		param.put("password", strPassword);
-		
-		try {
-			resultStr = util.httpPostData(pageUrl, param);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(strEmail.isEmpty()) {
+			Toast.makeText(SignupActivity.this, "Please enter email address", 0).show();
+		} else if(strName.isEmpty()) {
+			Toast.makeText(SignupActivity.this, "Please enter your name", 0).show();
+		} else if(strPassword.isEmpty()) {
+			Toast.makeText(SignupActivity.this, "Please enter password", 0).show();
+		} else {		
+			HttpPostUtil util = new HttpPostUtil();
+			HashMap result = new HashMap();
+			String resultStr = new String();
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("email", strEmail);
+			param.put("name", strName);
+			param.put("password", strPassword);
+			
+			try {
+				resultStr = util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			//Toast.makeText(SignupActivity.this, "Account created!\n" + resultStr, 0).show();
+			
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_OK, intent);
+			finish();
 		}
-		
-		//Toast.makeText(SignupActivity.this, "Account created!\n" + resultStr, 0).show();
-		
-		Intent intent = new Intent();
-		setResult(Activity.RESULT_OK, intent);
-		finish();
-		
 	}
 }

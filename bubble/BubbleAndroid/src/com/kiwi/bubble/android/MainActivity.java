@@ -24,6 +24,9 @@ import android.support.v4.app.NavUtils;
 
 public class MainActivity extends Activity {
 	private static final int REQUEST_CODE_SIGNUP = 101;
+	private TextView textViewWelcome;
+	private EditText editTextEmail;
+	private EditText editTextPassword;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,43 +35,13 @@ public class MainActivity extends Activity {
         
         Typeface tf = Typeface.createFromAsset(getAssets(), "font/Roboto-Regular.ttf");
         
-        final TextView textViewWelcome = (TextView)findViewById(R.id.textViewWelcome);
-        final EditText editTextEmail = (EditText)findViewById(R.id.editTextEmail);
-        final EditText editTextPassword = (EditText)findViewById(R.id.editTextPassword);
+        textViewWelcome = (TextView)findViewById(R.id.textViewWelcome);
+        editTextEmail = (EditText)findViewById(R.id.editTextEmail);
+        editTextPassword = (EditText)findViewById(R.id.editTextPassword);
         
         textViewWelcome.setTypeface(tf);
         editTextEmail.setTypeface(tf);
         editTextPassword.setTypeface(tf);
-        
-        Button btnLogin = (Button)findViewById(R.id.buttonLogin);
-        btnLogin.setOnClickListener(new OnClickListener() {
-        	@Override
-        	public void onClick(View v) {
-        		String pageUrl = Constant.SERVER_DOMAIN_URL;
-        		
-        		String strEmail = editTextEmail.getText().toString();
-        		String strPassword = editTextPassword.getText().toString();
-        		
-        		HttpPostUtil util = new HttpPostUtil();
-        		HashMap result = new HashMap();
-        		String resultStr = new String();
-        		Map<String, String> param = new HashMap<String, String>();
-        		param.put("email", strEmail);
-        		param.put("password", strPassword);
-        		
-        		try {
-        			resultStr = util.httpPostData(pageUrl, param);
-        		} catch (IOException e) {
-        			e.printStackTrace();
-        		}
-       		
-        		Toast.makeText(MainActivity.this, resultStr, 0).show();
-        	}
-        });
-        
-        
-		
-        
     }
 
     @Override
@@ -77,6 +50,34 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    public void onClickLogin(View v) {
+    	String pageUrl = Constant.SERVER_DOMAIN_URL;
+		
+		String strEmail = editTextEmail.getText().toString();
+		String strPassword = editTextPassword.getText().toString();
+		
+		if(strEmail.isEmpty()) {
+			Toast.makeText(MainActivity.this, "Please enter email address", 0).show();
+		} else if(strPassword.isEmpty()) {
+			Toast.makeText(MainActivity.this, "Please enter password", 0).show();
+		} else {		
+			HttpPostUtil util = new HttpPostUtil();
+			HashMap result = new HashMap();
+			String resultStr = new String();
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("email", strEmail);
+			param.put("password", strPassword);
+			
+			try {
+				resultStr = util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			Toast.makeText(MainActivity.this, resultStr, 0).show();
+		}
+    }
+    
     public void onClickSignup(View v) {
     	Intent intent = new Intent(this, SignupActivity.class);
 		startActivityForResult(intent, REQUEST_CODE_SIGNUP);

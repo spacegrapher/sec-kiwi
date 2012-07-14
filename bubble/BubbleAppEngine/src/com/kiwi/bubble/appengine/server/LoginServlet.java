@@ -32,6 +32,7 @@ public class LoginServlet extends HttpServlet {
 		if(userInfo.isEmpty()) {
 			msg = "User does not exist";
 		} else {
+			req.getSession().setAttribute("email", userInfo.get(0).getEmail());
 			msg = "Welcome " + userInfo.get(0).getName() + "!";
 		}
 		
