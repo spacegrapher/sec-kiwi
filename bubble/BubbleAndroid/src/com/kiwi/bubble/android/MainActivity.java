@@ -7,6 +7,7 @@ import java.util.Map;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.member.SignupActivity;
+import com.kiwi.bubble.android.list.BubbleListActivity;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -74,7 +75,13 @@ public class MainActivity extends Activity {
 				e.printStackTrace();
 			}
 			
-			Toast.makeText(MainActivity.this, resultStr, 0).show();
+			if (resultStr.isEmpty()) {
+				Toast.makeText(MainActivity.this, "Please enter correct information", 0).show();
+			} else {
+				Intent intent = new Intent(this, BubbleListActivity.class);
+				intent.putExtra("email", resultStr);
+				startActivity(intent);
+			}
 		}
     }
     
