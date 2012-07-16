@@ -24,6 +24,7 @@
         </activity>
         <activity android:name=".member.SignupActivity" />
         <activity android:name=".list.BubbleListActivity" />
+        <activity android:name=".BubbleCreateActivity" />
     </application>
     
 </manifest>

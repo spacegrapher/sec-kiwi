@@ -36,6 +36,26 @@
   	<url-pattern>/index</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>BubbleCreateServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleCreateServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>BubbleCreateServlet</servlet-name>
+  	<url-pattern>/create</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+  	<servlet-name>BubbleListServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleListServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>BubbleListServlet</servlet-name>
+  	<url-pattern>/list</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index</welcome-file>

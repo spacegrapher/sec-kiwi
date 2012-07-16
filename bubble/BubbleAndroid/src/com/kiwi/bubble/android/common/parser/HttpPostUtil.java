@@ -50,7 +50,7 @@ public class HttpPostUtil {
 	public String httpPostData(String url, Map<String, String> param) throws ClientProtocolException, IOException {   
 		// TODO Auto-generated method stub   
 		HttpPost request = makeHttpPost( param, url ) ;
-		HttpClient  client = new DefaultHttpClient() ;  
+		HttpClient client = new DefaultHttpClient() ;  
 		ResponseHandler<String> reshandler = new BasicResponseHandler() ;   
 		String result = client.execute( request, reshandler ) ;   
 		return result ;   

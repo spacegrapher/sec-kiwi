@@ -3,11 +3,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/textViewListWelcome"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:background="#B5E61D" >
+
+        <TextView
+            android:id="@+id/textViewListWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Welcome" />
+
+        <Button
+            android:id="@+id/buttonListCreateBubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickCreateBubble"
+            android:text="Create Bubble" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#7F7F7F" >
+
+        <Button
+            android:id="@+id/buttonListExplore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:text="Explore" />
+
+        <Button
+            android:id="@+id/buttonListBubble"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:text="Bubble" />
+
+        <Button
+            android:id="@+id/buttonListMe"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:text="Me" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listViewBubbleList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+    </ListView>
 
 </LinearLayout>
