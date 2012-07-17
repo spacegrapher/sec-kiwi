@@ -25,7 +25,6 @@ import android.support.v4.app.NavUtils;
 
 public class MainActivity extends Activity {
 	private static final int REQUEST_CODE_SIGNUP = 101;
-	private TextView textViewWelcome;
 	private EditText editTextEmail;
 	private EditText editTextPassword;
 	
@@ -36,11 +35,9 @@ public class MainActivity extends Activity {
         
         Typeface tf = Typeface.createFromAsset(getAssets(), "font/Roboto-Regular.ttf");
         
-        textViewWelcome = (TextView)findViewById(R.id.textViewWelcome);
         editTextEmail = (EditText)findViewById(R.id.editTextEmail);
         editTextPassword = (EditText)findViewById(R.id.editTextPassword);
         
-        textViewWelcome.setTypeface(tf);
         editTextEmail.setTypeface(tf);
         editTextPassword.setTypeface(tf);
     }
