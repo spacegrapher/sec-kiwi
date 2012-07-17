@@ -21,6 +21,7 @@ import android.widget.Toast;
 public class BubbleCreateActivity extends Activity {
 	private EditText editTextTitle;
 	private EditText editTextText;
+	private EditText editTextTag;
 	private Button buttonPost;
 	private String strEmail;
 
@@ -35,6 +36,7 @@ public class BubbleCreateActivity extends Activity {
 		
 		editTextTitle = (EditText) findViewById(R.id.editTextBubbleCreateTitle);
 		editTextText = (EditText) findViewById(R.id.editTextBubbleCreateText);
+		editTextTag = (EditText) findViewById(R.id.editTextBubbleCreateTag);
 		buttonPost = (Button) findViewById(R.id.buttonBubbleCreatePost);
 		buttonPost.setEnabled(false);
 		
@@ -96,7 +98,8 @@ public class BubbleCreateActivity extends Activity {
 		
 		String strTitle = editTextTitle.getText().toString();
 		String strText = editTextText.getText().toString();
-		
+		String strTag = editTextTag.getText().toString();
+				
 		HttpPostUtil util = new HttpPostUtil();
 		HashMap result = new HashMap();
 		String resultStr = new String();
@@ -104,6 +107,7 @@ public class BubbleCreateActivity extends Activity {
 		param.put("email", strEmail);
 		param.put("title", strTitle);
 		param.put("text", strText);
+		param.put("tag", strTag);
 		
 		try {
 			resultStr = util.httpPostData(pageUrl, param);

@@ -1,6 +1,7 @@
 package com.kiwi.bubble.android.common;
 
 import java.util.Date;
+import java.util.List;
 
 public class BubbleData {
 	private String authorEmail;
@@ -14,6 +15,8 @@ public class BubbleData {
 	private Date postTime;
 	
 	private String geopoint;
+	
+	private List<String> tag;
 
 	public BubbleData(String authorEmail, String title, String text) {
 		super();
@@ -61,4 +64,14 @@ public class BubbleData {
 	public void setGeopoint(String geopoint) {
 		this.geopoint = geopoint;
 	}
+
+	public List<String> getTag() {
+		return tag;
+	}
+
+	public void setTag(List<String> tag) {
+		this.tag = tag;
+	}
+	
+	
 }

@@ -8,6 +8,12 @@ public class BubbleDataXMLConverter {
 		content += addTag("email", data.getAuthorEmail());
 		content += addTag("title", data.getTitle());
 		content += addTag("text", data.getText());
+		String tagContent = "";
+		List<String> tags = data.getTag();
+		for(int i=0; i<tags.size(); i++) {
+			tagContent += addTag("tag", tags.get(i));
+		}
+		content += addTag("tags", tagContent);
 		String ret = addTag("bubble", content);
 		return ret;
 	}

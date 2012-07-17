@@ -15,12 +15,15 @@
             android:layout_height="wrap_content"
             android:onClick="onClickButtonCreateBack"
             android:text="Back" />
-
+
         <TextView
             android:id="@+id/textViewBubbleCreateDummy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Create Bubble" />
 
         <Button
             android:id="@+id/buttonBubbleCreatePost"
@@ -48,5 +51,12 @@
         android:ems="10"
         android:hint="Enter text"
         android:inputType="textMultiLine" />
+
+    <EditText
+        android:id="@+id/editTextBubbleCreateTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter tags" />
 
 </LinearLayout>
