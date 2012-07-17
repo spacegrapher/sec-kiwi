@@ -48,5 +48,25 @@
         android:ems="10"
         android:hint="Enter text"
         android:inputType="textMultiLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/buttonBubbleTakePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Take a Photo" />
+
+        <ImageView
+            android:id="@+id/imageViewBubbleResultPhoto"
+            android:layout_width="202dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@android:drawable/editbox_dropdown_light_frame" />
+
+    </LinearLayout>
 
 </LinearLayout>
