@@ -36,9 +36,6 @@ public class BubbleListActivity extends Activity {
 		Intent intent = this.getIntent();
 		strEmail = intent.getStringExtra("email");
 		
-		TextView textViewWelcome = (TextView) findViewById(R.id.textViewListWelcome);
-		textViewWelcome.setText("Welcome " + strEmail + "!");
-		
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
 		updateListView();
 	}
@@ -52,7 +49,7 @@ public class BubbleListActivity extends Activity {
 		
 		ArrayList<String> bubbleTitle = new ArrayList<String>();
 		for(int i=0; i<bubbles.size(); i++) {
-			bubbleTitle.add(bubbles.get(i).getTitle() + " (" + bubbles.get(i).getText() + ")");
+			bubbleTitle.add(bubbles.get(i).getTitle() + " (" + bubbles.get(i).getText() + ") " + bubbles.get(i).getTag().toString());
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bubbleTitle);
 		lvBubbleList.setAdapter(adapter);

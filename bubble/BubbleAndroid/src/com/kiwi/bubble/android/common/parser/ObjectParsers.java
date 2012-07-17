@@ -15,16 +15,30 @@ public class ObjectParsers {
 		String insideContents = ObjectParsers.regex("<bubbles>(.*)</bubbles>", response);
 		
 		String[] contents = insideContents.split("<bubble>");
+		
 		for (String content : contents) {
 			if (content.equals("")) {
 				continue;
 			}
-			Log.i("PARSER", "content: " + content);
+			
 			String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
 			String title = ObjectParsers.regex(".*>([^>]*)</title>.*", content);
 			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
-			Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text);
+						
+			String insideTags = ObjectParsers.regex(".*<tags>(.*)</tags>.*", content);
+			String[] tagContents = insideTags.split("<tag>");
+			List<String> tags = new ArrayList<String>();
+			for (String tagContent : tagContents) {
+				if (tagContent.equals("")) {
+					continue;
+				}
+				String tag = ObjectParsers.regex("([^>]*)</tag>", tagContent);
+				tags.add(tag);
+			}
+			
+			Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
 			BubbleData bd = new BubbleData(email, title, text);
+			bd.setTag(tags);
 			data.add(bd);
 		}
 		return data;		

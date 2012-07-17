@@ -3,25 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/gradient_background" >
-
+
+
+
+
         <Button
             android:id="@+id/buttonBubbleCreateBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickButtonCreateBack"
             android:text="Back" />
-
+
+
+
+
+
+
+
+
+
+
         <TextView
             android:id="@+id/textViewBubbleCreateDummy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Create Bubble" />
+
+
+
+
+
+
         <Button
             android:id="@+id/buttonBubbleCreatePost"
             android:layout_width="wrap_content"
@@ -30,7 +52,9 @@
             android:text="Post" />
 
     </LinearLayout>
-
+
+
+
     <EditText
         android:id="@+id/editTextBubbleCreateTitle"
         android:layout_width="match_parent"
@@ -40,7 +64,10 @@
 
         <requestFocus />
     </EditText>
-
+
+
+
+
     <EditText
         android:id="@+id/editTextBubbleCreateText"
         android:layout_width="match_parent"
@@ -48,18 +75,35 @@
         android:ems="10"
         android:hint="Enter text"
         android:inputType="textMultiLine" />
-
+
+
+
+    <EditText
+        android:id="@+id/editTextBubbleCreateTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter tags" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-
+
+
+
+
+
         <Button
             android:id="@+id/buttonBubbleTakePhoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Take a Photo" />
-
+
+
+
+
         <ImageView
             android:id="@+id/imageViewBubbleResultPhoto"
             android:layout_width="202dp"
@@ -68,5 +112,6 @@
             android:src="@android:drawable/editbox_dropdown_light_frame" />
 
     </LinearLayout>
+
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.kiwi.bubble.appengine.server;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -26,6 +27,9 @@ public class BubbleData extends ModelBase {
 	
 	@Persistent
 	private String geopoint;
+	
+	@Persistent
+	private List<String> tag;
 
 	public BubbleData(String authorEmail, String title, String text) {
 		super();
@@ -80,6 +84,14 @@ public class BubbleData extends ModelBase {
 
 	public void setGeopoint(String geopoint) {
 		this.geopoint = geopoint;
+	}
+
+	public List<String> getTag() {
+		return tag;
+	}
+
+	public void setTag(List<String> tag) {
+		this.tag = tag;
 	}
 	
 	

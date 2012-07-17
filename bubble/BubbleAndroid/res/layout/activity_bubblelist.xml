@@ -8,18 +8,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/gradient_background" >
-
-        <TextView
-            android:id="@+id/textViewListWelcome"
+
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Welcome" />
-
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="108dp"
+                android:layout_height="30dp"
+                android:src="@drawable/bubble_logo" />
+
+        </FrameLayout>
+
         <Button
             android:id="@+id/buttonListCreateBubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="right"
             android:onClick="onClickCreateBubble"
             android:text="Create Bubble" />
 
