@@ -269,10 +269,10 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 		};
 		
 		new AlertDialog.Builder(this)
-			.setTitle("업로드할 이미지 선택")
-			.setPositiveButton("사진촬영", cameraListener)
-			.setNeutralButton("앨범선택", albumListener)
-			.setNegativeButton("취소", cancelListener)
+			.setTitle("Select Image")
+			.setPositiveButton("Camera", cameraListener)
+			.setNeutralButton("Gallery", albumListener)
+			.setNegativeButton("Cancel", cancelListener)
 			.show();
 	}
 }
