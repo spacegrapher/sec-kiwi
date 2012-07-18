@@ -7,6 +7,7 @@ import java.util.Map;
 import com.kiwi.bubble.android.MainActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.TEA;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 
 import android.app.Activity;
@@ -27,6 +28,7 @@ public class SignupActivity extends Activity {
 
 	public void onClickCreateAccount(View v) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/signup";
+		TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
 		
 		EditText editTextEmail = (EditText)findViewById(R.id.editTextSignupEmail);
 		EditText editTextName = (EditText)findViewById(R.id.editTextSignupName);
@@ -34,7 +36,7 @@ public class SignupActivity extends Activity {
 		
 		String strEmail = editTextEmail.getText().toString();
 		String strName = editTextName.getText().toString();
-		String strPassword = editTextPassword.getText().toString();
+		String strPassword = new String(tea.encrypt(editTextPassword.getText().toString().getBytes()));
 		
 		if(strEmail.isEmpty()) {
 			Toast.makeText(SignupActivity.this, "Please enter email address", 0).show();

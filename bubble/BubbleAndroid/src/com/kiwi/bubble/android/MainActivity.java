@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.TEA;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.member.SignupActivity;
 import com.kiwi.bubble.android.list.BubbleListActivity;
@@ -50,9 +51,10 @@ public class MainActivity extends Activity {
 
     public void onClickLogin(View v) {
     	String pageUrl = Constant.SERVER_DOMAIN_URL;
+    	TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
 		
 		String strEmail = editTextEmail.getText().toString();
-		String strPassword = editTextPassword.getText().toString();
+		String strPassword = new String(tea.encrypt(editTextPassword.getText().toString().getBytes()));
 		
 		if(strEmail.isEmpty()) {
 			Toast.makeText(MainActivity.this, "Please enter email address", 0).show();
