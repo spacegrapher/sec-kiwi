@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,7 +46,7 @@ public class BubbleListActivity extends Activity {
 		DefaultHttpClient client = new DefaultHttpClient();
 		
 		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?email=" + strEmail, client);
-		List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
+		final List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
 		
 		ArrayList<String> bubbleTitle = new ArrayList<String>();
 		for(int i=0; i<bubbles.size(); i++) {
@@ -54,7 +55,16 @@ public class BubbleListActivity extends Activity {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bubbleTitle);
 		lvBubbleList.setAdapter(adapter);
 		
-		//Toast.makeText(BubbleListActivity.this, response, 0).show();
+		
+		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent intent = new Intent(BubbleListActivity.this, BubbleDetailActivity.class);
+				intent.putExtra("id", bubbles.get(position).getId());
+				startActivity(intent);
+			}
+			
+		});
 	}
 	
 	public void onClickCreateBubble(View v) {

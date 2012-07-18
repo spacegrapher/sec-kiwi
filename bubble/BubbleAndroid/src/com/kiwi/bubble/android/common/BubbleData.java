@@ -3,7 +3,7 @@ package com.kiwi.bubble.android.common;
 import java.util.Date;
 import java.util.List;
 
-public class BubbleData {
+public class BubbleData extends ModelBase {
 	private String authorEmail;
 	
 	private String title;

@@ -21,6 +21,7 @@ public class ObjectParsers {
 				continue;
 			}
 			
+			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>.*", content));
 			String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
 			String title = ObjectParsers.regex(".*>([^>]*)</title>.*", content);
 			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
@@ -38,6 +39,7 @@ public class ObjectParsers {
 			
 			Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
 			BubbleData bd = new BubbleData(email, title, text);
+			bd.setId(id);
 			bd.setTag(tags);
 			data.add(bd);
 		}

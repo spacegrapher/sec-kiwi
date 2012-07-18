@@ -56,6 +56,16 @@
   	<url-pattern>/list</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>BubbleDetailServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleDetailServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>BubbleDetailServlet</servlet-name>
+  	<url-pattern>/detail</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index</welcome-file>

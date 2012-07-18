@@ -31,4 +31,21 @@ public class BubbleDataJDOWrapper {
 		
 		return ret;
 	}
+	
+	public static List<BubbleData> getBubbleById(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Query query = pm.newQuery(BubbleData.class);
+		query.setFilter("id == inputId");
+		query.declareParameters("Long inputId");
+		
+		List<BubbleData> ret = null;
+		try {
+			ret = (List<BubbleData>) query.execute(id);
+		} finally {
+			query.closeAll();
+		}
+		
+		return ret;
+	}
 }
