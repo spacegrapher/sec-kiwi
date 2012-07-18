@@ -1,4 +1,4 @@
-package com.kiwi.bubble.appengine.server;
+package com.kiwi.bubble.appengine.server.bubbledata;
 
 import java.util.List;
 

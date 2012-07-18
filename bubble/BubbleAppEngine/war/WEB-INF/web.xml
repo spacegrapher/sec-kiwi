@@ -18,7 +18,7 @@
   
   <servlet>
   	<servlet-name>SignupServlet</servlet-name>
-  	<servlet-class>com.kiwi.bubble.appengine.server.SignupServlet</servlet-class>
+  	<servlet-class>com.kiwi.bubble.appengine.server.userinfo.SignupServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
@@ -28,7 +28,7 @@
   
   <servlet>
   	<servlet-name>LoginServlet</servlet-name>
-  	<servlet-class>com.kiwi.bubble.appengine.server.LoginServlet</servlet-class>
+  	<servlet-class>com.kiwi.bubble.appengine.server.userinfo.LoginServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
@@ -38,7 +38,7 @@
   
   <servlet>
   	<servlet-name>BubbleCreateServlet</servlet-name>
-  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleCreateServlet</servlet-class>
+  	<servlet-class>com.kiwi.bubble.appengine.server.bubbledata.BubbleCreateServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
@@ -48,7 +48,7 @@
   
    <servlet>
   	<servlet-name>BubbleListServlet</servlet-name>
-  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleListServlet</servlet-class>
+  	<servlet-class>com.kiwi.bubble.appengine.server.bubbledata.BubbleListServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
@@ -58,12 +58,22 @@
   
   <servlet>
   	<servlet-name>BubbleDetailServlet</servlet-name>
-  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleDetailServlet</servlet-class>
+  	<servlet-class>com.kiwi.bubble.appengine.server.bubbledata.BubbleDetailServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
   	<servlet-name>BubbleDetailServlet</servlet-name>
   	<url-pattern>/detail</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  	<servlet-name>BubbleCommentServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.comment.BubbleCommentServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>BubbleCommentServlet</servlet-name>
+  	<url-pattern>/comment</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

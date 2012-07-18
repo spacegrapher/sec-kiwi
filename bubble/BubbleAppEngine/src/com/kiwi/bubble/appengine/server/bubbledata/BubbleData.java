@@ -1,4 +1,4 @@
-package com.kiwi.bubble.appengine.server;
+package com.kiwi.bubble.appengine.server.bubbledata;
 
 import java.util.Date;
 import java.util.List;
@@ -7,6 +7,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.api.datastore.Blob;
+import com.kiwi.bubble.appengine.server.ModelBase;
 
 @PersistenceCapable
 public class BubbleData extends ModelBase {

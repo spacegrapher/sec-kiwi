@@ -45,7 +45,7 @@ public class BubbleListActivity extends Activity {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
 		DefaultHttpClient client = new DefaultHttpClient();
 		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?email=" + strEmail, client);
+		String response = HttpGetUtil.doGetWithResponse(pageUrl /*+ "?email=" + strEmail*/, client);
 		final List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
 		
 		ArrayList<String> bubbleTitle = new ArrayList<String>();
@@ -61,6 +61,7 @@ public class BubbleListActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent intent = new Intent(BubbleListActivity.this, BubbleDetailActivity.class);
 				intent.putExtra("id", bubbles.get(position).getId());
+				intent.putExtra("email", strEmail);
 				startActivity(intent);
 			}
 			

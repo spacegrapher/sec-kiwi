@@ -7,9 +7,33 @@ import java.util.regex.Pattern;
 
 import android.util.Log;
 
+import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 
 public class ObjectParsers {
+	public static List<BubbleComment> parseBubbleComment(String response) {
+		List<BubbleComment> data = new ArrayList<BubbleComment>();
+		String insideContents = ObjectParsers.regex("<comments>(.*)</comments>", response);
+		
+		String[] contents = insideContents.split("<comment>");
+		
+		for (String content : contents) {
+			if (content.equals("")) {
+				continue;
+			}
+			
+			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>.*", content));
+			String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
+			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
+						
+			
+			//Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
+			BubbleComment bc = new BubbleComment(id, email, text);
+			data.add(bc);
+		}
+		return data;	
+	}
+	
 	public static List<BubbleData> parseBubbleData(String response) {
 		List<BubbleData> data = new ArrayList<BubbleData>();
 		String insideContents = ObjectParsers.regex("<bubbles>(.*)</bubbles>", response);

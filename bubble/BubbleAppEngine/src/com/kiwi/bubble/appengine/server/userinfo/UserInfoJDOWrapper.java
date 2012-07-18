@@ -1,9 +1,11 @@
-package com.kiwi.bubble.appengine.server;
+package com.kiwi.bubble.appengine.server.userinfo;
 
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+
+import com.kiwi.bubble.appengine.server.PMF;
 
 public class UserInfoJDOWrapper {
 	public static void insertUser(UserInfo info) {

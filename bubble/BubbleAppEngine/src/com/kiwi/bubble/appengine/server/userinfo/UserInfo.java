@@ -1,7 +1,9 @@
-package com.kiwi.bubble.appengine.server;
+package com.kiwi.bubble.appengine.server.userinfo;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+
+import com.kiwi.bubble.appengine.server.ModelBase;
 
 @PersistenceCapable
 public class UserInfo extends ModelBase {

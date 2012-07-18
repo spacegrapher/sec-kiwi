@@ -1,4 +1,4 @@
-package com.kiwi.bubble.appengine.server;
+package com.kiwi.bubble.appengine.server.userinfo;
 
 public class UserInfoXMLConverter {
 	public static String convertUserToXml(UserInfo info) {

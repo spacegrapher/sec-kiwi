@@ -18,12 +18,14 @@
             android:text="Back" />
 
     </LinearLayout>
-
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:background="#FFFFFF" >
+        android:layout_weight="10"
+        android:background="#FFFFFF"
+        android:scrollbars="vertical" >
 
         <TableRow
             android:id="@+id/tableRow1"
@@ -88,15 +90,55 @@
             android:id="@+id/tableRow4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
+
             <TextView
                 android:id="@+id/textViewBubbleDetailTag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="TextView" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ListView
+                android:id="@+id/listViewComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#EDF9C8" >
+
+            </ListView>
 
         </TableRow>
     </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="1"
+        android:gravity="bottom" >
+
+        <EditText
+            android:id="@+id/editTextBubbleDetailComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="Enter comments" />
+
+        <Button
+            android:id="@+id/buttonBubbleDetailComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:onClick="onClickSubmitComment"
+            android:text="Comment" />
+
+    </LinearLayout>
 
 </LinearLayout>
