@@ -11,6 +11,7 @@ import com.kiwi.bubble.android.list.BubbleListActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,6 +28,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+/*+GPS+*/
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.util.Log;
+import android.widget.TextView;
+/*-GPS-*/
+
 public class BubbleCreateActivity extends Activity implements OnClickListener{
 	private EditText editTextTitle;
 	private EditText editTextText;
@@ -40,6 +50,14 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 	private static final int PICK_FROM_ALBUM = 1;
 	private static final int CROP_FROM_CAMERA = 2;
 	private Uri mImageCaptureUri;
+
+	/*+GPS+*/
+	private LocationListener locListenD;
+	private Button buttonLocation;
+	public TextView tvLatitude;
+	public TextView tvLongitude;
+	public Location loc;
+	/*-GPS-*/
 
 
 	@Override
@@ -60,6 +78,11 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 		buttonCamera = (Button) findViewById(R.id.buttonBubbleTakePhoto);
 		
 		buttonCamera.setOnClickListener(this);
+		
+		/*+GPS+*/
+		buttonLocation = (Button) findViewById(R.id.buttonBubbleLocation);
+		buttonLocation.setOnClickListener(this);
+		/*-GPS-*/
 		
 		editTextTitle.addTextChangedListener(new TextWatcher() {
 	        @Override
@@ -97,6 +120,57 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 		}
 	    );
 	}	
+
+	public void GetLocation(){
+        // 텍스트뷰를 찾는다
+        tvLatitude = (TextView)findViewById(R.id.tvLatitude);
+        tvLongitude = (TextView)findViewById(R.id.tvLongitude);
+        
+        Log.d("GetLocation","1!!");
+        LocationManager lm =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        
+        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        	Log.d("GetLocation","ERROR!!");
+        }
+        
+        
+        Log.d("GetLocation","1-1!!");
+        Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        
+        Log.d("GetLocation","2!!");
+        if(loc!=null) 
+        {
+            // TextView를 채운다
+           	 tvLatitude.setText(Double.toString(loc.getLatitude()));
+           	tvLongitude.setText(Double.toString(loc.getLongitude()));         
+
+               // Location Manager에게 위치정보를 업데이트해달라고 요청한다.
+           	Log.d("GetLocation","3!!");
+               locListenD = new DispLocListener();
+               Log.d("GetLocation","4!!");
+               lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000L, 10.0f, locListenD);    
+               Log.d("GetLocation","4-1!!");
+           }
+           else {
+           	Log.d("location", "location is null");
+           }
+	}
+		
+        private class DispLocListener implements LocationListener {
+        	public void onLocationChanged(Location location) {
+        		// TextView를 업데이트 한다.
+        		Log.d("GetLocation","5!!");
+        		tvLatitude.setText(Double.toString(location.getLatitude()));
+        		tvLongitude.setText(Double.toString(location.getLongitude()));  
+        		Log.d("GetLocation","6!!");
+        	}
+        	public void onProviderDisabled(String provider) { 
+        	}
+        	public void onProviderEnabled(String provider) {
+        	}
+        	public void onStatusChanged(String provider, int status, Bundle extras) { 
+        	}
+        }
 
 	public void onClickButtonCreateBack(View v) {
 		Intent intent = new Intent();
@@ -241,6 +315,7 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v)
 	{
+		if(v.getId() == R.id.buttonBubbleTakePhoto){
 		DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
 		{
 			@Override
@@ -274,5 +349,11 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 			.setNeutralButton("Gallery", albumListener)
 			.setNegativeButton("Cancel", cancelListener)
 			.show();
+	}
+		else
+		{
+			Log.d("click","location go to get the location!!");
+			GetLocation();
+		}
 	}
 }
