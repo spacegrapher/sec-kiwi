@@ -37,22 +37,22 @@ public class ObjectParsers {
 	
 	public static List<BubbleData> parseBubbleData(String response) {
 		List<BubbleData> data = new ArrayList<BubbleData>();
-		String insideContents = ObjectParsers.regex("<bubbles>(.*)</bubbles>", response);
+		String insideContents = ObjectParsers.regex("<bubbles>((?:.|\\s)*)</bubbles>", response);
 		
 		String[] contents = insideContents.split("<bubble>");
-		
+		//Log.i("PARSER", "insideContents: " + insideContents + ", contents: " + contents.toString());
 		for (String content : contents) {
 			if (content.equals("")) {
 				continue;
 			}
-			
-			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>.*", content));
-			String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
-			String title = ObjectParsers.regex(".*>([^>]*)</title>.*", content);
-			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
+			//Log.i("PARSER", "content: " + content);
+			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>(?:.|\\s)*", content));
+			String email = ObjectParsers.regex(".*>([^>]*)</email>(?:.|\\s)*", content);
+			String title = ObjectParsers.regex(".*>([^>]*)</title>(?:.|\\s)*", content);
+			String text = ObjectParsers.regex(".*>((?:.|\\s)*)</text>.*", content);
 			
 			List<Long> tags = parseBubbleTagId(content);
-			//Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
+			Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
 			
 			BubbleData bd = new BubbleData(email, title, text);
 			bd.setId(id);
@@ -115,10 +115,9 @@ public class ObjectParsers {
 	}
 	
 	public static String regex(String ex, String input) {
-		Pattern pattern = Pattern.compile(ex);
+		Pattern pattern = Pattern.compile(ex, Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(input);
 		if(matcher.matches()) {
-		//Log.i("PARSER", matcher.group(1));
 			return matcher.group(1);
 		} else return "";
 	}

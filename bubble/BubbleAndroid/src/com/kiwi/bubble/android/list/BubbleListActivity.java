@@ -18,9 +18,13 @@ import com.kiwi.bubble.android.common.parser.ObjectParsers;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,13 +52,14 @@ public class BubbleListActivity extends Activity {
 		
 		String response = HttpGetUtil.doGetWithResponse(pageUrl /*+ "?email=" + strEmail*/, client);
 		final List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
-		
-		ArrayList<String> bubbleTitle = new ArrayList<String>();
+		Log.i("BUBBLE", bubbles.toString());
+		/*ArrayList<String> bubbleTitle = new ArrayList<String>();
 		for(int i=0; i<bubbles.size(); i++) {
 			bubbleTitle.add(bubbles.get(i).getTitle() + " (" + bubbles.get(i).getText() + ") [" + bubbles.get(i).getTag().size() + "]");
 		}
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bubbleTitle);
-		lvBubbleList.setAdapter(adapter);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bubbleTitle);*/
+		BubbleListAdapter adapter = new BubbleListAdapter(bubbles);
+		lvBubbleList.setAdapter(adapter);	
 		
 		
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -86,4 +91,52 @@ public class BubbleListActivity extends Activity {
 			}
 		}
 	}
+	
+	class BubbleListAdapter extends BaseAdapter {
+		private List<BubbleData> bubbleData;
+		
+		public BubbleListAdapter(List<BubbleData> bubbleData) {
+			super();
+			this.bubbleData = bubbleData;
+		}
+
+		@Override
+		public int getCount() {
+			return bubbleData.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			TextView tvEmail;
+			TextView tvText;
+			TextView tvTagCount;
+			if(convertView == null) {
+				LayoutInflater inflater = LayoutInflater.from(BubbleListActivity.this);
+				convertView = inflater.inflate(R.layout.listview_bubblelist, parent, false);
+			}
+			tvEmail = (TextView)convertView.findViewById(R.id.textViewBubbleListViewEmail);
+			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
+			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
+						
+			tvEmail.setText(bubbleData.get(position).getAuthorEmail());
+			tvText.setText(bubbleData.get(position).getText());
+			tvTagCount.setText("[" + bubbleData.get(position).getTag().size() + "]");
+			
+			return convertView;
+		}
+		
+	}
+	
 }
