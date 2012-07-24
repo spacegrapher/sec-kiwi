@@ -12,6 +12,7 @@ import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
+import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
@@ -35,7 +36,7 @@ public class BubbleDetailActivity extends Activity {
 	private TextView tvText;
 	private TextView tvTag;
 	private EditText etComment;
-	private Long id;
+	private long id;
 	private String strEmail;
 	private ListView lvCommentList;
 	
@@ -60,27 +61,26 @@ public class BubbleDetailActivity extends Activity {
 	}
 	
 	private void getBubbleData() {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/detail";
-		DefaultHttpClient client = new DefaultHttpClient();
+		BubbleData bubble = BubbleData.getBubbleData(id);
 		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
-		List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
+		tvName.setText(bubble.getAuthorEmail());
+		tvTitle.setText(bubble.getTitle());
+		tvText.setText(bubble.getText());
 		
-		assert(bubbles.size() == 1);
+		String strTag = "[";
+		List<Long> tags = bubble.getTag();
+		for(int i=0; i<tags.size(); i++) {
+			BubbleTag tag = BubbleTag.getBubbleTag(tags.get(i));
+			if(i>0) strTag += ", ";
+			strTag += tag.getText();
+		}
+		strTag += "]";
 		
-		tvName.setText(bubbles.get(0).getAuthorEmail());
-		tvTitle.setText(bubbles.get(0).getTitle());
-		tvText.setText(bubbles.get(0).getText());
-		tvTag.setText(bubbles.get(0).getTag().toString());
+		tvTag.setText(strTag);
 	}
 	
-	private void getCommentData() {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/comment";
-		DefaultHttpClient client = new DefaultHttpClient();
-		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
-		Log.i("COMMENT", response);
-		List<BubbleComment> comments = ObjectParsers.parseBubbleComment(response);
+	private void getCommentData() {		
+		List<BubbleComment> comments = BubbleComment.getCommentData(id);
 		
 		ArrayList<String> commentText = new ArrayList<String>();
 		for(int i=0; i<comments.size(); i++) {

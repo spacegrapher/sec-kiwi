@@ -8,6 +8,7 @@ import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.api.datastore.Blob;
 import com.kiwi.bubble.appengine.server.ModelBase;
+import com.kiwi.bubble.appengine.server.tag.BubbleTag;
 
 @PersistenceCapable
 public class BubbleData extends ModelBase {
@@ -29,8 +30,11 @@ public class BubbleData extends ModelBase {
 	@Persistent
 	private String geopoint;
 	
+	//@Persistent
+	//private List<String> tag;
+	
 	@Persistent
-	private List<String> tag;
+	private List<Long> tag;
 
 	public BubbleData(String authorEmail, String title, String text) {
 		super();
@@ -87,11 +91,11 @@ public class BubbleData extends ModelBase {
 		this.geopoint = geopoint;
 	}
 
-	public List<String> getTag() {
+	public List<Long> getTag() {
 		return tag;
 	}
 
-	public void setTag(List<String> tag) {
+	public void setTag(List<Long> tag) {
 		this.tag = tag;
 	}
 	

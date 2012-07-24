@@ -10,6 +10,7 @@ import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.MainActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.common.BubbleData;
+import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
@@ -50,7 +51,7 @@ public class BubbleListActivity extends Activity {
 		
 		ArrayList<String> bubbleTitle = new ArrayList<String>();
 		for(int i=0; i<bubbles.size(); i++) {
-			bubbleTitle.add(bubbles.get(i).getTitle() + " (" + bubbles.get(i).getText() + ") " + bubbles.get(i).getTag().toString());
+			bubbleTitle.add(bubbles.get(i).getTitle() + " (" + bubbles.get(i).getText() + ") [" + bubbles.get(i).getTag().size() + "]");
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bubbleTitle);
 		lvBubbleList.setAdapter(adapter);

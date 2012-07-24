@@ -76,6 +76,16 @@
   	<url-pattern>/comment</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>BubbleTagServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.tag.BubbleTagServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>BubbleTagServlet</servlet-name>
+  	<url-pattern>/tag</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index</welcome-file>

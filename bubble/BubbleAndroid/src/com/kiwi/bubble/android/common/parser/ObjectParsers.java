@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
+import com.kiwi.bubble.android.common.BubbleTag;
 
 public class ObjectParsers {
 	public static List<BubbleComment> parseBubbleComment(String response) {
@@ -49,25 +50,68 @@ public class ObjectParsers {
 			String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
 			String title = ObjectParsers.regex(".*>([^>]*)</title>.*", content);
 			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
-						
-			String insideTags = ObjectParsers.regex(".*<tags>(.*)</tags>.*", content);
-			String[] tagContents = insideTags.split("<tag>");
-			List<String> tags = new ArrayList<String>();
-			for (String tagContent : tagContents) {
-				if (tagContent.equals("")) {
-					continue;
-				}
-				String tag = ObjectParsers.regex("([^>]*)</tag>", tagContent);
-				tags.add(tag);
-			}
 			
-			Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
+			List<Long> tags = parseBubbleTagId(content);
+			//Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
+			
 			BubbleData bd = new BubbleData(email, title, text);
 			bd.setId(id);
 			bd.setTag(tags);
 			data.add(bd);
 		}
 		return data;		
+	}
+	
+	public static List<Long> parseBubbleTagId(String response) {
+		List<Long> data = new ArrayList<Long>();
+		String insideContents = ObjectParsers.regex(".*<tags>(.*)</tags>.*", response);
+		
+		String[] tagContents = insideContents.split("<tag>");
+		//Log.i("PARSER", "response: " + response + ", insideContents: " + insideContents + ", tagContents: " + tagContents.toString());
+		for (String tagContent : tagContents) {
+			if (tagContent.equals("")) {
+				continue;
+			}
+			
+			Long id = Long.valueOf(ObjectParsers.regex("([^>]*)</tag>.*", tagContent));
+			
+			data.add(id);
+		}
+		return data;
+	}
+	
+	public static List<BubbleTag> parseBubbleTag(String response) {
+		List<BubbleTag> data = new ArrayList<BubbleTag>();
+		String insideContents = ObjectParsers.regex("<tags>(.*)</tags>", response);
+		
+		String[] tagContents = insideContents.split("<tag>");
+		//Log.i("PARSER", "response: " + response + ", insideContents: " + insideContents + ", tagContents: " + tagContents.toString());
+		for (String tagContent : tagContents) {
+			if (tagContent.equals("")) {
+				continue;
+			}
+			
+			int type = Integer.parseInt(ObjectParsers.regex(".*>([^>]*)</type>.*", tagContent));
+			BubbleTag bubbleTag = new BubbleTag(type);
+			
+			switch(type) {
+			case BubbleTag.TAG_TYPE_TEXT:
+				String text = ObjectParsers.regex(".*>([^>]*)</data>.*", tagContent);
+				bubbleTag.setText(text);
+				break;
+			case BubbleTag.TAG_TYPE_USER:
+				long user = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</data>.*", tagContent));
+				bubbleTag.setUser(user);
+				break;
+			case BubbleTag.TAG_TYPE_LOCATION:
+				String location = ObjectParsers.regex(".*>([^>]*)</data>.*", tagContent);
+				bubbleTag.setLocation(location);
+				break;
+			}			
+			
+			data.add(bubbleTag);
+		}
+		return data;
 	}
 	
 	public static String regex(String ex, String input) {

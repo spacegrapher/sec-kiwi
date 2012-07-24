@@ -2,6 +2,8 @@ package com.kiwi.bubble.appengine.server.bubbledata;
 
 import java.util.List;
 
+import com.kiwi.bubble.appengine.server.tag.BubbleTagXMLConverter;
+
 public class BubbleDataXMLConverter {
 	public static String convertDataToXml(BubbleData data) {
 		String content = "";
@@ -9,12 +11,8 @@ public class BubbleDataXMLConverter {
 		content += addTag("email", data.getAuthorEmail());
 		content += addTag("title", data.getTitle());
 		content += addTag("text", data.getText());
-		String tagContent = "";
-		List<String> tags = data.getTag();
-		for(int i=0; i<tags.size(); i++) {
-			tagContent += addTag("tag", tags.get(i));
-		}
-		content += addTag("tags", tagContent);
+		content += BubbleTagXMLConverter.convertTagIdListToXml(data.getTag());
+		
 		String ret = addTag("bubble", content);
 		return ret;
 	}

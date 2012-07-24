@@ -3,6 +3,11 @@ package com.kiwi.bubble.android.common;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import com.kiwi.bubble.android.common.parser.HttpGetUtil;
+import com.kiwi.bubble.android.common.parser.ObjectParsers;
+
 public class BubbleData extends ModelBase {
 	private String authorEmail;
 	
@@ -16,7 +21,7 @@ public class BubbleData extends ModelBase {
 	
 	private String geopoint;
 	
-	private List<String> tag;
+	private List<Long> tag;
 
 	public BubbleData(String authorEmail, String title, String text) {
 		super();
@@ -65,13 +70,23 @@ public class BubbleData extends ModelBase {
 		this.geopoint = geopoint;
 	}
 
-	public List<String> getTag() {
+	public List<Long> getTag() {
 		return tag;
 	}
 
-	public void setTag(List<String> tag) {
+	public void setTag(List<Long> tag) {
 		this.tag = tag;
 	}
 	
-	
+	public static BubbleData getBubbleData(long id) {
+		String pageUrl = Constant.SERVER_DOMAIN_URL + "/detail";
+		DefaultHttpClient client = new DefaultHttpClient();
+		
+		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
+		List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
+		
+		assert(bubbles.size() == 1);
+		
+		return bubbles.get(0);
+	}
 }
