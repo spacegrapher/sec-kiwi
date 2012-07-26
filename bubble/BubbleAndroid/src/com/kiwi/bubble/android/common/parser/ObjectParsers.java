@@ -49,7 +49,7 @@ public class ObjectParsers {
 			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>(?:.|\\s)*", content));
 			String email = ObjectParsers.regex(".*>([^>]*)</email>(?:.|\\s)*", content);
 			String title = ObjectParsers.regex(".*>([^>]*)</title>(?:.|\\s)*", content);
-			String text = ObjectParsers.regex(".*>((?:.|\\s)*)</text>.*", content);
+			String text = ObjectParsers.regex(".*>((?:.|\\s)*)</text>(?:.|\\s)*", content);
 			
 			List<Long> tags = parseBubbleTagId(content);
 			Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
@@ -64,7 +64,7 @@ public class ObjectParsers {
 	
 	public static List<Long> parseBubbleTagId(String response) {
 		List<Long> data = new ArrayList<Long>();
-		String insideContents = ObjectParsers.regex(".*<tags>(.*)</tags>.*", response);
+		String insideContents = ObjectParsers.regex("(?:.|\\s)*<tags>(.*)</tags>.*", response);
 		
 		String[] tagContents = insideContents.split("<tag>");
 		//Log.i("PARSER", "response: " + response + ", insideContents: " + insideContents + ", tagContents: " + tagContents.toString());
