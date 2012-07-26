@@ -52,13 +52,12 @@
             android:text="Post" />
 
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/editTextBubbleCreateTag"
-        android:layout_width="match_parent"
+
+    <TextView
+        android:id="@+id/textViewBubbleCreateTag"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Enter tags" />
+        android:text="TextView" />
 
     <EditText
         android:id="@+id/editTextBubbleCreateTitle"
@@ -108,48 +107,6 @@
             android:layout_weight="1"
             android:src="@android:drawable/editbox_dropdown_light_frame" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/buttonBubbleLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Location" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/lblLatitude"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Latitude:" />
-
-            <TextView
-                android:id="@+id/lblLongitude"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Longitude:" />
-
-            <TextView
-                android:id="@+id/tvLatitude"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/tvLongitude"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
 

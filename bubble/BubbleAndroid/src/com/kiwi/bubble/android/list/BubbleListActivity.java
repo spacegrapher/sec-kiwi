@@ -9,6 +9,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.MainActivity;
 import com.kiwi.bubble.android.R;
+import com.kiwi.bubble.android.TagSelectActivity;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
@@ -33,6 +34,8 @@ public class BubbleListActivity extends Activity {
 	private static final int REQUEST_CODE_CREATE = 101;
 	private String strEmail;
 	private ListView lvBubbleList;
+	private BubbleListAdapter adapter;
+	private List<BubbleData> bubbles;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,25 +46,6 @@ public class BubbleListActivity extends Activity {
 		strEmail = intent.getStringExtra("email");
 		
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
-		updateListView();
-	}
-	
-	public void updateListView() {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
-		DefaultHttpClient client = new DefaultHttpClient();
-		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl /*+ "?email=" + strEmail*/, client);
-		final List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
-		Log.i("BUBBLE", bubbles.toString());
-		/*ArrayList<String> bubbleTitle = new ArrayList<String>();
-		for(int i=0; i<bubbles.size(); i++) {
-			bubbleTitle.add(bubbles.get(i).getTitle() + " (" + bubbles.get(i).getText() + ") [" + bubbles.get(i).getTag().size() + "]");
-		}
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bubbleTitle);*/
-		BubbleListAdapter adapter = new BubbleListAdapter(bubbles);
-		lvBubbleList.setAdapter(adapter);	
-		
-		
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -72,12 +56,29 @@ public class BubbleListActivity extends Activity {
 			}
 			
 		});
+		updateListView();
+	}
+	
+	public void updateListView() {
+		String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
+		DefaultHttpClient client = new DefaultHttpClient();
+		
+		String response = HttpGetUtil.doGetWithResponse(pageUrl /*+ "?email=" + strEmail*/, client);
+		bubbles = ObjectParsers.parseBubbleData(response);
+		adapter = new BubbleListAdapter(bubbles);
+		lvBubbleList.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
 	}
 	
 	public void onClickCreateBubble(View v) {
-		Intent intent = new Intent(this, BubbleCreateActivity.class);
+		Intent intent = new Intent(this, TagSelectActivity.class);
 		intent.putExtra("email", strEmail);
 		startActivityForResult(intent, REQUEST_CODE_CREATE);
+	}
+	
+	public void onClickRefresh(View v) {
+		updateListView();
+				
 	}
 
 	@Override

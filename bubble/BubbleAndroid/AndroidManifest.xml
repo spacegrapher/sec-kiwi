@@ -28,6 +28,7 @@
         <activity android:name=".list.BubbleListActivity" />
         <activity android:name=".list.BubbleDetailActivity" />
         <activity android:name=".BubbleCreateActivity" />
+        <activity android:name=".TagSelectActivity" />
     </application>
     
 </manifest>

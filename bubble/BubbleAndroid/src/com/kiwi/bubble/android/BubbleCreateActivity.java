@@ -2,7 +2,9 @@ package com.kiwi.bubble.android;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.kiwi.bubble.android.common.Constant;
@@ -26,23 +28,17 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-/*+GPS+*/
-import android.location.GpsStatus;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.util.Log;
-import android.widget.TextView;
-/*-GPS-*/
-
-public class BubbleCreateActivity extends Activity implements OnClickListener{
+public class BubbleCreateActivity extends Activity implements OnClickListener {
 	private EditText editTextTitle;
 	private EditText editTextText;
 	private EditText editTextTag;
 	private Button buttonPost;
 	private String strEmail;
+	private List<String> strTagList;
+	private TextView tvTag;
 	
 	private Button buttonCamera;
 	private ImageView imageviewPhoto;
@@ -51,27 +47,21 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 	private static final int CROP_FROM_CAMERA = 2;
 	private Uri mImageCaptureUri;
 
-	/*+GPS+*/
-	private LocationListener locListenD;
-	private Button buttonLocation;
-	public TextView tvLatitude;
-	public TextView tvLongitude;
-	public Location loc;
-	/*-GPS-*/
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bubblecreate);
 		
 		Intent intent = this.getIntent();
-		strEmail = intent.getStringExtra("email");
+		strTagList = Arrays.asList(intent.getStringArrayExtra("tag"));
+		strEmail = intent.getStringExtra("email");		
 		
+		
+		tvTag = (TextView) findViewById(R.id.textViewBubbleCreateTag);
+		tvTag.setText(strTagList.toString());
 		editTextTitle = (EditText) findViewById(R.id.editTextBubbleCreateTitle);
 		editTextText = (EditText) findViewById(R.id.editTextBubbleCreateText);
-		editTextTag = (EditText) findViewById(R.id.editTextBubbleCreateTag);
+		//editTextTag = (EditText) findViewById(R.id.editTextBubbleCreateTag);
 		buttonPost = (Button) findViewById(R.id.buttonBubbleCreatePost);
 		buttonPost.setEnabled(false);
 		imageviewPhoto = (ImageView) findViewById(R.id.imageViewBubbleResultPhoto);
@@ -79,11 +69,7 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 		
 		buttonCamera.setOnClickListener(this);
 		
-		/*+GPS+*/
-		buttonLocation = (Button) findViewById(R.id.buttonBubbleLocation);
-		buttonLocation.setOnClickListener(this);
-		/*-GPS-*/
-		
+	
 		editTextTitle.addTextChangedListener(new TextWatcher() {
 	        @Override
 	        public void onTextChanged(CharSequence s, int start, int before, int count)
@@ -121,57 +107,6 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 	    );
 	}	
 
-	public void GetLocation(){
-        // 텍스트뷰를 찾는다
-        tvLatitude = (TextView)findViewById(R.id.tvLatitude);
-        tvLongitude = (TextView)findViewById(R.id.tvLongitude);
-        
-        Log.d("GetLocation","1!!");
-        LocationManager lm =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        
-        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-        	Log.d("GetLocation","ERROR!!");
-        }
-        
-        
-        Log.d("GetLocation","1-1!!");
-        Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        
-        Log.d("GetLocation","2!!");
-        if(loc!=null) 
-        {
-            // TextView를 채운다
-           	 tvLatitude.setText(Double.toString(loc.getLatitude()));
-           	tvLongitude.setText(Double.toString(loc.getLongitude()));         
-
-               // Location Manager에게 위치정보를 업데이트해달라고 요청한다.
-           	Log.d("GetLocation","3!!");
-               locListenD = new DispLocListener();
-               Log.d("GetLocation","4!!");
-               lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000L, 10.0f, locListenD);    
-               Log.d("GetLocation","4-1!!");
-           }
-           else {
-           	Log.d("location", "location is null");
-           }
-	}
-		
-        private class DispLocListener implements LocationListener {
-        	public void onLocationChanged(Location location) {
-        		// TextView를 업데이트 한다.
-        		Log.d("GetLocation","5!!");
-        		tvLatitude.setText(Double.toString(location.getLatitude()));
-        		tvLongitude.setText(Double.toString(location.getLongitude()));  
-        		Log.d("GetLocation","6!!");
-        	}
-        	public void onProviderDisabled(String provider) { 
-        	}
-        	public void onProviderEnabled(String provider) {
-        	}
-        	public void onStatusChanged(String provider, int status, Bundle extras) { 
-        	}
-        }
-
 	public void onClickButtonCreateBack(View v) {
 		Intent intent = new Intent();
 		setResult(Activity.RESULT_CANCELED, intent);
@@ -193,10 +128,10 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 		
 		String strTitle = editTextTitle.getText().toString();
 		String strText = editTextText.getText().toString();
-		String strTag = editTextTag.getText().toString();
+		String strTag = strTagList.toString().substring(1, strTagList.toString().length()-1);
 				
 		HttpPostUtil util = new HttpPostUtil();
-		HashMap result = new HashMap();
+		
 		String resultStr = new String();
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("email", strEmail);
@@ -210,6 +145,10 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 			e.printStackTrace();
 		}
 		
+		Intent killIntent = new Intent(TagSelectActivity.ACTION_KILL_COMMAND);
+        killIntent.setType(TagSelectActivity.ACTION_KILL_DATATYPE);
+        sendBroadcast(killIntent);
+        
 		Intent intent = new Intent();
 		setResult(Activity.RESULT_OK, intent);
 		finish();
@@ -349,11 +288,6 @@ public class BubbleCreateActivity extends Activity implements OnClickListener{
 			.setNeutralButton("Gallery", albumListener)
 			.setNegativeButton("Cancel", cancelListener)
 			.show();
-	}
-		else
-		{
-			Log.d("click","location go to get the location!!");
-			GetLocation();
-		}
+	}		
 	}
 }
