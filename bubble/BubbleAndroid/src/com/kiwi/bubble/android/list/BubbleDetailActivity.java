@@ -18,13 +18,17 @@ import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
+import com.kiwi.bubble.android.list.BubbleListActivity.BubbleListAdapter;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -41,6 +45,7 @@ public class BubbleDetailActivity extends Activity {
 	private Long authorId;
 	//private String strEmail;
 	private ListView lvCommentList;
+	private BubbleCommentListAdapter adapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +93,12 @@ public class BubbleDetailActivity extends Activity {
 		List<BubbleComment> comments = BubbleComment.getCommentData(bubbleId.longValue());
 		
 		
-		ArrayList<String> commentText = new ArrayList<String>();
+		/*ArrayList<String> commentText = new ArrayList<String>();
 		for(int i=0; i<comments.size(); i++) {
 			UserInfo userInfo = UserInfo.getUserInfo(comments.get(i).getAuthorId().longValue());
 			commentText.add("[" + userInfo.getName() + "] " + comments.get(i).getText());
-		}
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, commentText);
+		}*/
+		adapter = new BubbleCommentListAdapter(comments);
 		lvCommentList.setAdapter(adapter);
 	}
 	
@@ -123,5 +128,55 @@ public class BubbleDetailActivity extends Activity {
 		
 		finish();
 		startActivity(getIntent());
+	}
+	
+	class BubbleCommentListAdapter extends BaseAdapter {
+		private List<BubbleComment> bubbleComment;
+		
+		public BubbleCommentListAdapter(List<BubbleComment> bubbleComment) {
+			super();
+			this.bubbleComment = bubbleComment;
+		}
+
+		@Override
+		public int getCount() {
+			return bubbleComment.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			UserInfo userInfo;
+			
+			TextView tvName;
+			TextView tvText;
+			
+			if(convertView == null) {
+				LayoutInflater inflater = LayoutInflater.from(BubbleDetailActivity.this);
+				convertView = inflater.inflate(R.layout.listview_bubblecomment, parent, false);
+			}
+			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewName);
+			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewText);
+			
+			
+			userInfo = UserInfo.getUserInfo(bubbleComment.get(position).getAuthorId().longValue());
+						
+			tvName.setText("" + userInfo.getName());
+			tvText.setText(bubbleComment.get(position).getText());
+			
+			
+			return convertView;
+		}		
 	}
 }

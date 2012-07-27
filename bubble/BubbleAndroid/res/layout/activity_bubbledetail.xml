@@ -101,19 +101,17 @@
                 android:layout_weight="1"
                 android:text="TextView" />
         </TableRow>
-
+
         <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp" >
-
+            android:layout_height="wrap_content" >
+
             <ListView
                 android:id="@+id/listViewComments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#EDF9C8" >
+                android:layout_weight="1" >
 
             </ListView>
 
