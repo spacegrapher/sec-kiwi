@@ -1,4 +1,4 @@
-package com.kiwi.bubble.appengine.server.comment;
+package com.kiwi.bubble.appengine.server.userinfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,36 +13,30 @@ import com.kiwi.bubble.appengine.server.bubbledata.BubbleData;
 import com.kiwi.bubble.appengine.server.bubbledata.BubbleDataJDOWrapper;
 import com.kiwi.bubble.appengine.server.bubbledata.BubbleDataXMLConverter;
 
-public class BubbleCommentServlet extends HttpServlet {
+public class UserInfoServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String id = req.getParameter("id");
-		//System.out.println("id: " + id);
+		Long id = Long.valueOf(req.getParameter("id"));
 		
-		List<BubbleComment> bubbleComment = BubbleCommentJDOWrapper.getBubbleByBubbleId(Long.valueOf(id));
+		List<UserInfo> userInfo = UserInfoJDOWrapper.getUserById(id);
 		
-		String ret = BubbleCommentXMLConverter.convertDataListToXml(bubbleComment);
+		assert(userInfo.size() == 1);
+		
+		String ret = UserInfoXMLConverter.convertUserToXml(userInfo.get(0));
 		
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
 		
-		System.out.println("[BubbleCommentServlet] " + ret);
+		System.out.println("[UserInfoServlet] " + ret);
 		resp.getWriter().write(ret);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		Long bubbleId = Long.valueOf(req.getParameter("bubbleid"));
-		Long authorId = Long.valueOf(req.getParameter("authorid"));
-		String comment = req.getParameter("comment");
 		
-		System.out.println("[BubbleCommentServlet] bubbleId: " + bubbleId + ", authorId: " + authorId + ", comment: " + comment);
-		BubbleComment bubbleComment = new BubbleComment(bubbleId, authorId, comment);
-		
-		BubbleCommentJDOWrapper.insertComment(bubbleComment);
 	}
 
 }

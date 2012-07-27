@@ -27,7 +27,8 @@ public class TagSelectActivity extends Activity {
 	public static final String ACTION_KILL_COMMAND = "ACTION_KILL_COMMAND";
 	public static final String ACTION_KILL_DATATYPE = "content://ACTION_KILL_DATATYPE";
 	
-	String strEmail;
+	long id;
+	//String strEmail;
 	EditText etAddTag;
 	Button btnAddTag;
 	GridView gvSelectedTag;
@@ -50,7 +51,8 @@ public class TagSelectActivity extends Activity {
 		setContentView(R.layout.activity_tagselect);
 		
 		Intent intent = this.getIntent();
-		strEmail = intent.getStringExtra("email");
+		//strEmail = intent.getStringExtra("email");
+		id = intent.getLongExtra("id", -1);
 		
 		etAddTag = (EditText) findViewById(R.id.editTextAddTag);
 		btnAddTag = (Button) findViewById(R.id.buttonAddTag);
@@ -171,7 +173,8 @@ public class TagSelectActivity extends Activity {
 		String[] tagArray = (String[]) tagList.toArray(new String[tagList.size()]);
 		Intent intent = new Intent(this, BubbleCreateActivity.class);
 		intent.putExtra("tag", tagArray);
-		intent.putExtra("email", strEmail);
+		//intent.putExtra("email", strEmail);
+		intent.putExtra("id", id);
 		startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
 	}
 	

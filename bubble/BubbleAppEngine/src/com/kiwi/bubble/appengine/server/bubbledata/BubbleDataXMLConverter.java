@@ -8,7 +8,7 @@ public class BubbleDataXMLConverter {
 	public static String convertDataToXml(BubbleData data) {
 		String content = "";
 		content += addTag("id", data.getId().toString());
-		content += addTag("email", data.getAuthorEmail());
+		content += addTag("author", data.getAuthorId().toString());
 		content += addTag("title", data.getTitle());
 		content += addTag("text", data.getText());
 		content += BubbleTagXMLConverter.convertTagIdListToXml(data.getTag());

@@ -10,8 +10,22 @@ import android.util.Log;
 import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
+import com.kiwi.bubble.android.common.UserInfo;
 
 public class ObjectParsers {
+	public static UserInfo parseUserInfo(String response) {
+		//List<UserInfo> data = new ArrayList<UserInfo>();
+		String content = ObjectParsers.regex("<user>(.*)</user>", response);
+		
+		String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
+		String name = ObjectParsers.regex(".*>([^>]*)</name>.*", content);
+		
+		UserInfo user = new UserInfo(email, name);
+		//data.add(user);
+		
+		return user;
+	}
+	
 	public static List<BubbleComment> parseBubbleComment(String response) {
 		List<BubbleComment> data = new ArrayList<BubbleComment>();
 		String insideContents = ObjectParsers.regex("<comments>(.*)</comments>", response);
@@ -24,12 +38,11 @@ public class ObjectParsers {
 			}
 			
 			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>.*", content));
-			String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
+			Long authorId = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</author>.*", content));
 			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
 						
 			
-			//Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
-			BubbleComment bc = new BubbleComment(id, email, text);
+			BubbleComment bc = new BubbleComment(id, authorId, text);
 			data.add(bc);
 		}
 		return data;	
@@ -47,14 +60,14 @@ public class ObjectParsers {
 			}
 			//Log.i("PARSER", "content: " + content);
 			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>(?:.|\\s)*", content));
-			String email = ObjectParsers.regex(".*>([^>]*)</email>(?:.|\\s)*", content);
+			Long authorId = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</author>(?:.|\\s)*", content));
 			String title = ObjectParsers.regex(".*>([^>]*)</title>(?:.|\\s)*", content);
 			String text = ObjectParsers.regex(".*>((?:.|\\s)*)</text>(?:.|\\s)*", content);
 			
 			List<Long> tags = parseBubbleTagId(content);
-			Log.i("PARSER", "email: " + email + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
+			Log.i("PARSER", "author: " + authorId + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
 			
-			BubbleData bd = new BubbleData(email, title, text);
+			BubbleData bd = new BubbleData(authorId, title, text);
 			bd.setId(id);
 			bd.setTag(tags);
 			data.add(bd);

@@ -10,9 +10,11 @@ import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.MainActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.TagSelectActivity;
+import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
@@ -32,10 +34,11 @@ import android.widget.Toast;
 
 public class BubbleListActivity extends Activity {
 	private static final int REQUEST_CODE_CREATE = 101;
-	private String strEmail;
+	private Long id;
 	private ListView lvBubbleList;
 	private BubbleListAdapter adapter;
 	private List<BubbleData> bubbles;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +46,15 @@ public class BubbleListActivity extends Activity {
 		setContentView(R.layout.activity_bubblelist);
 		
 		Intent intent = this.getIntent();
-		strEmail = intent.getStringExtra("email");
+		id = Long.valueOf(intent.getLongExtra("id", -1));
 		
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
 				Intent intent = new Intent(BubbleListActivity.this, BubbleDetailActivity.class);
-				intent.putExtra("id", bubbles.get(position).getId());
-				intent.putExtra("email", strEmail);
+				intent.putExtra("bubbleid", bubbles.get(position).getId());
+				intent.putExtra("authorid", id.longValue());
 				startActivity(intent);
 			}
 			
@@ -72,7 +75,8 @@ public class BubbleListActivity extends Activity {
 	
 	public void onClickCreateBubble(View v) {
 		Intent intent = new Intent(this, TagSelectActivity.class);
-		intent.putExtra("email", strEmail);
+		//intent.putExtra("email", strEmail);
+		intent.putExtra("id", id.longValue());
 		startActivityForResult(intent, REQUEST_CODE_CREATE);
 	}
 	
@@ -120,23 +124,30 @@ public class BubbleListActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView tvEmail;
+			UserInfo userInfo;
+			List<BubbleComment> comments;
+			TextView tvName;
 			TextView tvText;
 			TextView tvTagCount;
 			if(convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(BubbleListActivity.this);
 				convertView = inflater.inflate(R.layout.listview_bubblelist, parent, false);
 			}
-			tvEmail = (TextView)convertView.findViewById(R.id.textViewBubbleListViewEmail);
+			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListViewName);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
 			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
-						
-			tvEmail.setText(bubbleData.get(position).getAuthorEmail());
+			
+			userInfo = UserInfo.getUserInfo(bubbleData.get(position).getAuthorId().longValue());
+			comments = BubbleComment.getCommentData(bubbleData.get(position).getId().longValue());
+			
+			tvName.setText("" + userInfo.getName());
 			tvText.setText(bubbleData.get(position).getText());
-			tvTagCount.setText("[" + bubbleData.get(position).getTag().size() + "]");
+			tvTagCount.setText("Tag: " + bubbleData.get(position).getTag().size() + ", Comments: " + comments.size());
 			
 			return convertView;
 		}
+		
+		
 		
 	}
 	

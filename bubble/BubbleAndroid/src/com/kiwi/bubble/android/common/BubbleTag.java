@@ -70,8 +70,8 @@ public class BubbleTag extends ModelBase {
 		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + String.valueOf(id), client);
 		final List<BubbleTag> tags = ObjectParsers.parseBubbleTag(response);
 		
-		assert(tags.size() == 1);
+		//assert(tags.size() == 1);
 		
-		return tags.get(0);
+		return tags.size()==0?null:tags.get(0);
 	}
 }

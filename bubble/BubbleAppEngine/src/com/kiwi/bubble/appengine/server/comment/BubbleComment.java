@@ -13,7 +13,7 @@ public class BubbleComment extends ModelBase {
 	private Long bubbleId;
 	
 	@Persistent
-	private String email;
+	private Long authorId;
 	
 	@Persistent
 	private String text;
@@ -23,10 +23,10 @@ public class BubbleComment extends ModelBase {
 	
 	
 
-	public BubbleComment(Long bubbleId, String email, String text) {
+	public BubbleComment(Long bubbleId, Long authorId, String text) {
 		super();
 		this.bubbleId = bubbleId;
-		this.email = email;
+		this.authorId = authorId;
 		this.text = text;
 	}
 
@@ -38,12 +38,12 @@ public class BubbleComment extends ModelBase {
 		this.bubbleId = bubbleId;
 	}
 
-	public String getEmail() {
-		return email;
+	public Long getAuthorId() {
+		return authorId;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setAuthorId(Long authorId) {
+		this.authorId = authorId;
 	}
 
 	public String getText() {

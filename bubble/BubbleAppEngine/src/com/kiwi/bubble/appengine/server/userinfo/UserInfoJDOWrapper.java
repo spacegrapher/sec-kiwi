@@ -56,6 +56,45 @@ public class UserInfoJDOWrapper {
 		return ret;
 	}
 	
+	public static List<UserInfo> getUserById(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Query query = pm.newQuery(UserInfo.class);
+		query.setFilter("id == inputId");
+		query.declareParameters("Long inputId");
+		
+		List<UserInfo> ret = null;
+		try {
+			ret = (List<UserInfo>) query.execute(id);
+		} finally {
+			query.closeAll();
+		}
+		
+		return ret;
+	}
+	
+	public static Long getUserIdByEmailAndPassword(String email, String password) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Query query = pm.newQuery(UserInfo.class);
+		query.setFilter("email == inputEmail && password == inputPassword");
+		query.declareParameters("String inputEmail, String inputPassword");
+		
+		List<UserInfo> ret = null;
+		try {
+			ret = (List<UserInfo>) query.execute(email, password);
+		} finally {
+			query.closeAll();
+		}
+		
+		if (ret == null || ret.isEmpty())
+			return Long.valueOf(-1);
+		
+		assert(ret.size() == 1);
+		
+		return ret.get(0).getId();
+	}
+	
 	private static boolean checkUserExists(UserInfo info) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		

@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
 				Toast.makeText(MainActivity.this, "Please enter correct information", 0).show();
 			} else {
 				Intent intent = new Intent(this, BubbleListActivity.class);
-				intent.putExtra("email", resultStr);
+				intent.putExtra("id", Long.valueOf(resultStr));
 				startActivity(intent);
 			}
 		}

@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
   <!-- Servlets -->
-  <!--<servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.kiwi.bubble.appengine.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/bubbleappengine/greet</url-pattern>
-  </servlet-mapping>-->
-  
-  <!--<servlet>
-  	<servlet-name>BubbleServlet</servlet-name>
-  	<servlet-class>com.kiwi.bubble.appengine.server.BubbleServlet</servlet-class>
-  </servlet>-->
-  
   <servlet>
   	<servlet-name>SignupServlet</servlet-name>
   	<servlet-class>com.kiwi.bubble.appengine.server.userinfo.SignupServlet</servlet-class>
@@ -24,6 +9,16 @@
   <servlet-mapping>
   	<servlet-name>SignupServlet</servlet-name>
   	<url-pattern>/signup</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  	<servlet-name>UserInfoServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.userinfo.UserInfoServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>UserInfoServlet</servlet-name>
+  	<url-pattern>/user</url-pattern>
   </servlet-mapping>
   
   <servlet>

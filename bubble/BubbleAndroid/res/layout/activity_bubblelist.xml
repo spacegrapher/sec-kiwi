@@ -71,12 +71,12 @@
             android:text="Me" />
 
     </LinearLayout>
-
+
     <ListView
         android:id="@+id/listViewBubbleList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#DDDDDD" >
+        android:background="#ECF9C6" >
 
     </ListView>
 

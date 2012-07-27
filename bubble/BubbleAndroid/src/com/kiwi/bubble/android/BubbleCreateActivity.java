@@ -36,7 +36,8 @@ public class BubbleCreateActivity extends Activity implements OnClickListener {
 	private EditText editTextText;
 	private EditText editTextTag;
 	private Button buttonPost;
-	private String strEmail;
+	private long id;
+	//private String strEmail;
 	private List<String> strTagList;
 	private TextView tvTag;
 	
@@ -54,7 +55,8 @@ public class BubbleCreateActivity extends Activity implements OnClickListener {
 		
 		Intent intent = this.getIntent();
 		strTagList = Arrays.asList(intent.getStringArrayExtra("tag"));
-		strEmail = intent.getStringExtra("email");		
+		id = intent.getLongExtra("id", -1);
+		//strEmail = intent.getStringExtra("email");		
 		
 		
 		tvTag = (TextView) findViewById(R.id.textViewBubbleCreateTag);
@@ -134,7 +136,8 @@ public class BubbleCreateActivity extends Activity implements OnClickListener {
 		
 		String resultStr = new String();
 		Map<String, String> param = new HashMap<String, String>();
-		param.put("email", strEmail);
+		//param.put("email", strEmail);
+		param.put("id", String.valueOf(id));
 		param.put("title", strTitle);
 		param.put("text", strText);
 		param.put("tag", strTag);

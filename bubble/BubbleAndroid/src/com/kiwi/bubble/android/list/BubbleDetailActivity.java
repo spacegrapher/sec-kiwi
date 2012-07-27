@@ -14,6 +14,7 @@ import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
@@ -36,8 +37,9 @@ public class BubbleDetailActivity extends Activity {
 	private TextView tvText;
 	private TextView tvTag;
 	private EditText etComment;
-	private long id;
-	private String strEmail;
+	private Long bubbleId;
+	private Long authorId;
+	//private String strEmail;
 	private ListView lvCommentList;
 	
 	@Override
@@ -53,17 +55,19 @@ public class BubbleDetailActivity extends Activity {
 		lvCommentList = (ListView) findViewById(R.id.listViewComments);
 		
 		Intent intent = this.getIntent();
-		id = intent.getLongExtra("id", -1);
-		strEmail = intent.getStringExtra("email");
+		bubbleId = Long.valueOf(intent.getLongExtra("bubbleid", -1));
+		authorId = Long.valueOf(intent.getLongExtra("authorid", -1));
+		//strEmail = intent.getStringExtra("email"); 
 		
 		getBubbleData();
 		getCommentData();
 	}
 	
 	private void getBubbleData() {
-		BubbleData bubble = BubbleData.getBubbleData(id);
+		BubbleData bubble = BubbleData.getBubbleData(bubbleId.longValue());
+		UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId().longValue());
 		
-		tvName.setText(bubble.getAuthorEmail());
+		tvName.setText(userInfo.getName());
 		tvTitle.setText(bubble.getTitle());
 		tvText.setText(bubble.getText());
 		
@@ -71,6 +75,7 @@ public class BubbleDetailActivity extends Activity {
 		List<Long> tags = bubble.getTag();
 		for(int i=0; i<tags.size(); i++) {
 			BubbleTag tag = BubbleTag.getBubbleTag(tags.get(i));
+			if(tag==null) continue;
 			if(i>0) strTag += ", ";
 			strTag += tag.getText();
 		}
@@ -80,11 +85,13 @@ public class BubbleDetailActivity extends Activity {
 	}
 	
 	private void getCommentData() {		
-		List<BubbleComment> comments = BubbleComment.getCommentData(id);
+		List<BubbleComment> comments = BubbleComment.getCommentData(bubbleId.longValue());
+		
 		
 		ArrayList<String> commentText = new ArrayList<String>();
 		for(int i=0; i<comments.size(); i++) {
-			commentText.add("[" + comments.get(i).getEmail() + "] " + comments.get(i).getText());
+			UserInfo userInfo = UserInfo.getUserInfo(comments.get(i).getAuthorId().longValue());
+			commentText.add("[" + userInfo.getName() + "] " + comments.get(i).getText());
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, commentText);
 		lvCommentList.setAdapter(adapter);
@@ -103,8 +110,8 @@ public class BubbleDetailActivity extends Activity {
 		HashMap result = new HashMap();
 		String resultStr = new String();
 		Map<String, String> param = new HashMap<String, String>();
-		param.put("bubbleid", Long.toString(id));
-		param.put("email", strEmail);
+		param.put("bubbleid", bubbleId.toString());
+		param.put("authorid", authorId.toString());
 		param.put("comment", strComment);
 		
 		

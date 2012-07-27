@@ -25,12 +25,13 @@ public class BubbleCreateServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String strEmail = req.getParameter("email");
+		//String strEmail = req.getParameter("email");
+		Long id = Long.valueOf(req.getParameter("id"));
 		String strTitle = req.getParameter("title");
 		String strText = req.getParameter("text");
 		String strTag = req.getParameter("tag");
 		
-		BubbleData bubbleData = new BubbleData(strEmail, strTitle, strText);
+		BubbleData bubbleData = new BubbleData(id, strTitle, strText);
 		List<Long> tagList = new ArrayList<Long>();
 		if(!strTag.isEmpty()) {
 			String[] tags = strTag.split(",");

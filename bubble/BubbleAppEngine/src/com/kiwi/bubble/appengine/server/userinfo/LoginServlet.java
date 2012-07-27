@@ -18,7 +18,7 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("[doGet] Hello Bubble!");
+		resp.getWriter().println("Bubble");
 	}
 
 	@Override
@@ -27,14 +27,15 @@ public class LoginServlet extends HttpServlet {
 		String email = req.getParameter("email");
 		String password = req.getParameter("password");
 		
-		List<UserInfo> userInfo = UserInfoJDOWrapper.getUserByEmailAndPassword(email, password);
+		//List<UserInfo> userInfo = UserInfoJDOWrapper.getUserByEmailAndPassword(email, password);
+		Long userId = UserInfoJDOWrapper.getUserIdByEmailAndPassword(email, password);
 		
 		String msg = new String();
-		if(userInfo.isEmpty()) {
+		if(userId < 0) {
 			msg = "";
 		} else {
-			req.getSession().setAttribute("email", userInfo.get(0).getEmail());
-			msg = userInfo.get(0).getEmail();
+			req.getSession().setAttribute("id", userId);
+			msg = "" + userId;
 		}
 		
 		System.out.println("[LoginServlet] " + msg);

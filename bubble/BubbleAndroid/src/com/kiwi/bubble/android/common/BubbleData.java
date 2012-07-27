@@ -9,7 +9,7 @@ import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
 public class BubbleData extends ModelBase {
-	private String authorEmail;
+	private Long authorId;
 	
 	private String title;
 	
@@ -23,19 +23,19 @@ public class BubbleData extends ModelBase {
 	
 	private List<Long> tag;
 
-	public BubbleData(String authorEmail, String title, String text) {
+	public BubbleData(Long id, String title, String text) {
 		super();
-		this.authorEmail = authorEmail;
+		this.authorId = id;
 		this.title = title;
 		this.text = text;
 	}
 
-	public String getAuthorEmail() {
-		return authorEmail;
+	public Long getAuthorId() {
+		return authorId;
 	}
 
-	public void setAuthorEmail(String authorEmail) {
-		this.authorEmail = authorEmail;
+	public void setAuthorId(Long id) {
+		this.authorId = id;
 	}
 
 	public String getTitle() {

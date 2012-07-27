@@ -1,5 +1,8 @@
 package com.kiwi.bubble.appengine.server.userinfo;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -15,6 +18,12 @@ public class UserInfo extends ModelBase {
 	
 	@Persistent
 	private String password;
+	
+	@Persistent
+	private Date joinDate;
+	
+	@Persistent
+	private List<Long> favorites;
 
 	public UserInfo(String email, String name, String password) {
 		super();
