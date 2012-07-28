@@ -21,6 +21,7 @@ public class BubbleDataJDOWrapper {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		Query query = pm.newQuery(BubbleData.class);
+		query.setOrdering("postTime desc");
 		
 		List<BubbleData> ret = null;
 		try {
@@ -38,6 +39,7 @@ public class BubbleDataJDOWrapper {
 		Query query = pm.newQuery(BubbleData.class);
 		query.setFilter("authorEmail == inputEmail");
 		query.declareParameters("String inputEmail");
+		query.setOrdering("postTime desc");
 		
 		List<BubbleData> ret = null;
 		try {
@@ -55,6 +57,7 @@ public class BubbleDataJDOWrapper {
 		Query query = pm.newQuery(BubbleData.class);
 		query.setFilter("id == inputId");
 		query.declareParameters("Long inputId");
+		query.setOrdering("postTime desc");
 		
 		List<BubbleData> ret = null;
 		try {

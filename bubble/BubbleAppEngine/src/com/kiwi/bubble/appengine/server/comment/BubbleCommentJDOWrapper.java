@@ -24,6 +24,7 @@ public class BubbleCommentJDOWrapper {
 		Query query = pm.newQuery(BubbleComment.class);
 		query.setFilter("bubbleId == inputId");
 		query.declareParameters("Long inputId");
+		query.setOrdering("postTime asc");
 		
 		List<BubbleComment> ret = null;
 		try {
