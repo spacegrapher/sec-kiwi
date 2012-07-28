@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
 			msg = "" + userId;
 		}
 		
-		System.out.println("[LoginServlet] " + msg);
+		//System.out.println("[LoginServlet] " + msg);
 		resp.getWriter().print(msg);
 	}
 

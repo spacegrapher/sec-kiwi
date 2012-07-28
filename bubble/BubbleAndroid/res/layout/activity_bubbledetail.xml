@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ECF9C6"
-    android:orientation="vertical" >
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,16 +36,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" >
-
+
                 <ImageView
                     android:id="@+id/imageViewBubbleDetailProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
                     android:src="@drawable/ic_launcher" />
-
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical" >
 
@@ -58,14 +58,22 @@
                         android:text="TextView"
                         android:textColor="#99C516"
                         android:textStyle="bold" />
-
+
+                    <TextView
+                        android:id="@+id/textViewBubbleDetailDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TextView"
+                        android:textColor="#666666"
+                        android:textSize="5pt" />
+
                     <TextView
                         android:id="@+id/textViewBubbleDetailTitle"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
                         android:text="TextView"
-                        android:textSize="18dp" />
+                        android:textSize="8pt" />
 
                 </LinearLayout>
 

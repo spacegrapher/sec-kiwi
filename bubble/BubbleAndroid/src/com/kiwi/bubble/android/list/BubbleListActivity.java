@@ -127,6 +127,7 @@ public class BubbleListActivity extends Activity {
 			UserInfo userInfo;
 			List<BubbleComment> comments;
 			TextView tvName;
+			TextView tvDate;
 			TextView tvText;
 			TextView tvTagCount;
 			if(convertView == null) {
@@ -134,6 +135,7 @@ public class BubbleListActivity extends Activity {
 				convertView = inflater.inflate(R.layout.listview_bubblelist, parent, false);
 			}
 			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListViewName);
+			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListViewDate);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
 			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
 			
@@ -141,6 +143,7 @@ public class BubbleListActivity extends Activity {
 			comments = BubbleComment.getCommentData(bubbleData.get(position).getId().longValue());
 			
 			tvName.setText("" + userInfo.getName());
+			tvDate.setText(bubbleData.get(position).getPostTime().toString());
 			tvText.setText(bubbleData.get(position).getText());
 			tvTagCount.setText("Tag: " + bubbleData.get(position).getTag().size() + ", Comments: " + comments.size());
 			

@@ -2,6 +2,7 @@ package com.kiwi.bubble.appengine.server.comment;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -28,7 +29,7 @@ public class BubbleCommentServlet extends HttpServlet {
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
 		
-		System.out.println("[BubbleCommentServlet] " + ret);
+		//System.out.println("[BubbleCommentServlet] " + ret);
 		resp.getWriter().write(ret);
 	}
 
@@ -39,8 +40,9 @@ public class BubbleCommentServlet extends HttpServlet {
 		Long authorId = Long.valueOf(req.getParameter("authorid"));
 		String comment = req.getParameter("comment");
 		
-		System.out.println("[BubbleCommentServlet] bubbleId: " + bubbleId + ", authorId: " + authorId + ", comment: " + comment);
+		//System.out.println("[BubbleCommentServlet] bubbleId: " + bubbleId + ", authorId: " + authorId + ", comment: " + comment);
 		BubbleComment bubbleComment = new BubbleComment(bubbleId, authorId, comment);
+		bubbleComment.setPostTime(new Date());
 		
 		BubbleCommentJDOWrapper.insertComment(bubbleComment);
 	}

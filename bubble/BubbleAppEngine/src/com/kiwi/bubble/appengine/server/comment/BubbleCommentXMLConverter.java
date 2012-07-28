@@ -7,6 +7,7 @@ public class BubbleCommentXMLConverter {
 		String content = "";
 		content += addTag("id", data.getId().toString());
 		content += addTag("author", data.getAuthorId().toString());
+		content += addTag("date", String.valueOf(data.getPostTime().getTime()));
 		content += addTag("text", data.getText());
 		String ret = addTag("comment", content);
 		return ret;

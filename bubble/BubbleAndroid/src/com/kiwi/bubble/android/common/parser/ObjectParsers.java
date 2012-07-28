@@ -1,6 +1,10 @@
 package com.kiwi.bubble.android.common.parser;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,10 +43,13 @@ public class ObjectParsers {
 			
 			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>.*", content));
 			Long authorId = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</author>.*", content));
+			Long date = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</date>.*", content));
 			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
 						
+			Date dateData = new Date(date);
 			
 			BubbleComment bc = new BubbleComment(id, authorId, text);
+			bc.setPostTime(dateData);
 			data.add(bc);
 		}
 		return data;	
@@ -61,14 +68,18 @@ public class ObjectParsers {
 			//Log.i("PARSER", "content: " + content);
 			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>(?:.|\\s)*", content));
 			Long authorId = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</author>(?:.|\\s)*", content));
+			Long date = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</date>(?:.|\\s)*", content));
 			String title = ObjectParsers.regex(".*>([^>]*)</title>(?:.|\\s)*", content);
 			String text = ObjectParsers.regex(".*>((?:.|\\s)*)</text>(?:.|\\s)*", content);
 			
 			List<Long> tags = parseBubbleTagId(content);
-			Log.i("PARSER", "author: " + authorId + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
+			//Log.i("PARSER", "author: " + authorId + ", date: " + date + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
 			
 			BubbleData bd = new BubbleData(authorId, title, text);
 			bd.setId(id);
+			Date dateData = new Date(date);
+			
+			bd.setPostTime(dateData);
 			bd.setTag(tags);
 			data.add(bd);
 		}

@@ -2,6 +2,7 @@ package com.kiwi.bubble.appengine.server.bubbledata;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -48,6 +49,7 @@ public class BubbleCreateServlet extends HttpServlet {
 				}
 			}
 			bubbleData.setTag(tagList);
+			bubbleData.setPostTime(new Date());
 		}
 		
 		BubbleDataJDOWrapper.insertBubble(bubbleData);

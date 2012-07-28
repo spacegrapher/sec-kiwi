@@ -15,7 +15,7 @@ public class BubbleDetailServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String id = req.getParameter("id");
-		System.out.println("id: " + id);
+		//System.out.println("id: " + id);
 		
 		List<BubbleData> bubbleData = BubbleDataJDOWrapper.getBubbleById(Long.valueOf(id));
 		
@@ -24,7 +24,7 @@ public class BubbleDetailServlet extends HttpServlet {
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
 		
-		System.out.println("[BubbleDetailServlet] " + ret);
+		//System.out.println("[BubbleDetailServlet] " + ret);
 		resp.getWriter().write(ret);
 	}
 

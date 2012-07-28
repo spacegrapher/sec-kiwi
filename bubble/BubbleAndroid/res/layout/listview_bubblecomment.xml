@@ -37,6 +37,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textViewBubbleListCommentViewDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="TextView"
+                android:textColor="#666666"
+                android:textSize="5pt" />
 
         </LinearLayout>
     </LinearLayout>

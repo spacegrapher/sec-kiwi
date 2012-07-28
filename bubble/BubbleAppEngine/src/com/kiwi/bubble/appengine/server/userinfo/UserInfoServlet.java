@@ -29,7 +29,7 @@ public class UserInfoServlet extends HttpServlet {
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
 		
-		System.out.println("[UserInfoServlet] " + ret);
+		//System.out.println("[UserInfoServlet] " + ret);
 		resp.getWriter().write(ret);
 	}
 

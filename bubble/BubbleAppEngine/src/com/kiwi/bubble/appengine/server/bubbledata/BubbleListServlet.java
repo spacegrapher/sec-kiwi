@@ -15,7 +15,7 @@ public class BubbleListServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String email = req.getParameter("email");
-		System.out.println("email: " + email);
+		//System.out.println("email: " + email);
 		
 		List<BubbleData> bubbleData = null;
 		
@@ -30,7 +30,7 @@ public class BubbleListServlet extends HttpServlet {
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
 		
-		System.out.println("[BubbleListServlet] " + ret);
+		//System.out.println("[BubbleListServlet] " + ret);
 		resp.getWriter().write(ret);
 	}
 

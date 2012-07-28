@@ -38,6 +38,7 @@ import android.widget.TextView;
 public class BubbleDetailActivity extends Activity {
 	private TextView tvName;
 	private TextView tvTitle;
+	private TextView tvDate;
 	private TextView tvText;
 	private TextView tvTag;
 	private EditText etComment;
@@ -54,6 +55,7 @@ public class BubbleDetailActivity extends Activity {
 		
 		tvName = (TextView) findViewById(R.id.textViewBubbleDetailName);
 		tvTitle = (TextView) findViewById(R.id.textViewBubbleDetailTitle);
+		tvDate = (TextView) findViewById(R.id.textViewBubbleDetailDate);
 		tvText = (TextView) findViewById(R.id.textViewBubbleDetailText);
 		tvTag = (TextView) findViewById(R.id.textViewBubbleDetailTag);
 		etComment = (EditText) findViewById(R.id.editTextBubbleDetailComment);
@@ -74,6 +76,7 @@ public class BubbleDetailActivity extends Activity {
 		
 		tvName.setText(userInfo.getName());
 		tvTitle.setText(bubble.getTitle());
+		tvDate.setText(bubble.getPostTime().toString());
 		tvText.setText(bubble.getText());
 		
 		String strTag = "[";
@@ -161,6 +164,7 @@ public class BubbleDetailActivity extends Activity {
 			
 			TextView tvName;
 			TextView tvText;
+			TextView tvDate;
 			
 			if(convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(BubbleDetailActivity.this);
@@ -168,13 +172,13 @@ public class BubbleDetailActivity extends Activity {
 			}
 			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewName);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewText);
-			
+			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewDate);
 			
 			userInfo = UserInfo.getUserInfo(bubbleComment.get(position).getAuthorId().longValue());
 						
 			tvName.setText("" + userInfo.getName());
 			tvText.setText(bubbleComment.get(position).getText());
-			
+			tvDate.setText(bubbleComment.get(position).getPostTime().toString());
 			
 			return convertView;
 		}		
