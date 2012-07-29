@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.parser.HttpImagePostUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.list.BubbleListActivity;
 
@@ -146,6 +147,17 @@ public class BubbleCreateActivity extends Activity implements OnClickListener {
 			resultStr = util.httpPostData(pageUrl, param);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		if(mImageCaptureUri != null){ /*FixMe : I'm not sure this is correct error handling*/
+			HttpImagePostUtil image_util = new HttpImagePostUtil();
+			String resultImageStr = new String();
+			
+			try {
+				resultImageStr = image_util.httpPostData(pageUrl, mImageCaptureUri.getPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		Intent killIntent = new Intent(TagSelectActivity.ACTION_KILL_COMMAND);
