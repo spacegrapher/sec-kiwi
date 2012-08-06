@@ -14,16 +14,15 @@ public class BubbleListServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String email = req.getParameter("email");
-		//System.out.println("email: " + email);
-		
+		String id = req.getParameter("id");
+				
 		List<BubbleData> bubbleData = null;
 		
-		if(email == null) {
+		if(id == null) {
 			bubbleData = BubbleDataJDOWrapper.getAllBubbles();
 		}
 		else
-			bubbleData = BubbleDataJDOWrapper.getBubbleByEmail(email);
+			bubbleData = BubbleDataJDOWrapper.getBubbleByAuthorId(Long.valueOf(id));
 		
 		String ret = BubbleDataXMLConverter.convertDataListToXml(bubbleData);
 		

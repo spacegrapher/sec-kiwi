@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ECF9C6"
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradient_background" >
+
+        <Button
+            android:id="@+id/buttonUserProfileBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickButtonBack"
+            android:text="Back" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" >
+
+        <ImageView
+            android:id="@+id/imageViewUserProfile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#FFFFFF"
+            android:src="@drawable/ic_launcher" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textViewUserProfileName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"
+                android:text="TextView"
+                android:textColor="#99C516"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewUserProfileEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="TextView" />
+
+            <Button
+                android:id="@+id/buttonUserProfileSetting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Setting" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listViewUserBubbleList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ECF9C6" >
+
+    </ListView>
+
+</LinearLayout>

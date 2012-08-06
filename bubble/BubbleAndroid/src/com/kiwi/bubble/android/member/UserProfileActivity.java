@@ -1,23 +1,23 @@
-package com.kiwi.bubble.android.list;
+package com.kiwi.bubble.android.member;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.kiwi.bubble.android.BubbleCreateActivity;
-import com.kiwi.bubble.android.MainActivity;
 import com.kiwi.bubble.android.R;
-import com.kiwi.bubble.android.TagSelectActivity;
 import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
+import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
-import com.kiwi.bubble.android.member.UserProfileActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,83 +25,76 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class BubbleListActivity extends Activity {
-	private static final int REQUEST_CODE_CREATE = 101;
+
+public class UserProfileActivity extends Activity {
 	private Long id;
+	private Long selectedId;
+	private TextView tvName;
+	private TextView tvEmail;
+	private Button btnSetting;
 	private ListView lvBubbleList;
-	private BubbleListAdapter adapter;
+	private UserBubbleListAdapter adapter;
+	private UserInfo userInfo;
 	private List<BubbleData> bubbles;
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_bubblelist);
+		setContentView(R.layout.activity_userprofile);
 		
 		Intent intent = this.getIntent();
 		id = Long.valueOf(intent.getLongExtra("id", -1));
+		selectedId = Long.valueOf(intent.getLongExtra("selectedid", -1));
+	 
+		tvName = (TextView) findViewById(R.id.textViewUserProfileName);
+		tvEmail = (TextView) findViewById(R.id.textViewUserProfileEmail);
+		btnSetting = (Button) findViewById(R.id.buttonUserProfileSetting);
+		lvBubbleList = (ListView) findViewById(R.id.listViewUserBubbleList);
 		
-		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
-		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
-				Intent intent = new Intent(BubbleListActivity.this, BubbleDetailActivity.class);
-				intent.putExtra("bubbleid", bubbles.get(position).getId());
-				intent.putExtra("authorid", id.longValue());
-				startActivity(intent);
-			}
-			
-		});
+		if(id == selectedId) {
+			btnSetting.setVisibility(View.VISIBLE);
+		} else {
+			btnSetting.setVisibility(View.INVISIBLE);
+		}
+		getUserInfo();
 		updateListView();
+	}
+	
+	private void getUserInfo() {
+		userInfo = UserInfo.getUserInfo(selectedId.longValue());
+		
+		tvName.setText(userInfo.getName());
+		tvEmail.setText(userInfo.getEmail());
 	}
 	
 	public void updateListView() {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
 		DefaultHttpClient client = new DefaultHttpClient();
 		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl, client);
+		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + selectedId.toString(), client);
 		bubbles = ObjectParsers.parseBubbleData(response);
-		adapter = new BubbleListAdapter(bubbles);
+		adapter = new UserBubbleListAdapter(bubbles);
 		lvBubbleList.setAdapter(adapter);
 		adapter.notifyDataSetChanged();
 	}
 	
-	public void onClickCreateBubble(View v) {
-		Intent intent = new Intent(this, TagSelectActivity.class);
-		intent.putExtra("id", id.longValue());
-		startActivityForResult(intent, REQUEST_CODE_CREATE);
+	public void onClickButtonBack(View v) {
+		finish();
 	}
 	
-	public void onClickRefresh(View v) {
-		updateListView();
-				
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (resultCode == Activity.RESULT_OK){
-			if (requestCode == REQUEST_CODE_CREATE) {
-				updateListView();
-				Toast.makeText(BubbleListActivity.this, "Bubble Created!", 0).show();
-			}
-		}
-	}
-	
-	class BubbleListAdapter extends BaseAdapter {
+	class UserBubbleListAdapter extends BaseAdapter {
 		private List<BubbleData> bubbleData;
 		
-		public BubbleListAdapter(List<BubbleData> bubbleData) {
+		public UserBubbleListAdapter(List<BubbleData> bubbleData) {
 			super();
 			this.bubbleData = bubbleData;
 		}
@@ -131,10 +124,8 @@ public class BubbleListActivity extends Activity {
 			TextView tvDate;
 			TextView tvText;
 			TextView tvTagCount;
-			final long lSelectedId;
-			
 			if(convertView == null) {
-				LayoutInflater inflater = LayoutInflater.from(BubbleListActivity.this);
+				LayoutInflater inflater = LayoutInflater.from(UserProfileActivity.this);
 				convertView = inflater.inflate(R.layout.listview_bubblelist, parent, false);
 			}
 			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListViewName);
@@ -142,8 +133,7 @@ public class BubbleListActivity extends Activity {
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
 			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
 			
-			lSelectedId = bubbleData.get(position).getAuthorId().longValue();
-			userInfo = UserInfo.getUserInfo(lSelectedId);
+			userInfo = UserInfo.getUserInfo(bubbleData.get(position).getAuthorId().longValue());
 			comments = BubbleComment.getCommentData(bubbleData.get(position).getId().longValue());
 			
 			tvName.setText("" + userInfo.getName());
@@ -154,19 +144,13 @@ public class BubbleListActivity extends Activity {
 			tvName.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(BubbleListActivity.this, UserProfileActivity.class);
-					intent.putExtra("id", id.longValue());
-					intent.putExtra("selectedid", lSelectedId);
+					Intent intent = new Intent(UserProfileActivity.this, UserProfileActivity.class);
 					startActivity(intent);
 				}
 				
 			});
 			
 			return convertView;
-		}
-		
-		
-		
+		}		
 	}
-	
 }

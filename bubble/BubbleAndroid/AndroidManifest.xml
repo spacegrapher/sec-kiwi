@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".member.SignupActivity" />
+        <activity android:name=".member.UserProfileActivity" />
         <activity android:name=".list.BubbleListActivity" />
         <activity android:name=".list.BubbleDetailActivity" />
         <activity android:name=".BubbleCreateActivity" />

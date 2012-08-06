@@ -33,17 +33,17 @@ public class BubbleDataJDOWrapper {
 		return ret;
 	}
 	
-	public static List<BubbleData> getBubbleByEmail(String email) {
+	public static List<BubbleData> getBubbleByAuthorId(Long id) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		Query query = pm.newQuery(BubbleData.class);
-		query.setFilter("authorEmail == inputEmail");
-		query.declareParameters("String inputEmail");
+		query.setFilter("authorId == inputId");
+		query.declareParameters("Long inputId");
 		query.setOrdering("postTime desc");
 		
 		List<BubbleData> ret = null;
 		try {
-			ret = (List<BubbleData>) query.execute(email);
+			ret = (List<BubbleData>) query.execute(id);
 		} finally {
 			query.closeAll();
 		}
