@@ -6,6 +6,11 @@ import java.util.List;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.MainActivity;
 import com.kiwi.bubble.android.R;
@@ -22,6 +27,7 @@ import com.kiwi.bubble.android.member.UserProfileActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,22 +40,32 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BubbleListActivity extends Activity {
+public class BubbleListActivity extends SherlockActivity implements ActionBar.TabListener {
 	private static final int REQUEST_CODE_CREATE = 101;
 	private Long id;
 	private ListView lvBubbleList;
 	private BubbleListAdapter adapter;
 	private List<BubbleData> bubbles;
-	
+	private String[] tabLabel = {"Explore", "Bubble", "Me"};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bubblelist);
 		
 		Intent intent = this.getIntent();
 		id = Long.valueOf(intent.getLongExtra("id", -1));
 		
+		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		for (int i = 0; i < 3; i++) {
+            ActionBar.Tab tab = getSupportActionBar().newTab();
+            tab.setText(tabLabel[i]);
+            tab.setTabListener(this);
+            getSupportActionBar().addTab(tab);
+        }
+		getSupportActionBar().setSelectedNavigationItem(1);
+        
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -64,6 +80,30 @@ public class BubbleListActivity extends Activity {
 		updateListView();
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add("Refresh")
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		menu.add("Tag")
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.i("MENU", "item: " + item.toString() + ", id: " + item.getGroupId() + ", order: " + item.getOrder());
+		if (item.toString().equals("Refresh")) {
+			updateListView();
+		} else if (item.toString().equals("Tag")) {
+			Intent intent = new Intent(this, TagSelectActivity.class);
+			intent.putExtra("id", id.longValue());
+			startActivityForResult(intent, REQUEST_CODE_CREATE);
+		}
+		return true;
+	}
+
 	public void updateListView() {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
 		DefaultHttpClient client = new DefaultHttpClient();
@@ -158,14 +198,44 @@ public class BubbleListActivity extends Activity {
 					intent.putExtra("id", id.longValue());
 					intent.putExtra("selectedid", lSelectedId);
 					startActivity(intent);
+					if(id.longValue() == lSelectedId)
+						overridePendingTransition(0, 0);
 				}
 				
 			});
 			
 			return convertView;
+		}		
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		Log.i("TAB", "position: " + tab.getPosition());
+		switch (tab.getPosition()) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			Intent intent = new Intent(BubbleListActivity.this, UserProfileActivity.class);
+			intent.putExtra("id", id.longValue());
+			intent.putExtra("selectedid", id.longValue());
+			startActivity(intent);
+			overridePendingTransition(0, 0);
+			break;
 		}
 		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
 		
 	}
 	

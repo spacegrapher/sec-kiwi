@@ -8,6 +8,9 @@ import java.util.Map;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.common.BubbleComment;
@@ -18,10 +21,12 @@ import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
+import com.kiwi.bubble.android.list.BubbleListActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +40,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
-public class UserProfileActivity extends Activity {
+public class UserProfileActivity extends SherlockActivity implements ActionBar.TabListener {
 	private Long id;
 	private Long selectedId;
 	private TextView tvName;
@@ -45,9 +50,11 @@ public class UserProfileActivity extends Activity {
 	private UserBubbleListAdapter adapter;
 	private UserInfo userInfo;
 	private List<BubbleData> bubbles;
+	private String[] tabLabel = {"Explore", "Bubble", "Me"};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_userprofile);
 		
@@ -65,6 +72,20 @@ public class UserProfileActivity extends Activity {
 		} else {
 			btnSetting.setVisibility(View.INVISIBLE);
 		}
+		
+		if(id == selectedId) {
+		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		for (int i = 0; i < 3; i++) {
+            ActionBar.Tab tab = getSupportActionBar().newTab();
+            tab.setText(tabLabel[i]);
+            tab.setTabListener(this);
+            getSupportActionBar().addTab(tab);
+        }
+		getSupportActionBar().setSelectedNavigationItem(2);
+		} else {
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+		
 		getUserInfo();
 		updateListView();
 	}
@@ -152,5 +173,34 @@ public class UserProfileActivity extends Activity {
 			
 			return convertView;
 		}		
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		switch (tab.getPosition()) {
+		case 0:
+			break;
+		case 1:
+			Intent intent = new Intent(UserProfileActivity.this, BubbleListActivity.class);
+			intent.putExtra("id", id.longValue());
+			intent.putExtra("selectedid", id.longValue());
+			startActivity(intent);
+			overridePendingTransition(0, 0);
+			break;
+		case 2:
+			break;
+		}		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
 	}
 }

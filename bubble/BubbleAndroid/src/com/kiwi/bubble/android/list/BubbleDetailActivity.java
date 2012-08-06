@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.common.BubbleComment;
@@ -35,7 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
-public class BubbleDetailActivity extends Activity {
+public class BubbleDetailActivity extends SherlockActivity {
 	private TextView tvName;
 	private TextView tvTitle;
 	private TextView tvDate;
@@ -50,6 +51,7 @@ public class BubbleDetailActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bubbledetail);
 		
@@ -65,6 +67,8 @@ public class BubbleDetailActivity extends Activity {
 		bubbleId = Long.valueOf(intent.getLongExtra("bubbleid", -1));
 		authorId = Long.valueOf(intent.getLongExtra("authorid", -1));
 		//strEmail = intent.getStringExtra("email"); 
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		getBubbleData();
 		getCommentData();

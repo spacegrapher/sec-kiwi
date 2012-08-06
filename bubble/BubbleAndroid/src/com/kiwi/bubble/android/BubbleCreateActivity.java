@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.parser.HttpImagePostUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
@@ -24,6 +27,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -32,7 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BubbleCreateActivity extends Activity implements OnClickListener {
+public class BubbleCreateActivity extends SherlockActivity implements OnClickListener {
 	private EditText editTextTitle;
 	private EditText editTextText;
 	private EditText editTextTag;
@@ -51,6 +55,7 @@ public class BubbleCreateActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bubblecreate);
 		
@@ -108,7 +113,26 @@ public class BubbleCreateActivity extends Activity implements OnClickListener {
 	        }
 		}
 	    );
-	}	
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add("Post")
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.i("MENU", "item: " + item.toString() + ", id: " + item.getGroupId() + ", order: " + item.getOrder());
+		if (item.toString().equals("Post")) {
+			onClickButtonCreatePost(null);
+		} 
+		return true;
+	}
 
 	public void onClickButtonCreateBack(View v) {
 		Intent intent = new Intent();

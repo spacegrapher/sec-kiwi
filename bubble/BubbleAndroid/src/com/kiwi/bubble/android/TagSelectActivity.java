@@ -2,6 +2,10 @@ package com.kiwi.bubble.android;
 
 import java.util.ArrayList;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -22,7 +26,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 
-public class TagSelectActivity extends Activity {
+public class TagSelectActivity extends SherlockActivity {
 	private static final int REQUEST_BUBBLE_CREATE = 101;
 	public static final String ACTION_KILL_COMMAND = "ACTION_KILL_COMMAND";
 	public static final String ACTION_KILL_DATATYPE = "content://ACTION_KILL_DATATYPE";
@@ -47,6 +51,7 @@ public class TagSelectActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tagselect);
 		
@@ -83,12 +88,35 @@ public class TagSelectActivity extends Activity {
 		
 		mKillReceiver = new KillReceiver();
 	    registerReceiver(mKillReceiver, IntentFilter.create(ACTION_KILL_COMMAND, ACTION_KILL_DATATYPE));
+	    
+	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
 	@Override
 	protected void onDestroy() {
 	    super.onDestroy();
 	    unregisterReceiver(mKillReceiver);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add("Create")
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.i("MENU", "item: " + item.toString() + ", id: " + item.getGroupId() + ", order: " + item.getOrder());
+		if (item.toString().equals("Create")) {
+			String[] tagArray = (String[]) tagList.toArray(new String[tagList.size()]);
+			Intent intent = new Intent(this, BubbleCreateActivity.class);
+			intent.putExtra("tag", tagArray);
+			intent.putExtra("id", id);
+			startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
+		} 
+		return true;
 	}
 	
 	public void onClickAddLocation(View v){
