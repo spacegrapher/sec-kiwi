@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,6 +37,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,7 +60,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 		id = Long.valueOf(intent.getLongExtra("id", -1));
 		
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < tabLabel.length; i++) {
             ActionBar.Tab tab = getSupportActionBar().newTab();
             tab.setText(tabLabel[i]);
             tab.setTabListener(this);
@@ -167,10 +169,12 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 		public View getView(int position, View convertView, ViewGroup parent) {
 			UserInfo userInfo;
 			List<BubbleComment> comments;
+			
 			TextView tvName;
 			TextView tvDate;
 			TextView tvText;
 			TextView tvTagCount;
+			LinearLayout llTag;
 			final long lSelectedId;
 			
 			if(convertView == null) {
@@ -181,6 +185,8 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListViewDate);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
 			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
+			llTag = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListViewTag);
+			llTag.removeAllViews();
 			
 			lSelectedId = bubbleData.get(position).getAuthorId().longValue();
 			userInfo = UserInfo.getUserInfo(lSelectedId);
@@ -190,6 +196,19 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			tvDate.setText(bubbleData.get(position).getPostTime().toString());
 			tvText.setText(bubbleData.get(position).getText());
 			tvTagCount.setText("Tag: " + bubbleData.get(position).getTag().size() + ", Comments: " + comments.size());
+			
+			for(int i=0; i<bubbleData.get(position).getTag().size(); i++) {
+				BubbleTag tag = BubbleTag.getBubbleTag(bubbleData.get(position).getTag().get(i));
+				
+				TextView tagText = new TextView(BubbleListActivity.this);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				params.setMargins(0, 0, 10, 0);
+				tagText.setLayoutParams(params);
+				tagText.setBackgroundColor(0xFFFFFF00);
+				tagText.setTextSize(TypedValue.COMPLEX_UNIT_PT, 6);
+				tagText.setText(tag.getText());
+				llTag.addView(tagText);
+			}
 			
 			tvName.setOnClickListener(new OnClickListener() {
 				@Override

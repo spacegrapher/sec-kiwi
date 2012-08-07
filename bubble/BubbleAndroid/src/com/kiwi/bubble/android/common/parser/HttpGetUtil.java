@@ -30,7 +30,7 @@ public class HttpGetUtil {
 		HttpGet getMethod = new HttpGet(mUrl);
 		try {
 			response = httpClient.execute(getMethod);
-			Log.i(LOG_TAG, "STATUS CODE: " + String.valueOf(response.getStatusLine().getStatusCode()));
+			//Log.i(LOG_TAG, "STATUS CODE: " + String.valueOf(response.getStatusLine().getStatusCode()));
 			if (null != response) {
 				// helper method to convert HTTP response to String
 				ret = getResponseBody(response);
