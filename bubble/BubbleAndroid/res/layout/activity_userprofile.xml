@@ -18,56 +18,74 @@
             android:text="Back" />
 
     </LinearLayout>
-
-    <LinearLayout
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp" >
-
-        <ImageView
-            android:id="@+id/imageViewUserProfile"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="#FFFFFF"
-            android:src="@drawable/ic_launcher" />
+        android:layout_height="match_parent" >
 
         <LinearLayout
+            android:id="@+id/linearLayoutUserProfileBody"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textViewUserProfileName"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:gravity="center_vertical"
-                android:text="TextView"
-                android:textColor="#99C516"
-                android:textStyle="bold" />
+                android:layout_margin="10dp" >
 
-            <TextView
-                android:id="@+id/textViewUserProfileEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="TextView" />
-
-            <Button
-                android:id="@+id/buttonUserProfileSetting"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Setting" />
+                <ImageView
+                    android:id="@+id/imageViewUserProfile"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="#FFFFFF"
+                    android:src="@drawable/ic_launcher" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/textViewUserProfileName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:gravity="center_vertical"
+                        android:text="TextView"
+                        android:textColor="#99C516"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textViewUserProfileEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="TextView" />
+
+                    <Button
+                        android:id="@+id/buttonUserProfileSetting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Setting" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/listViewUserBubbleList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ECF9C6" >
+            </ListView>
         </LinearLayout>
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/listViewUserBubbleList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ECF9C6" >
+
+        <ProgressBar
+            android:id="@+id/progressBarUserProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
 
-    </ListView>
+    </FrameLayout>
 
 </LinearLayout>

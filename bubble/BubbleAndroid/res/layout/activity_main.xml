@@ -21,17 +21,18 @@
             android:layout_margin="5dp"
             android:paddingBottom="10dp"
             android:src="@drawable/bubble_logo" />
-
+
         <EditText
             android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:hint="Email address"
-            android:inputType="textEmailAddress" >
+            android:inputType="textEmailAddress"
+            android:text="a@a.com" >
 
         </EditText>
-
+
         <EditText
             android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
@@ -39,7 +40,8 @@
             android:layout_margin="5dp"
             android:ems="10"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:text="qqqq" />
 
         <Button
             android:id="@+id/buttonLogin"

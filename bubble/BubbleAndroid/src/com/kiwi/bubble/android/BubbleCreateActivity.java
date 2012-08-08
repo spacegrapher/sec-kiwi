@@ -7,17 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.kiwi.bubble.android.common.Constant;
-import com.kiwi.bubble.android.common.parser.HttpImagePostUtil;
-import com.kiwi.bubble.android.common.parser.HttpPostUtil;
-import com.kiwi.bubble.android.list.BubbleListActivity;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -34,7 +25,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.parser.HttpImagePostUtil;
+import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 
 public class BubbleCreateActivity extends SherlockActivity implements OnClickListener {
 	private EditText editTextTitle;
@@ -156,7 +153,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		String strTitle = editTextTitle.getText().toString();
 		String strText = editTextText.getText().toString();
 		String strTag = strTagList.toString().substring(1, strTagList.toString().length()-1);
-				
+		
 		HttpPostUtil util = new HttpPostUtil();
 		
 		String resultStr = new String();
@@ -195,12 +192,12 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 	}
 	
 	/**
-	 * Ä«¸Þ¶ó¿¡¼­ ÀÌ¹ÌÁö °¡Á®¿À±â
+	 * Ä«ï¿½Þ¶ó¿¡¼ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	private void doTakePhotoAction()
 	{
 		/*
-		 * Âü°í ÇØº¼°÷
+		 * ï¿½ï¿½ï¿½ ï¿½Øºï¿½ï¿½ï¿½
 		 * http://2009.hfoss.org/Tutorial:Camera_and_Gallery_Demo
 		 * http://stackoverflow.com/questions/1050297/how-to-get-the-url-of-the-captured-image
 		 * http://www.damonkohler.com/2009/02/android-recipes.html
@@ -209,7 +206,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		
-		// ÀÓ½Ã·Î »ç¿ëÇÒ ÆÄÀÏÀÇ °æ·Î¸¦ »ý¼º
+		// ï¿½Ó½Ã·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½
 		String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
 		mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
 		
@@ -219,11 +216,11 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 	}
 	
 	/**
-	 * ¾Ù¹ü¿¡¼­ ÀÌ¹ÌÁö °¡Á®¿À±â
+	 * ï¿½Ù¹ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	private void doTakeAlbumAction()
 	{
-		// ¾Ù¹ü È£Ãâ
+		// ï¿½Ù¹ï¿½ È£ï¿½ï¿½
 		Intent intent = new Intent(Intent.ACTION_PICK);
 		intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
 		startActivityForResult(intent, PICK_FROM_ALBUM);
@@ -241,8 +238,8 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		{
 			case CROP_FROM_CAMERA:
 			{
-				// Å©·ÓÀÌ µÈ ÀÌÈÄÀÇ ÀÌ¹ÌÁö¸¦ ³Ñ°Ü ¹Þ½À´Ï´Ù. ÀÌ¹ÌÁöºä¿¡ ÀÌ¹ÌÁö¸¦ º¸¿©ÁØ´Ù°Å³ª ºÎ°¡ÀûÀÎ ÀÛ¾÷ ÀÌÈÄ¿¡
-				// ÀÓ½Ã ÆÄÀÏÀ» »èÁ¦ÇÕ´Ï´Ù.
+				// Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°ï¿½ ï¿½Þ½ï¿½ï¿½Ï´ï¿½. ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ä¿¡ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´Ù°Å³ï¿½ ï¿½Î°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½Ä¿ï¿½
+				// ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 				final Bundle extras = data.getExtras();
 	
 				if(extras != null)
@@ -251,7 +248,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 					imageviewPhoto.setImageBitmap(photo);
 				}
 	
-				// ÀÓ½Ã ÆÄÀÏ »èÁ¦
+				// ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				File f = new File(mImageCaptureUri.getPath());
 				if(f.exists())
 				{
@@ -263,16 +260,16 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 	
 			case PICK_FROM_ALBUM:
 			{
-				// ÀÌÈÄÀÇ Ã³¸®°¡ Ä«¸Þ¶ó¿Í °°À¸¹Ç·Î ÀÏ´Ü  break¾øÀÌ ÁøÇàÇÕ´Ï´Ù.
-				// ½ÇÁ¦ ÄÚµå¿¡¼­´Â Á»´õ ÇÕ¸®ÀûÀÎ ¹æ¹ýÀ» ¼±ÅÃÇÏ½Ã±â ¹Ù¶ø´Ï´Ù.
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½Ï´ï¿½  breakï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¿¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Õ¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ã±ï¿½ ï¿½Ù¶ï¿½Ï´ï¿½.
 				
 				mImageCaptureUri = data.getData();
 			}
 			
 			case PICK_FROM_CAMERA:
 			{
-				// ÀÌ¹ÌÁö¸¦ °¡Á®¿Â ÀÌÈÄÀÇ ¸®»çÀÌÁîÇÒ ÀÌ¹ÌÁö Å©±â¸¦ °áÁ¤ÇÕ´Ï´Ù.
-				// ÀÌÈÄ¿¡ ÀÌ¹ÌÁö Å©·Ó ¾îÇÃ¸®ÄÉÀÌ¼ÇÀ» È£ÃâÇÏ°Ô µË´Ï´Ù.
+				// ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ Å©ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+				// ï¿½ï¿½ï¿½Ä¿ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ë´Ï´ï¿½.
 	
 				Intent intent = new Intent("com.android.camera.action.CROP");
 				intent.setDataAndType(mImageCaptureUri, "image/*");

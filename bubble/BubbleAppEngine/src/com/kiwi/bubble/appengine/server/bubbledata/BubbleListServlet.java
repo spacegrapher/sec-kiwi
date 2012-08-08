@@ -28,6 +28,7 @@ public class BubbleListServlet extends HttpServlet {
 		
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
+		resp.setCharacterEncoding("utf-8");
 		
 		//System.out.println("[BubbleListServlet] " + ret);
 		resp.getWriter().write(ret);

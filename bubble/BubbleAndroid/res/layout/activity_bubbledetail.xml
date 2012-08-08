@@ -3,10 +3,11 @@
     android:layout_height="match_parent"
     android:background="#ECF9C6"
     android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="0"
         android:background="@drawable/gradient_background"
         android:visibility="gone" >
 
@@ -18,138 +19,179 @@
             android:text="Back" />
 
     </LinearLayout>
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_weight="10"
-        android:background="#FFFFFF"
-        android:scrollbars="vertical" >
 
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp" >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0" >
+
+        <LinearLayout
+            android:id="@+id/linearLayoutBubbleDetailBody"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:orientation="vertical" >
 
+                <ScrollView
+                    android:id="@+id/scrollView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:clipChildren="false" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TableLayout
+                            android:id="@+id/tableLayoutBubbleDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_weight="10"
+                            android:background="#FFFFFF"
+                            android:scrollbars="vertical" >
+
+                            <TableRow
+                                android:id="@+id/tableRow1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp" >
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" >
+
+                                    <ImageView
+                                        android:id="@+id/imageViewBubbleDetailProfile"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginRight="5dp"
+                                        android:src="@drawable/ic_launcher" />
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical" >
+
+                                        <TextView
+                                            android:id="@+id/textViewBubbleDetailName"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center_vertical"
+                                            android:text="TextView"
+                                            android:textColor="#99C516"
+                                            android:textStyle="bold" />
+
+                                        <TextView
+                                            android:id="@+id/textViewBubbleDetailDate"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="TextView"
+                                            android:textColor="#666666"
+                                            android:textSize="5pt" />
+
+                                        <TextView
+                                            android:id="@+id/textViewBubbleDetailTitle"
+                                            android:layout_width="fill_parent"
+                                            android:layout_height="fill_parent"
+                                            android:layout_weight="1"
+                                            android:text="TextView"
+                                            android:textSize="8pt" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:id="@+id/tableRow3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp" >
+
+                                <TextView
+                                    android:id="@+id/textViewBubbleDetailText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Text" />
+                            </TableRow>
+
+                            <TableRow
+                                android:id="@+id/tableRow4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp" >
+
+                                <TextView
+                                    android:id="@+id/textViewBubbleDetailTag"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="TextView" />
+                            </TableRow>
+
+                            <TableRow
+                                android:id="@+id/tableRow2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" >
+
+                                <LinearLayout
+                                    android:id="@+id/linearLayoutBubbleDetailComments"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible" >
+
+                                </LinearLayout>
+
+                            </TableRow>
+                        </TableLayout>
+                    </LinearLayout>
+                </ScrollView>
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" >
-
-                <ImageView
-                    android:id="@+id/imageViewBubbleDetailProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:src="@drawable/ic_launcher" />
-
-                <LinearLayout
+                android:layout_weight="1"
+                android:gravity="bottom" >
+
+                <EditText
+                    android:id="@+id/editTextBubbleDetailComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/textViewBubbleDetailName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:text="TextView"
-                        android:textColor="#99C516"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/textViewBubbleDetailDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView"
-                        android:textColor="#666666"
-                        android:textSize="5pt" />
-
-                    <TextView
-                        android:id="@+id/textViewBubbleDetailTitle"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1"
-                        android:text="TextView"
-                        android:textSize="8pt" />
+                    android:ems="10"
+                    android:hint="Enter comments" >
 
-                </LinearLayout>
+                    <requestFocus />
+                </EditText>
 
+                <Button
+                    android:id="@+id/buttonBubbleDetailComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:onClick="onClickSubmitComment"
+                    android:text="Comment" />
             </LinearLayout>
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow3"
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBarBubbleDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp" >
-
-            <TextView
-                android:id="@+id/textViewBubbleDetailText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Text" />
+            android:layout_gravity="center"
+            android:visibility="invisible" />
 
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp" >
-
-            <TextView
-                android:id="@+id/textViewBubbleDetailTag"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <ListView
-                android:id="@+id/listViewComments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" >
-
-            </ListView>
-
-        </TableRow>
-    </TableLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:layout_weight="1"
-        android:gravity="bottom" >
-
-        <EditText
-            android:id="@+id/editTextBubbleDetailComment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="Enter comments" />
-
-        <Button
-            android:id="@+id/buttonBubbleDetailComment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:onClick="onClickSubmitComment"
-            android:text="Comment" />
-
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

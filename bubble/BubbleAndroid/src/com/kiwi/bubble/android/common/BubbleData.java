@@ -10,6 +10,7 @@ import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
 public class BubbleData extends ModelBase {
 	private Long authorId;
+	private UserInfo authorInfo;
 	
 	private String title;
 	
@@ -22,6 +23,9 @@ public class BubbleData extends ModelBase {
 	private String geopoint;
 	
 	private List<Long> tag;
+	private List<BubbleTag> realTag;
+	
+	private List<BubbleComment> comments;
 
 	public BubbleData(Long id, String title, String text) {
 		super();
@@ -36,6 +40,14 @@ public class BubbleData extends ModelBase {
 
 	public void setAuthorId(Long id) {
 		this.authorId = id;
+	}
+
+	public UserInfo getAuthorInfo() {
+		return authorInfo;
+	}
+
+	public void setAuthorInfo(UserInfo authorInfo) {
+		this.authorInfo = authorInfo;
 	}
 
 	public String getTitle() {
@@ -78,6 +90,22 @@ public class BubbleData extends ModelBase {
 		this.tag = tag;
 	}
 	
+	public List<BubbleTag> getRealTag() {
+		return realTag;
+	}
+
+	public void setRealTag(List<BubbleTag> realTag) {
+		this.realTag = realTag;
+	}
+
+	public List<BubbleComment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<BubbleComment> comments) {
+		this.comments = comments;
+	}
+
 	public static BubbleData getBubbleData(long id) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/detail";
 		DefaultHttpClient client = new DefaultHttpClient();

@@ -26,6 +26,7 @@ public class BubbleTagServlet extends HttpServlet {
 		
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
+		resp.setCharacterEncoding("utf-8");
 		
 		//System.out.println("[BubbleTagServlet] " + ret);
 		resp.getWriter().write(ret);

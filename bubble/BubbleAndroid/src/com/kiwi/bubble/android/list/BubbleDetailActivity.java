@@ -1,42 +1,37 @@
 package com.kiwi.bubble.android.list;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.impl.client.DefaultHttpClient;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
-import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
-import com.kiwi.bubble.android.common.parser.ObjectParsers;
-import com.kiwi.bubble.android.list.BubbleListActivity.BubbleListAdapter;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
 
 public class BubbleDetailActivity extends SherlockActivity {
+	private LinearLayout llBody;
+	private LinearLayout llComments;
+	private ProgressBar progressBar;
 	private TextView tvName;
 	private TextView tvTitle;
 	private TextView tvDate;
@@ -45,9 +40,6 @@ public class BubbleDetailActivity extends SherlockActivity {
 	private EditText etComment;
 	private Long bubbleId;
 	private Long authorId;
-	//private String strEmail;
-	private ListView lvCommentList;
-	private BubbleCommentListAdapter adapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,58 +47,23 @@ public class BubbleDetailActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bubbledetail);
 		
+		llBody = (LinearLayout) findViewById(R.id.linearLayoutBubbleDetailBody);
+		llComments = (LinearLayout) findViewById(R.id.linearLayoutBubbleDetailComments);
+		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleDetail);
 		tvName = (TextView) findViewById(R.id.textViewBubbleDetailName);
 		tvTitle = (TextView) findViewById(R.id.textViewBubbleDetailTitle);
 		tvDate = (TextView) findViewById(R.id.textViewBubbleDetailDate);
 		tvText = (TextView) findViewById(R.id.textViewBubbleDetailText);
 		tvTag = (TextView) findViewById(R.id.textViewBubbleDetailTag);
 		etComment = (EditText) findViewById(R.id.editTextBubbleDetailComment);
-		lvCommentList = (ListView) findViewById(R.id.listViewComments);
-		
+				
 		Intent intent = this.getIntent();
 		bubbleId = Long.valueOf(intent.getLongExtra("bubbleid", -1));
 		authorId = Long.valueOf(intent.getLongExtra("authorid", -1));
-		//strEmail = intent.getStringExtra("email"); 
 		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		getBubbleData();
-		getCommentData();
-	}
-	
-	private void getBubbleData() {
-		BubbleData bubble = BubbleData.getBubbleData(bubbleId.longValue());
-		UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId().longValue());
-		
-		tvName.setText(userInfo.getName());
-		tvTitle.setText(bubble.getTitle());
-		tvDate.setText(bubble.getPostTime().toString());
-		tvText.setText(bubble.getText());
-		
-		String strTag = "[";
-		List<Long> tags = bubble.getTag();
-		for(int i=0; i<tags.size(); i++) {
-			BubbleTag tag = BubbleTag.getBubbleTag(tags.get(i));
-			if(tag==null) continue;
-			if(i>0) strTag += ", ";
-			strTag += tag.getText();
-		}
-		strTag += "]";
-		
-		tvTag.setText(strTag);
-	}
-	
-	private void getCommentData() {		
-		List<BubbleComment> comments = BubbleComment.getCommentData(bubbleId.longValue());
-		
-		
-		/*ArrayList<String> commentText = new ArrayList<String>();
-		for(int i=0; i<comments.size(); i++) {
-			UserInfo userInfo = UserInfo.getUserInfo(comments.get(i).getAuthorId().longValue());
-			commentText.add("[" + userInfo.getName() + "] " + comments.get(i).getText());
-		}*/
-		adapter = new BubbleCommentListAdapter(comments);
-		lvCommentList.setAdapter(adapter);
+		new BackgroundTask(true).execute();
 	}
 	
 	public void onClickButtonBack(View v) {
@@ -114,77 +71,149 @@ public class BubbleDetailActivity extends SherlockActivity {
 	}
 	
 	public void onClickSubmitComment(View v) {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/comment";
-		
-		String strComment = etComment.getText().toString();
-				
-		HttpPostUtil util = new HttpPostUtil();
-		HashMap result = new HashMap();
-		String resultStr = new String();
-		Map<String, String> param = new HashMap<String, String>();
-		param.put("bubbleid", bubbleId.toString());
-		param.put("authorid", authorId.toString());
-		param.put("comment", strComment);
-		
-		
-		try {
-			resultStr = util.httpPostData(pageUrl, param);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		finish();
-		startActivity(getIntent());
+		new CommentTask().execute();
 	}
 	
-	class BubbleCommentListAdapter extends BaseAdapter {
-		private List<BubbleComment> bubbleComment;
+	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
+		BubbleData bubble;
+		UserInfo userInfo;
+		String strTag;
+		List<BubbleComment> comments;
+		boolean bHideBody;
 		
-		public BubbleCommentListAdapter(List<BubbleComment> bubbleComment) {
+		public BackgroundTask(boolean hideBody) {
 			super();
-			this.bubbleComment = bubbleComment;
+			bHideBody = hideBody;
 		}
-
+		
 		@Override
-		public int getCount() {
-			return bubbleComment.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
+		protected Long doInBackground(String... arg0) {
+			getBubbleData();
+			getCommentData();
 			return null;
 		}
 
 		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return 0;
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			tvName.setText(userInfo.getName());
+			tvTitle.setText(bubble.getTitle());
+			tvDate.setText(bubble.getPostTime().toString());
+			tvText.setText(bubble.getText());
+			tvTag.setText(strTag);			
+			
+			llComments.removeAllViews();
+			for(int i=0; i<comments.size(); i++) {
+				LayoutInflater inflater = (LayoutInflater)getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View commentView = inflater.inflate(R.layout.listview_bubblecomment, null);
+				TextView tvName = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewName);
+				TextView tvText = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewText);
+				TextView tvDate = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewDate);
+				tvName.setText("" + comments.get(i).getAuthorInfo().getName());
+				tvText.setText(comments.get(i).getText());
+				tvDate.setText(comments.get(i).getPostTime().toString());
+				llComments.addView(commentView);
+			}
+			
+			if(bHideBody) llBody.setVisibility(View.VISIBLE);
+			progressBar.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			UserInfo userInfo;
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			progressBar.setVisibility(View.VISIBLE);
+			if(bHideBody) llBody.setVisibility(View.INVISIBLE);
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
+		
+		private void getBubbleData() {
+			bubble = BubbleData.getBubbleData(bubbleId.longValue());
+			userInfo = UserInfo.getUserInfo(bubble.getAuthorId().longValue());
 			
-			TextView tvName;
-			TextView tvText;
-			TextView tvDate;
-			
-			if(convertView == null) {
-				LayoutInflater inflater = LayoutInflater.from(BubbleDetailActivity.this);
-				convertView = inflater.inflate(R.layout.listview_bubblecomment, parent, false);
+			strTag = "[";
+			List<Long> tags = bubble.getTag();
+			for(int i=0; i<tags.size(); i++) {
+				BubbleTag tag = BubbleTag.getBubbleTag(tags.get(i));
+				if(tag==null) continue;
+				if(i>0) strTag += ", ";
+				strTag += tag.getText();
 			}
-			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewName);
-			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewText);
-			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListCommentViewDate);
+			strTag += "]";
+		}
+		
+		private void getCommentData() {		
+			comments = BubbleComment.getCommentData(bubbleId.longValue());
 			
-			userInfo = UserInfo.getUserInfo(bubbleComment.get(position).getAuthorId().longValue());
-						
-			tvName.setText("" + userInfo.getName());
-			tvText.setText(bubbleComment.get(position).getText());
-			tvDate.setText(bubbleComment.get(position).getPostTime().toString());
+			for(int i=0; i<comments.size(); i++) {
+				BubbleComment comment = comments.get(i);
+				UserInfo commentAuthor = UserInfo.getUserInfo(comment.getAuthorId().longValue());
+				
+				comment.setAuthorInfo(commentAuthor);
+				comments.set(i, comment);
+			}
+		}
+	}
+	
+	private class CommentTask extends AsyncTask<String, Integer, Long> {
+		
+		private ProgressDialog progressDialog;
+
+		@Override
+		protected Long doInBackground(String... arg0) {
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/comment";
 			
-			return convertView;
-		}		
+			String strComment = etComment.getText().toString();
+					
+			HttpPostUtil util = new HttpPostUtil();
+			HashMap result = new HashMap();
+			String resultStr = new String();
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("bubbleid", bubbleId.toString());
+			param.put("authorid", authorId.toString());
+			param.put("comment", strComment);
+			
+			
+			try {
+				resultStr = util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			progressDialog.hide();
+			etComment.clearFocus();
+			etComment.setText("");
+			new BackgroundTask(false).execute();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			
+			progressDialog = new ProgressDialog(BubbleDetailActivity.this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("Posting comment...");
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
 	}
 }

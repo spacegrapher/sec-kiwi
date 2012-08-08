@@ -42,10 +42,10 @@ import android.util.Log;
 public class HttpPostUtil {
 	/**
 	 * 
-	 * @param pageUrl : Àü¼Û ¹ÞÀ» Page URL ÁÖ¼Ò Çü½Ä
-	 * @param requestMethod : Àü¼Û ¹ÞÀ» requestÇü½Ä GET/POST
-	 * @param param HashMapÇü½Ä put( String "ParameterÀÌ¸§", String "°ª" )
-	 * @return ÇØ´ç URL PAGE¿¡¼­  µ¥ÀÌÅÍ Ã³¸® ÈÄ HTMLÇü½ÄÀ¸·Î Return
+	 * @param pageUrl : ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Page URL ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½
+	 * @param requestMethod : ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ requestï¿½ï¿½ï¿½ GET/POST
+	 * @param param HashMapï¿½ï¿½ï¿½ put( String "Parameterï¿½Ì¸ï¿½", String "ï¿½ï¿½" )
+	 * @return ï¿½Ø´ï¿½ URL PAGEï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ HTMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Return
 	 */
 	public String httpPostData(String url, Map<String, String> param) throws ClientProtocolException, IOException {   
 		// TODO Auto-generated method stub   
@@ -60,7 +60,7 @@ public class HttpPostUtil {
 	private HttpEntity makeEntity( Vector<NameValuePair>  nameValue ) {   
 		HttpEntity result = null ;   
 		try {   
-			result = new UrlEncodedFormEntity( nameValue, "EUC-KR" ) ;   
+			result = new UrlEncodedFormEntity( nameValue, "UTF-8" ) ;   
 		} catch (UnsupportedEncodingException e) {   
 			// TODO Auto-generated catch block   
 //			e.printStackTrace();   
@@ -90,7 +90,7 @@ public class HttpPostUtil {
 	public Document getDocument(String xml){
 		Document doc = null;
         try{
-        	// XML Document ¸¦ »ý¼º
+        	// XML Document ï¿½ï¿½ ï¿½ï¿½
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -105,8 +105,8 @@ public class HttpPostUtil {
 	
 	/**
 	 * 
-	 * @param xml : ÁöÁ¤µÈ xmlÀÇ  NodeList¸¦ Ãâ·Â
-	 * @return : Document NodeList¸¦ ¸®ÅÏ
+	 * @param xml : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ xmlï¿½ï¿½  NodeListï¿½ï¿½ ï¿½ï¿½ï¿½
+	 * @return : Document NodeListï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 */
 	public NodeList getElementsByTagNameNodeList(Document doc, String nodeName){
 		NodeList result = null;
@@ -139,9 +139,9 @@ public class HttpPostUtil {
 	
 	/**
 	 * 
-	 * @param xml : XMLÇü½ÄÀÇ String 
-	 * @param tagName : ÁöÁ¤ÇÑ ÅÂ±×ÀÇ ÇÏÀ§ ÅÂ±× ¸ðµÎ¸¦ HashMapÀ¸·Î »ý¼º
-	 * @return ArrayList : »ý¼ºµÈ HashMapÀ» ArrayList¿¡ ´ã¾Æ return
+	 * @param xml : XMLï¿½ï¿½ï¿½ï¿½ï¿½ String 
+	 * @param tagName : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½Î¸ï¿½ HashMapï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+	 * @return ArrayList : ï¿½ï¿½ï¿½ HashMapï¿½ï¿½ ArrayListï¿½ï¿½ ï¿½ï¿½ï¿½ return
 	 * @throws IOException
 	 */
 	public HashMap getChildXmlHashMap(String xml, String tagName) throws IOException{
@@ -158,11 +158,11 @@ public class HttpPostUtil {
 	
 	/**
 	 * 
-	 * @param pageUrl : µ¥ÀÌÅÍ¸¦ ¿äÃ»ÇÒ PAGE URL
-	 * @param requestMethod : Àü¼Û ¹ÞÀ» requestÇü½Ä GET/POST
-	 * @param xml : XMLÇü½ÄÀÇ String 
-	 * @param tagName : ÁöÁ¤ÇÑ ÅÂ±×ÀÇ ÇÏÀ§ ÅÂ±× ¸ðµÎ¸¦ HashMapÀ¸·Î »ý¼º
-	 * @return ArrayList : »ý¼ºµÈ HashMapÀ» ArrayList¿¡ ´ã¾Æ return
+	 * @param pageUrl : ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ PAGE URL
+	 * @param requestMethod : ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ requestï¿½ï¿½ï¿½ GET/POST
+	 * @param xml : XMLï¿½ï¿½ï¿½ï¿½ï¿½ String 
+	 * @param tagName : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½Î¸ï¿½ HashMapï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+	 * @return ArrayList : ï¿½ï¿½ï¿½ HashMapï¿½ï¿½ ArrayListï¿½ï¿½ ï¿½ï¿½ï¿½ return
 	 * @throws IOException
 	 */
 	public HashMap httpPostGetChild(String pageUrl, String tagName, Map<String, String> param) throws IOException{		

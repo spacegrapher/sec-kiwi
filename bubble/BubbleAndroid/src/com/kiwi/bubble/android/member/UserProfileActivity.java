@@ -1,17 +1,29 @@
 package com.kiwi.bubble.android.member;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockActivity;
-import com.kiwi.bubble.android.BubbleCreateActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
@@ -19,25 +31,8 @@ import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
-import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 import com.kiwi.bubble.android.list.BubbleListActivity;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
 
 public class UserProfileActivity extends SherlockActivity implements ActionBar.TabListener {
@@ -47,10 +42,12 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 	private TextView tvEmail;
 	private Button btnSetting;
 	private ListView lvBubbleList;
+	private LinearLayout llBody;
+	private ProgressBar progressBar;
 	private UserBubbleListAdapter adapter;
 	private UserInfo userInfo;
 	private List<BubbleData> bubbles;
-	private String[] tabLabel = {"Explore", "Bubble", "Me"};
+	private String[] tabLabel = {"Bubble", "Explore", "Me"};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +63,8 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		tvEmail = (TextView) findViewById(R.id.textViewUserProfileEmail);
 		btnSetting = (Button) findViewById(R.id.buttonUserProfileSetting);
 		lvBubbleList = (ListView) findViewById(R.id.listViewUserBubbleList);
+		llBody = (LinearLayout) findViewById(R.id.linearLayoutUserProfileBody);
+		progressBar = (ProgressBar) findViewById(R.id.progressBarUserProfile);
 		
 		if(id == selectedId) {
 			btnSetting.setVisibility(View.VISIBLE);
@@ -86,27 +85,10 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		
-		getUserInfo();
-		updateListView();
+		new BackgroundTask().execute();
 	}
 	
-	private void getUserInfo() {
-		userInfo = UserInfo.getUserInfo(selectedId.longValue());
-		
-		tvName.setText(userInfo.getName());
-		tvEmail.setText(userInfo.getEmail());
-	}
 	
-	public void updateListView() {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
-		DefaultHttpClient client = new DefaultHttpClient();
-		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + selectedId.toString(), client);
-		bubbles = ObjectParsers.parseBubbleData(response);
-		adapter = new UserBubbleListAdapter(bubbles);
-		lvBubbleList.setAdapter(adapter);
-		adapter.notifyDataSetChanged();
-	}
 	
 	public void onClickButtonBack(View v) {
 		finish();
@@ -139,12 +121,14 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			UserInfo userInfo;
-			List<BubbleComment> comments;
+			final BubbleData currentBubble;
 			TextView tvName;
 			TextView tvDate;
 			TextView tvText;
 			TextView tvTagCount;
+			LinearLayout llTag;
+			final long lSelectedId;
+			
 			if(convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(UserProfileActivity.this);
 				convertView = inflater.inflate(R.layout.listview_bubblelist, parent, false);
@@ -153,23 +137,28 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListViewDate);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
 			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
+			llTag = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListViewTag);
+			llTag.removeAllViews();
 			
-			userInfo = UserInfo.getUserInfo(bubbleData.get(position).getAuthorId().longValue());
-			comments = BubbleComment.getCommentData(bubbleData.get(position).getId().longValue());
+			currentBubble = bubbleData.get(position);
 			
-			tvName.setText("" + userInfo.getName());
-			tvDate.setText(bubbleData.get(position).getPostTime().toString());
-			tvText.setText(bubbleData.get(position).getText());
-			tvTagCount.setText("Tag: " + bubbleData.get(position).getTag().size() + ", Comments: " + comments.size());
+			tvName.setText("" + currentBubble.getAuthorInfo().getName());
+			tvDate.setText(currentBubble.getPostTime().toString());
+			tvText.setText(currentBubble.getText());
+			tvTagCount.setText("Tag: " + currentBubble.getTag().size() + ", Comments: " + currentBubble.getComments().size());
 			
-			tvName.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(UserProfileActivity.this, UserProfileActivity.class);
-					startActivity(intent);
-				}
+			for(int i=0; i<currentBubble.getTag().size(); i++) {
+				BubbleTag tag = currentBubble.getRealTag().get(i);
 				
-			});
+				TextView tagText = new TextView(UserProfileActivity.this);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				params.setMargins(0, 0, 10, 0);
+				tagText.setLayoutParams(params);
+				tagText.setBackgroundColor(0xFFFFFF00);
+				tagText.setTextSize(TypedValue.COMPLEX_UNIT_PT, 6);
+				tagText.setText(tag.getText());
+				llTag.addView(tagText);
+			}
 			
 			return convertView;
 		}		
@@ -179,13 +168,13 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		switch (tab.getPosition()) {
 		case 0:
-			break;
-		case 1:
 			Intent intent = new Intent(UserProfileActivity.this, BubbleListActivity.class);
 			intent.putExtra("id", id.longValue());
 			intent.putExtra("selectedid", id.longValue());
 			startActivity(intent);
 			overridePendingTransition(0, 0);
+			break;
+		case 1:			
 			break;
 		case 2:
 			break;
@@ -202,5 +191,76 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
+		@Override
+		protected Long doInBackground(String... arg0) {
+			getUserInfo();
+			updateListView();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			tvName.setText(userInfo.getName());
+			tvEmail.setText(userInfo.getEmail());
+			
+			adapter = new UserBubbleListAdapter(bubbles);
+			lvBubbleList.setAdapter(adapter);
+			adapter.notifyDataSetChanged();
+			
+			progressBar.setVisibility(View.INVISIBLE);
+			llBody.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progressBar.setVisibility(View.VISIBLE);
+			llBody.setVisibility(View.INVISIBLE);
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+		
+		private void getUserInfo() {
+			userInfo = UserInfo.getUserInfo(selectedId.longValue());
+		}
+		
+		private void updateListView() {
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
+			DefaultHttpClient client = new DefaultHttpClient();
+			
+			String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + selectedId.toString(), client);
+			bubbles = ObjectParsers.parseBubbleData(response);
+			
+			for(int i=0; i<bubbles.size(); i++) {
+				BubbleData bubble = bubbles.get(i);
+				
+				// Get UserInfo
+				UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId());
+				bubble.setAuthorInfo(userInfo);
+				
+				// Get Tag
+				List<Long> longTag = bubble.getTag();
+				List<BubbleTag> bubbleTag = new ArrayList<BubbleTag>();
+				
+				for(int j=0; j<longTag.size(); j++) {
+					BubbleTag tag = BubbleTag.getBubbleTag(longTag.get(j));
+					bubbleTag.add(tag);
+				}
+				bubble.setRealTag(bubbleTag);
+				
+				// Get Comments
+				List<BubbleComment> comments = BubbleComment.getCommentData(bubble.getId().longValue());
+				bubble.setComments(comments);
+				
+				bubbles.set(i, bubble);
+			}
+		}
 	}
 }

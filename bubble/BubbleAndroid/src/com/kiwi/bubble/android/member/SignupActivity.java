@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.kiwi.bubble.android.MainActivity;
-import com.kiwi.bubble.android.R;
-import com.kiwi.bubble.android.common.Constant;
-import com.kiwi.bubble.android.common.TEA;
-import com.kiwi.bubble.android.common.parser.HttpPostUtil;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.kiwi.bubble.android.R;
+import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.TEA;
+import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 
 public class SignupActivity extends Activity {
 	

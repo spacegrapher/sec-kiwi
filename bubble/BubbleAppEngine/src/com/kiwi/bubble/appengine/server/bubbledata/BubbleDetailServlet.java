@@ -23,6 +23,7 @@ public class BubbleDetailServlet extends HttpServlet {
 		
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
+		resp.setCharacterEncoding("utf-8");
 		
 		//System.out.println("[BubbleDetailServlet] " + ret);
 		resp.getWriter().write(ret);

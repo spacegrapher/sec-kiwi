@@ -17,6 +17,7 @@ public class BubbleComment extends ModelBase {
 	private Long bubbleId;
 	
 	private Long authorId;
+	private UserInfo authorInfo;
 	
 	private String text;
 	
@@ -45,6 +46,14 @@ public class BubbleComment extends ModelBase {
 
 	public void setAuthorId(Long authorId) {
 		this.authorId = authorId;
+	}
+
+	public UserInfo getAuthorInfo() {
+		return authorInfo;
+	}
+
+	public void setAuthorInfo(UserInfo authorInfo) {
+		this.authorInfo = authorInfo;
 	}
 
 	public String getText() {
