@@ -2,17 +2,22 @@ package com.kiwi.bubble.android;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -29,9 +34,15 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.kiwi.bubble.android.common.BubbleComment;
+import com.kiwi.bubble.android.common.BubbleData;
+import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.UserInfo;
+import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpImagePostUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
+import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
 public class BubbleCreateActivity extends SherlockActivity implements OnClickListener {
 	private EditText editTextTitle;
@@ -148,47 +159,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		}
 	}
 	public void onClickButtonCreatePost(View v) {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/create";
-		
-		String strTitle = editTextTitle.getText().toString();
-		String strText = editTextText.getText().toString();
-		String strTag = strTagList.toString().substring(1, strTagList.toString().length()-1);
-		
-		HttpPostUtil util = new HttpPostUtil();
-		
-		String resultStr = new String();
-		Map<String, String> param = new HashMap<String, String>();
-		//param.put("email", strEmail);
-		param.put("id", String.valueOf(id));
-		param.put("title", strTitle);
-		param.put("text", strText);
-		param.put("tag", strTag);
-		
-		try {
-			resultStr = util.httpPostData(pageUrl, param);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		if(mImageCaptureUri != null){ /*FixMe : I'm not sure this is correct error handling*/
-			HttpImagePostUtil image_util = new HttpImagePostUtil();
-			String resultImageStr = new String();
-			
-			try {
-				resultImageStr = image_util.httpPostData(pageUrl, mImageCaptureUri.getPath());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		Intent killIntent = new Intent(TagSelectActivity.ACTION_KILL_COMMAND);
-        killIntent.setType(TagSelectActivity.ACTION_KILL_DATATYPE);
-        sendBroadcast(killIntent);
-        
-		Intent intent = new Intent();
-		setResult(Activity.RESULT_OK, intent);
-		finish();
-		//Toast.makeText(BubbleCreateActivity.this, "Bubble Created!", 0).show();
+		new BackgroundTask().execute();
 	}
 	
 	/**
@@ -325,5 +296,80 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 			.setNegativeButton("Cancel", cancelListener)
 			.show();
 	}		
+	}
+	
+	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
+		private ProgressDialog progressDialog;
+
+		@Override
+		protected Long doInBackground(String... arg0) {
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/create";
+			
+			String strTitle = editTextTitle.getText().toString();
+			String strText = editTextText.getText().toString();
+			String strTag = strTagList.toString().substring(1, strTagList.toString().length()-1);
+			
+			HttpPostUtil util = new HttpPostUtil();
+			
+			String resultStr = new String();
+			Map<String, String> param = new HashMap<String, String>();
+			//param.put("email", strEmail);
+			param.put("id", String.valueOf(id));
+			param.put("title", strTitle);
+			param.put("text", strText);
+			param.put("tag", strTag);
+			
+			try {
+				resultStr = util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			if(mImageCaptureUri != null){ /*FixMe : I'm not sure this is correct error handling*/
+				HttpImagePostUtil image_util = new HttpImagePostUtil();
+				String resultImageStr = new String();
+				
+				try {
+					resultImageStr = image_util.httpPostData(pageUrl, mImageCaptureUri.getPath());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			
+			
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			progressDialog.hide();
+			Intent killIntent = new Intent(TagSelectActivity.ACTION_KILL_COMMAND);
+	        killIntent.setType(TagSelectActivity.ACTION_KILL_DATATYPE);
+	        sendBroadcast(killIntent);
+	        
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_OK, intent);
+			finish();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progressDialog = new ProgressDialog(BubbleCreateActivity.this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("Posting Bubble...");
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
+		
+		
 	}
 }

@@ -136,16 +136,18 @@
                                     android:layout_weight="1"
                                     android:text="TextView" />
                             </TableRow>
-
+
                             <TableRow
                                 android:id="@+id/tableRow2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" >
-
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="#EEEEEE" >
+
                                 <LinearLayout
                                     android:id="@+id/linearLayoutBubbleDetailComments"
-                                    android:layout_width="match_parent"
+                                    android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
+                                    android:background="#EEEEEE"
                                     android:orientation="vertical"
                                     android:visibility="visible" >
 

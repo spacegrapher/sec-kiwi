@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -32,6 +33,7 @@ import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
+import com.kiwi.bubble.android.list.BubbleDetailActivity;
 import com.kiwi.bubble.android.list.BubbleListActivity;
 
 
@@ -84,6 +86,17 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		} else {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
+		
+		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
+				Intent intent = new Intent(UserProfileActivity.this, BubbleDetailActivity.class);
+				intent.putExtra("bubbleid", bubbles.get(position).getId());
+				intent.putExtra("authorid", id.longValue());
+				startActivity(intent);
+			}
+			
+		});
 		
 		new BackgroundTask().execute();
 	}

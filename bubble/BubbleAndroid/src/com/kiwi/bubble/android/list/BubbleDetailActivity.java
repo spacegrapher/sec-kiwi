@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -26,6 +27,7 @@ import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
+import com.kiwi.bubble.android.member.UserProfileActivity;
 
 
 public class BubbleDetailActivity extends SherlockActivity {
@@ -104,16 +106,45 @@ public class BubbleDetailActivity extends SherlockActivity {
 			
 			llComments.removeAllViews();
 			for(int i=0; i<comments.size(); i++) {
+				final BubbleComment comment = comments.get(i);
 				LayoutInflater inflater = (LayoutInflater)getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				View commentView = inflater.inflate(R.layout.listview_bubblecomment, null);
-				TextView tvName = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewName);
-				TextView tvText = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewText);
-				TextView tvDate = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewDate);
-				tvName.setText("" + comments.get(i).getAuthorInfo().getName());
-				tvText.setText(comments.get(i).getText());
-				tvDate.setText(comments.get(i).getPostTime().toString());
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				commentView.setLayoutParams(params);
+				TextView tvcName = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewName);
+				TextView tvcText = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewText);
+				TextView tvcDate = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewDate);
+				tvcName.setText("" + comment.getAuthorInfo().getName());
+				tvcText.setText(comment.getText());
+				tvcDate.setText(comment.getPostTime().toString());
 				llComments.addView(commentView);
+				
+				tvcName.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(BubbleDetailActivity.this, UserProfileActivity.class);
+						intent.putExtra("id", authorId.longValue());
+						intent.putExtra("selectedid", comment.getAuthorId().longValue());
+						startActivity(intent);
+						if(authorId.longValue() == comment.getAuthorId().longValue())
+							overridePendingTransition(0, 0);
+					}
+					
+				});
 			}
+			
+			tvName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(BubbleDetailActivity.this, UserProfileActivity.class);
+					intent.putExtra("id", authorId.longValue());
+					intent.putExtra("selectedid", bubble.getAuthorId().longValue());
+					startActivity(intent);
+					if(authorId.longValue() == bubble.getAuthorId().longValue())
+						overridePendingTransition(0, 0);
+				}
+				
+			});
 			
 			if(bHideBody) llBody.setVisibility(View.VISIBLE);
 			progressBar.setVisibility(View.INVISIBLE);

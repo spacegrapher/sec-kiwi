@@ -79,9 +79,6 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			}
 			
 		});
-		//updateListView();
-		
-		
 		new BackgroundTask().execute();
 	}
 	
@@ -100,7 +97,6 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.i("MENU", "item: " + item.toString() + ", id: " + item.getGroupId() + ", order: " + item.getOrder());
 		if (item.toString().equals("Refresh")) {
-			//updateListView();
 			new BackgroundTask().execute();
 		} else if (item.toString().equals("Tag")) {
 			Intent intent = new Intent(this, TagSelectActivity.class);
@@ -117,7 +113,6 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 	}
 	
 	public void onClickRefresh(View v) {
-		//updateListView();
 		new BackgroundTask().execute();
 	}
 
@@ -127,7 +122,6 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 		
 		if (resultCode == Activity.RESULT_OK){
 			if (requestCode == REQUEST_CODE_CREATE) {
-				//updateListView();
 				new BackgroundTask().execute();
 				Toast.makeText(BubbleListActivity.this, "Bubble Created!", 0).show();
 			}
