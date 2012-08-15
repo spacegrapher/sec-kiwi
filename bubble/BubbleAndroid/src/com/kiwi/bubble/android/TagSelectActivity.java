@@ -136,24 +136,19 @@ public class TagSelectActivity extends SherlockActivity {
         Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         
         Log.d("GetLocation","2!!");
-        if(loc!=null) 
-        {
-            // TextView를 채운다
-           	 tvLatitude.setText(Double.toString(loc.getLatitude()));
-           	tvLongitude.setText(Double.toString(loc.getLongitude()));         
 
-               // Location Manager에게 위치정보를 업데이트해달라고 요청한다.
-           	Log.d("GetLocation","3!!");
-               locListenD = new DispLocListener();
-               Log.d("GetLocation","4!!");
-               lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000L, 10.0f, locListenD);    
-               Log.d("GetLocation","4-1!!");
-           }
-           else {
-           	Log.d("location", "location is null");
-           	tvLatitude.setText("0");
-           	tvLongitude.setText("0");
-           }
+        //double latitude = loc.getLatitude();//37.519576;
+        //double longitude = loc.getLongitude();//126.940245;
+       
+        //String pos = String.format("geo:%f,%f?z=16", latitude, longitude);
+         //Uri uri = Uri.parse(pos);
+        //Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        //startActivity(intent);
+        
+        
+        Intent intent = new Intent(TagSelectActivity.this,BubbleMap.class);
+        startActivity(intent);
+        
 	}
 		
         private class DispLocListener implements LocationListener {
