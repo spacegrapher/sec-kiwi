@@ -1,14 +1,12 @@
 package com.kiwi.bubble.android;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +22,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,15 +34,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.kiwi.bubble.android.common.BubbleComment;
-import com.kiwi.bubble.android.common.BubbleData;
-import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
-import com.kiwi.bubble.android.common.UserInfo;
-import com.kiwi.bubble.android.common.parser.HttpGetUtil;
-import com.kiwi.bubble.android.common.parser.HttpImagePostUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
-import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
 public class BubbleCreateActivity extends SherlockActivity implements OnClickListener {
 	private EditText editTextTitle;
@@ -56,6 +49,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 	
 	private Button buttonCamera;
 	private ImageView imageviewPhoto;
+	private Bitmap bmpPhoto;
 	private static final int PICK_FROM_CAMERA = 0;
 	private static final int PICK_FROM_ALBUM = 1;
 	private static final int CROP_FROM_CAMERA = 2;
@@ -215,8 +209,8 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 	
 				if(extras != null)
 				{
-					Bitmap photo = extras.getParcelable("data");
-					imageviewPhoto.setImageBitmap(photo);
+					bmpPhoto = extras.getParcelable("data");
+					imageviewPhoto.setImageBitmap(bmpPhoto);
 				}
 	
 				// �ӽ� ���� ����
@@ -245,8 +239,8 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 				Intent intent = new Intent("com.android.camera.action.CROP");
 				intent.setDataAndType(mImageCaptureUri, "image/*");
 	
-				intent.putExtra("outputX", 90);
-				intent.putExtra("outputY", 90);
+				intent.putExtra("outputX", 400);
+				intent.putExtra("outputY", 400);
 				intent.putExtra("aspectX", 1);
 				intent.putExtra("aspectY", 1);
 				intent.putExtra("scale", true);
@@ -311,35 +305,44 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 			
 			HttpPostUtil util = new HttpPostUtil();
 			
-			String resultStr = new String();
+			String bubbleId = new String();
 			Map<String, String> param = new HashMap<String, String>();
-			//param.put("email", strEmail);
 			param.put("id", String.valueOf(id));
 			param.put("title", strTitle);
 			param.put("text", strText);
 			param.put("tag", strTag);
 			
 			try {
+				bubbleId = util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
+			
+			if(bmpPhoto != null) 
+				uploadBitmap(bubbleId);
+			
+			return null;
+		}
+		
+		private void uploadBitmap(String bubbleId) {
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/image";
+			
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        bmpPhoto.compress(CompressFormat.JPEG, 75, bos);
+	        byte[] data = bos.toByteArray();
+	        String b64 = Base64.encodeToString(data, Base64.DEFAULT);
+	        
+	        HttpPostUtil util = new HttpPostUtil();
+			String resultStr = new String();
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("bubbleid", bubbleId);
+	        param.put("image", b64);
+	        try {
 				resultStr = util.httpPostData(pageUrl, param);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			if(mImageCaptureUri != null){ /*FixMe : I'm not sure this is correct error handling*/
-				HttpImagePostUtil image_util = new HttpImagePostUtil();
-				String resultImageStr = new String();
-				
-				try {
-					resultImageStr = image_util.httpPostData(pageUrl, mImageCaptureUri.getPath());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			
-			
-			return null;
-		}
+	    }
 
 		@Override
 		protected void onPostExecute(Long result) {

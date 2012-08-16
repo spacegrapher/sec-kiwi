@@ -81,6 +81,16 @@
   	<url-pattern>/tag</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>BubbleDataImageServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.bubbledata.BubbleDataImageServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>BubbleDataImageServlet</servlet-name>
+  	<url-pattern>/image</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index</welcome-file>

@@ -7,9 +7,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -44,6 +48,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 	private static final int REQUEST_CODE_CREATE = 101;
 	private Long id;
 	private ListView lvBubbleList;
+	//private ImageView ivBubblePhoto;
 	private BubbleListAdapter adapter;
 	private List<BubbleData> bubbles;
 	private String[] tabLabel = {"Bubble", "Explore", "Me"};
@@ -68,6 +73,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 		getSupportActionBar().setSelectedNavigationItem(0);
         
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleList);
+		//ivBubblePhoto = (ImageView) findViewById(R.id.imageViewBubblePhoto);
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -161,6 +167,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			TextView tvText;
 			TextView tvTagCount;
 			LinearLayout llTag;
+			ImageView ivBubblePhoto;
 			final long lSelectedId;
 			
 			if(convertView == null) {
@@ -171,6 +178,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListViewDate);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
 			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
+			ivBubblePhoto = (ImageView) convertView.findViewById(R.id.imageViewBubbleImage);
 			llTag = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListViewTag);
 			llTag.removeAllViews();
 			
@@ -180,6 +188,13 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
 			tvTagCount.setText("Tag: " + currentBubble.getTag().size() + ", Comments: " + currentBubble.getComments().size());
+			
+			final Bitmap photo = currentBubble.getPhoto();
+			if(photo != null) {
+				ivBubblePhoto.setImageBitmap(photo);
+				ivBubblePhoto.setVisibility(View.VISIBLE);
+			} else
+				ivBubblePhoto.setVisibility(View.GONE);
 			
 			for(int i=0; i<currentBubble.getTag().size(); i++) {
 				BubbleTag tag = currentBubble.getRealTag().get(i);
@@ -298,6 +313,17 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 				// Get Comments
 				List<BubbleComment> comments = BubbleComment.getCommentData(bubble.getId().longValue());
 				bubble.setComments(comments);
+				
+				// Get Photo
+				String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";
+				DefaultHttpClient photoClient = new DefaultHttpClient();
+				String photoRes = HttpGetUtil.doGetWithResponse(photoUrl + "?bubbleid=" + bubble.getId(), photoClient);
+				if(!photoRes.equals("")) {
+					byte[] photoByte = Base64.decode(photoRes, Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+									
+					bubble.setPhoto(bmp);
+				}
 				
 				bubbles.set(i, bubble);
 			}

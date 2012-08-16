@@ -1,39 +1,25 @@
 package com.kiwi.bubble.android;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.kiwi.bubble.android.common.BubbleComment;
-import com.kiwi.bubble.android.common.BubbleData;
-import com.kiwi.bubble.android.common.BubbleTag;
-import com.kiwi.bubble.android.common.Constant;
-import com.kiwi.bubble.android.common.TEA;
-import com.kiwi.bubble.android.common.UserInfo;
-import com.kiwi.bubble.android.common.parser.HttpGetUtil;
-import com.kiwi.bubble.android.common.parser.HttpPostUtil;
-import com.kiwi.bubble.android.common.parser.ObjectParsers;
-import com.kiwi.bubble.android.member.SignupActivity;
-import com.kiwi.bubble.android.list.BubbleListActivity;
-
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.kiwi.bubble.android.common.Constant;
+import com.kiwi.bubble.android.common.TEA;
+import com.kiwi.bubble.android.common.parser.HttpPostUtil;
+import com.kiwi.bubble.android.list.BubbleListActivity;
+import com.kiwi.bubble.android.member.SignupActivity;
 
 public class MainActivity extends Activity {
 	private static final int REQUEST_CODE_SIGNUP = 101;

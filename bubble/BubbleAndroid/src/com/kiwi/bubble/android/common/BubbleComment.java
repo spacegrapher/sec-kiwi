@@ -1,13 +1,9 @@
 package com.kiwi.bubble.android.common;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.http.impl.client.DefaultHttpClient;
-
-import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;

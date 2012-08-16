@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.graphics.Bitmap;
+
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
@@ -16,7 +18,7 @@ public class BubbleData extends ModelBase {
 	
 	private String text;
 	
-	//private Blob photo;
+	private Bitmap photo;
 	
 	private Date postTime;
 	
@@ -32,6 +34,7 @@ public class BubbleData extends ModelBase {
 		this.authorId = id;
 		this.title = title;
 		this.text = text;
+		this.photo = null;
 	}
 
 	public Long getAuthorId() {
@@ -64,6 +67,14 @@ public class BubbleData extends ModelBase {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public Bitmap getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(Bitmap photo) {
+		this.photo = photo;
 	}
 
 	public Date getPostTime() {

@@ -1,6 +1,7 @@
 package com.kiwi.bubble.appengine.server.bubbledata;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
+
+import com.google.appengine.api.datastore.Blob;
 import com.kiwi.bubble.appengine.server.tag.BubbleTag;
 import com.kiwi.bubble.appengine.server.tag.BubbleTagJDOWrapper;
 
@@ -26,13 +33,13 @@ public class BubbleCreateServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		//String strEmail = req.getParameter("email");
 		Long id = Long.valueOf(req.getParameter("id"));
 		String strTitle = req.getParameter("title");
 		String strText = req.getParameter("text");
 		String strTag = req.getParameter("tag");
 		
 		BubbleData bubbleData = new BubbleData(id, strTitle, strText);
+		
 		List<Long> tagList = new ArrayList<Long>();
 		if(!strTag.isEmpty()) {
 			String[] tags = strTag.split(",");
@@ -53,6 +60,10 @@ public class BubbleCreateServlet extends HttpServlet {
 		}
 		
 		BubbleDataJDOWrapper.insertBubble(bubbleData);
+		
+		System.out.println("bubbleid: " + bubbleData.getId());
+		resp.setContentType("text/plain");
+        resp.getWriter().write(bubbleData.getId().toString());
 	}
 
 }

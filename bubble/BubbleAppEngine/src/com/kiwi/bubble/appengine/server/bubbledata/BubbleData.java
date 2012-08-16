@@ -13,7 +13,6 @@ import com.kiwi.bubble.appengine.server.tag.BubbleTag;
 @PersistenceCapable
 public class BubbleData extends ModelBase {
 	@Persistent
-	//private String authorEmail;
 	private Long authorId;
 	
 	@Persistent
@@ -23,16 +22,10 @@ public class BubbleData extends ModelBase {
 	private String text;
 	
 	@Persistent
-	private Blob photo;
-	
-	@Persistent
 	private Date postTime;
 	
 	@Persistent
 	private String geopoint;
-	
-	//@Persistent
-	//private List<String> tag;
 	
 	@Persistent
 	private List<Long> tag;
@@ -66,14 +59,6 @@ public class BubbleData extends ModelBase {
 
 	public void setText(String text) {
 		this.text = text;
-	}
-
-	public Blob getPhoto() {
-		return photo;
-	}
-
-	public void setPhoto(Blob photo) {
-		this.photo = photo;
 	}
 
 	public Date getPostTime() {

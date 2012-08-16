@@ -2,11 +2,6 @@ package com.kiwi.bubble.android;
 
 import java.util.ArrayList;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,6 +20,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class TagSelectActivity extends SherlockActivity {
 	private static final int REQUEST_BUBBLE_CREATE = 101;
@@ -120,7 +119,7 @@ public class TagSelectActivity extends SherlockActivity {
 	}
 	
 	public void onClickAddLocation(View v){
-        // ÅØ½ºÆ®ºä¸¦ Ã£´Â´Ù
+        // ï¿½Ø½ï¿½Æ®ï¿½ä¸¦ Ã£ï¿½Â´ï¿½
         tvLatitude = (TextView)findViewById(R.id.tvLatitude);
         tvLongitude = (TextView)findViewById(R.id.tvLongitude);
         
@@ -153,7 +152,7 @@ public class TagSelectActivity extends SherlockActivity {
 		
         private class DispLocListener implements LocationListener {
         	public void onLocationChanged(Location location) {
-        		// TextView¸¦ ¾÷µ¥ÀÌÆ® ÇÑ´Ù.
+        		// TextViewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ñ´ï¿½.
         		Log.d("GetLocation","5!!");
         		tvLatitude.setText(Double.toString(location.getLatitude()));
         		tvLongitude.setText(Double.toString(location.getLongitude()));  
