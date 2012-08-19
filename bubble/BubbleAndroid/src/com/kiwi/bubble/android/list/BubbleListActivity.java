@@ -188,7 +188,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			tvName.setText("" + currentBubble.getAuthorInfo().getName());
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
-			tvTagCount.setText("Tag: " + currentBubble.getTag().size() + ", Comments: " + currentBubble.getComments().size());
+			tvTagCount.setText("태그: " + currentBubble.getTag().size() + ", 댓글: " + currentBubble.getComments().size());
 			
 			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
 			if(userImage != null) {

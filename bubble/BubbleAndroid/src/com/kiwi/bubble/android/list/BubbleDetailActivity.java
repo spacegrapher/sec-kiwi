@@ -128,10 +128,16 @@ public class BubbleDetailActivity extends SherlockActivity {
 				TextView tvcName = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewName);
 				TextView tvcText = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewText);
 				TextView tvcDate = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewDate);
+				ImageView ivCommentPhoto = (ImageView)commentView.findViewById(R.id.imageViewBubbleCommentPhoto);
 				tvcName.setText("" + comment.getAuthorInfo().getName());
 				tvcText.setText(comment.getText());
 				tvcDate.setText(comment.getPostTime().toString());
 				llComments.addView(commentView);
+				
+				final Bitmap commentPhoto = comment.getAuthorInfo().getImage();
+				if(commentPhoto != null) {
+					ivCommentPhoto.setImageBitmap(commentPhoto);
+				}
 				
 				tvcName.setOnClickListener(new OnClickListener() {
 					@Override
@@ -186,7 +192,6 @@ public class BubbleDetailActivity extends SherlockActivity {
 			String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
 			DefaultHttpClient userImageClient = new DefaultHttpClient();
 			String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
-			//Log.i("USER", "userImageRes: " + userImageRes);
 			if(!userImageRes.equals("")) {
 				byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
 				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
@@ -211,6 +216,16 @@ public class BubbleDetailActivity extends SherlockActivity {
 			for(int i=0; i<comments.size(); i++) {
 				BubbleComment comment = comments.get(i);
 				UserInfo commentAuthor = UserInfo.getUserInfo(comment.getAuthorId().longValue());
+				// Get User Image
+				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+				DefaultHttpClient userImageClient = new DefaultHttpClient();
+				String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + comment.getAuthorId().longValue(), userImageClient);
+				if(!userImageRes.equals("")) {
+					byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+									
+					commentAuthor.setImage(bmp);
+				}
 				
 				comment.setAuthorInfo(commentAuthor);
 				comments.set(i, comment);
@@ -262,7 +277,7 @@ public class BubbleDetailActivity extends SherlockActivity {
 			
 			progressDialog = new ProgressDialog(BubbleDetailActivity.this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progressDialog.setMessage("Posting comment...");
+			progressDialog.setMessage("댓글 게시 중...");
 			progressDialog.setCancelable(false);
 			progressDialog.show();
 		}

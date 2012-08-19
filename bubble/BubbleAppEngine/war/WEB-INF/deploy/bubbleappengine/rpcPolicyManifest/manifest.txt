@@ -1,2 +1,3 @@
 # Module bubbleappengine
 # RPC service class, partial path of RPC policy file
+com.kiwi.bubble.appengine.client.GreetingService, 774F191AD7D4C2F9CB11BD80D668AAA7.gwt.rpc

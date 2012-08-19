@@ -80,9 +80,9 @@ public class MainActivity extends Activity {
 			String strPassword = new String(tea.encrypt(editTextPassword.getText().toString().getBytes()));
 			
 			if(strEmail.isEmpty()) {
-				Toast.makeText(MainActivity.this, "Please enter email address", 0).show();
+				Toast.makeText(MainActivity.this, "이메일 주소를 입력하세요", 0).show();
 			} else if(strPassword.isEmpty()) {
-				Toast.makeText(MainActivity.this, "Please enter password", 0).show();
+				Toast.makeText(MainActivity.this, "비밀번호를 입력하세요", 0).show();
 			} else {		
 				HttpPostUtil util = new HttpPostUtil();
 				HashMap result = new HashMap();
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
 			super.onPostExecute(result);
 			progressDialog.hide();
 			if (resultStr.isEmpty()) {
-				Toast.makeText(MainActivity.this, "Please enter correct information", 0).show();
+				Toast.makeText(MainActivity.this, "로그인 정보가 맞지 않습니다", 0).show();
 			} else {
 				Intent intent = new Intent(MainActivity.this, BubbleListActivity.class);
 				intent.putExtra("id", Long.valueOf(resultStr));
@@ -120,7 +120,7 @@ public class MainActivity extends Activity {
 			super.onPreExecute();
 			progressDialog = new ProgressDialog(MainActivity.this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progressDialog.setMessage("Logging in...");
+			progressDialog.setMessage("로그인 중...");
 			progressDialog.setCancelable(false);
 			progressDialog.show();
 		}

@@ -2,72 +2,59 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-
-
+    android:background="#ECF9C6"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
     <TextView
         android:id="@+id/textViewSignupEmail"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Email address" />
-
-
-
+        android:text="이메일 주소" />
+
     <EditText
         android:id="@+id/editTextSignupEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Enter email address"
+        android:hint="이메일 주소를 입력하세요"
         android:inputType="textEmailAddress" >
 
         <requestFocus />
     </EditText>
-
-
-
+
     <TextView
         android:id="@+id/textViewSignupName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name" />
-
-
-
+        android:text="이름" />
+
     <EditText
         android:id="@+id/editTextSignupName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Enter your name" />
-
-
-
+        android:hint="이름을 입력하세요" />
+
     <TextView
         android:id="@+id/textViewSignupPassword"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Password" />
-
-
+        android:text="비밀번호" />
+
     <EditText
         android:id="@+id/editTextSignupPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Enter password"
+        android:hint="비밀번호를 입력하세요"
         android:inputType="textPassword" />
-
-
-
-
-
+
     <Button
         android:id="@+id/buttonSignupCreate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onClickCreateAccount"
-        android:text="Create Account" />
+        android:text="계정 생성" />
 
 </LinearLayout>

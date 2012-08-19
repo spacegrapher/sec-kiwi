@@ -67,23 +67,23 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1" >
-
+
                                     <ImageView
                                         android:id="@+id/imageViewBubbleDetailProfile"
                                         android:layout_width="60dp"
                                         android:layout_height="60dp"
                                         android:layout_marginRight="5dp"
-                                        android:src="@drawable/ic_launcher" />
+                                        android:src="@drawable/empty_profile_picture" />
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
                                         android:orientation="vertical" >
-
+
                                         <TextView
                                             android:id="@+id/textViewBubbleDetailName"
-                                            android:layout_width="wrap_content"
+                                            android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center_vertical"
                                             android:text="TextView"
@@ -165,25 +165,26 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="bottom" >
-
+
                 <EditText
                     android:id="@+id/editTextBubbleDetailComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="Enter comments" >
+                    android:hint="댓글 입력" >
 
                     <requestFocus />
                 </EditText>
-
+
                 <Button
                     android:id="@+id/buttonBubbleDetailComment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:onClick="onClickSubmitComment"
-                    android:text="Comment" />
+                    android:text="게시" />
+
             </LinearLayout>
         </LinearLayout>
 

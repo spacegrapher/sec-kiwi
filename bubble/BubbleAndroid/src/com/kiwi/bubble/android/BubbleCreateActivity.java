@@ -337,7 +337,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 			super.onPreExecute();
 			progressDialog = new ProgressDialog(BubbleCreateActivity.this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progressDialog.setMessage("Posting Bubble...");
+			progressDialog.setMessage("버블 생성 중...");
 			progressDialog.setCancelable(false);
 			progressDialog.show();
 		}
