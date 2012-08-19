@@ -156,22 +156,10 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		new BackgroundTask().execute();
 	}
 	
-	/**
-	 * ī�޶󿡼� �̹��� ��������
-	 */
 	private void doTakePhotoAction()
 	{
-		/*
-		 * ��� �غ���
-		 * http://2009.hfoss.org/Tutorial:Camera_and_Gallery_Demo
-		 * http://stackoverflow.com/questions/1050297/how-to-get-the-url-of-the-captured-image
-		 * http://www.damonkohler.com/2009/02/android-recipes.html
-		 * http://www.firstclown.us/tag/android/
-		 */
-
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		
-		// �ӽ÷� ����� ������ ��θ� ��
 		String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
 		mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
 		
@@ -180,12 +168,8 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		startActivityForResult(intent, PICK_FROM_CAMERA);
 	}
 	
-	/**
-	 * �ٹ� �̹��� ��������
-	 */
 	private void doTakeAlbumAction()
 	{
-		// �ٹ� ȣ��
 		Intent intent = new Intent(Intent.ACTION_PICK);
 		intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
 		startActivityForResult(intent, PICK_FROM_ALBUM);
@@ -203,8 +187,6 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		{
 			case CROP_FROM_CAMERA:
 			{
-				// ũ���� �� ������ �̹����� �Ѱ� �޽��ϴ�. �̹����信 �̹����� �����شٰų� �ΰ����� �۾� ���Ŀ�
-				// �ӽ� ������ �����մϴ�.
 				final Bundle extras = data.getExtras();
 	
 				if(extras != null)
@@ -213,7 +195,6 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 					imageviewPhoto.setImageBitmap(bmpPhoto);
 				}
 	
-				// �ӽ� ���� ����
 				File f = new File(mImageCaptureUri.getPath());
 				if(f.exists())
 				{
@@ -225,22 +206,16 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 	
 			case PICK_FROM_ALBUM:
 			{
-				// ������ ó���� ī�޶�� �����Ƿ� �ϴ�  break���� �����մϴ�.
-				// ���� �ڵ忡���� ���� �ո����� ����� �����Ͻñ� �ٶ�ϴ�.
-				
 				mImageCaptureUri = data.getData();
 			}
 			
 			case PICK_FROM_CAMERA:
 			{
-				// �̹����� ������ ������ ���������� �̹��� ũ�⸦ �����մϴ�.
-				// ���Ŀ� �̹��� ũ�� ���ø����̼��� ȣ���ϰ� �˴ϴ�.
-	
 				Intent intent = new Intent("com.android.camera.action.CROP");
 				intent.setDataAndType(mImageCaptureUri, "image/*");
 	
-				intent.putExtra("outputX", 400);
-				intent.putExtra("outputY", 400);
+				intent.putExtra("outputX", 500);
+				intent.putExtra("outputY", 500);
 				intent.putExtra("aspectX", 1);
 				intent.putExtra("aspectY", 1);
 				intent.putExtra("scale", true);
@@ -289,7 +264,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 			.setNeutralButton("Gallery", albumListener)
 			.setNegativeButton("Cancel", cancelListener)
 			.show();
-	}		
+		}		
 	}
 	
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {

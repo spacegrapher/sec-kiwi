@@ -30,6 +30,9 @@ public class SignupServlet extends HttpServlet {
 		UserInfo userInfo = new UserInfo(email, name, password);
 		UserInfoJDOWrapper.insertUser(userInfo);
 		
+		//UserInfoImage userInfoImage = new UserInfoImage(userInfo.getId(), null);
+		//UserInfoImageJDOWrapper.insertImage(userInfoImage);
+		
 		String msg = "Your email: " + userInfo.getEmail() + "\nYour name: " + userInfo.getName();
 		//System.out.println("[SignupServlet] " + msg);
 		resp.getWriter().print(msg);

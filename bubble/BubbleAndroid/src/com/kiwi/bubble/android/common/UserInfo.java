@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.graphics.Bitmap;
+
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
@@ -14,6 +16,8 @@ public class UserInfo extends ModelBase {
 	private String name;
 	
 	private Date joinDate;
+	
+	private Bitmap image;
 	
 	private List<Long> favorites;
 
@@ -40,6 +44,14 @@ public class UserInfo extends ModelBase {
 	}
 
 	
+	public Bitmap getImage() {
+		return image;
+	}
+
+	public void setImage(Bitmap image) {
+		this.image = image;
+	}
+
 	public static UserInfo getUserInfo(long id) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/user";
 		DefaultHttpClient client = new DefaultHttpClient();

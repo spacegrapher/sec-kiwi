@@ -42,13 +42,13 @@ import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
+import com.kiwi.bubble.android.member.UserPhotoActivity;
 import com.kiwi.bubble.android.member.UserProfileActivity;
 
 public class BubbleListActivity extends SherlockActivity implements ActionBar.TabListener {
 	private static final int REQUEST_CODE_CREATE = 101;
 	private Long id;
 	private ListView lvBubbleList;
-	//private ImageView ivBubblePhoto;
 	private BubbleListAdapter adapter;
 	private List<BubbleData> bubbles;
 	private String[] tabLabel = {"Bubble", "Explore", "Me"};
@@ -73,7 +73,6 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 		getSupportActionBar().setSelectedNavigationItem(0);
         
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleList);
-		//ivBubblePhoto = (ImageView) findViewById(R.id.imageViewBubblePhoto);
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -168,6 +167,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			TextView tvTagCount;
 			LinearLayout llTag;
 			ImageView ivBubblePhoto;
+			ImageView ivBubbleUserImage;
 			final long lSelectedId;
 			
 			if(convertView == null) {
@@ -179,6 +179,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
 			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
 			ivBubblePhoto = (ImageView) convertView.findViewById(R.id.imageViewBubbleImage);
+			ivBubbleUserImage = (ImageView) convertView.findViewById(R.id.imageViewBubbleUserImage);
 			llTag = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListViewTag);
 			llTag.removeAllViews();
 			
@@ -188,6 +189,11 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
 			tvTagCount.setText("Tag: " + currentBubble.getTag().size() + ", Comments: " + currentBubble.getComments().size());
+			
+			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
+			if(userImage != null) {
+				ivBubbleUserImage.setImageBitmap(userImage);
+			}
 			
 			final Bitmap photo = currentBubble.getPhoto();
 			if(photo != null) {
@@ -220,6 +226,16 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 						overridePendingTransition(0, 0);
 				}
 				
+			});
+			
+			ivBubbleUserImage.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(BubbleListActivity.this, UserPhotoActivity.class);
+					intent.putExtra("id", currentBubble.getAuthorId().longValue());
+					intent.putExtra("editable", false);
+					startActivity(intent);
+				}
 			});
 			
 			return convertView;
@@ -298,6 +314,18 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 				
 				// Get UserInfo
 				UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId());
+								
+				// Get User Image
+				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+				DefaultHttpClient userImageClient = new DefaultHttpClient();
+				String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
+				//Log.i("USER", "userImageRes: " + userImageRes);
+				if(!userImageRes.equals("")) {
+					byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+									
+					userInfo.setImage(bmp);
+				}
 				bubble.setAuthorInfo(userInfo);
 				
 				// Get Tag

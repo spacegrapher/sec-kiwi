@@ -5,16 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,6 +32,7 @@ import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
+import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.member.UserProfileActivity;
 
@@ -40,6 +47,7 @@ public class BubbleDetailActivity extends SherlockActivity {
 	private TextView tvText;
 	private TextView tvTag;
 	private EditText etComment;
+	private ImageView ivPhoto;
 	private Long bubbleId;
 	private Long authorId;
 	
@@ -58,6 +66,7 @@ public class BubbleDetailActivity extends SherlockActivity {
 		tvText = (TextView) findViewById(R.id.textViewBubbleDetailText);
 		tvTag = (TextView) findViewById(R.id.textViewBubbleDetailTag);
 		etComment = (EditText) findViewById(R.id.editTextBubbleDetailComment);
+		ivPhoto = (ImageView) findViewById(R.id.imageViewBubbleDetailProfile);
 				
 		Intent intent = this.getIntent();
 		bubbleId = Long.valueOf(intent.getLongExtra("bubbleid", -1));
@@ -102,7 +111,12 @@ public class BubbleDetailActivity extends SherlockActivity {
 			tvTitle.setText(bubble.getTitle());
 			tvDate.setText(bubble.getPostTime().toString());
 			tvText.setText(bubble.getText());
-			tvTag.setText(strTag);			
+			tvTag.setText(strTag);
+			
+			final Bitmap userImage = userInfo.getImage();
+			if(userImage != null) {
+				ivPhoto.setImageBitmap(userImage);
+			}
 			
 			llComments.removeAllViews();
 			for(int i=0; i<comments.size(); i++) {
@@ -167,6 +181,18 @@ public class BubbleDetailActivity extends SherlockActivity {
 		private void getBubbleData() {
 			bubble = BubbleData.getBubbleData(bubbleId.longValue());
 			userInfo = UserInfo.getUserInfo(bubble.getAuthorId().longValue());
+			
+			// Get User Image
+			String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+			DefaultHttpClient userImageClient = new DefaultHttpClient();
+			String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
+			//Log.i("USER", "userImageRes: " + userImageRes);
+			if(!userImageRes.equals("")) {
+				byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
+				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+								
+				userInfo.setImage(bmp);
+			}
 			
 			strTag = "[";
 			List<Long> tags = bubble.getTag();

@@ -3,21 +3,6 @@
     android:layout_height="match_parent"
     android:background="#ECF9C6"
     android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/gradient_background"
-        android:visibility="gone" >
-
-        <Button
-            android:id="@+id/buttonUserProfileBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onClickButtonBack"
-            android:text="Back" />
-
-    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -33,13 +18,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp" >
-
+
                 <ImageView
                     android:id="@+id/imageViewUserProfile"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:background="#FFFFFF"
-                    android:src="@drawable/ic_launcher" />
+                    android:src="@drawable/empty_profile_picture" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

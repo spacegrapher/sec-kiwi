@@ -91,6 +91,16 @@
   	<url-pattern>/image</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>UserInfoImageServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.userinfo.UserInfoImageServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>UserInfoImageServlet</servlet-name>
+  	<url-pattern>/userimage</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index</welcome-file>
