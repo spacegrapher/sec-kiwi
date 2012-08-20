@@ -1,6 +1,7 @@
 package com.kiwi.bubble.android;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -10,33 +11,51 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.kiwi.bubble.android.common.BubbleTag;
 
 public class TagSelectActivity extends SherlockActivity {
 	private static final int REQUEST_BUBBLE_CREATE = 101;
 	public static final String ACTION_KILL_COMMAND = "ACTION_KILL_COMMAND";
 	public static final String ACTION_KILL_DATATYPE = "content://ACTION_KILL_DATATYPE";
 	
-	long id;
-	//String strEmail;
-	EditText etAddTag;
-	Button btnAddTag;
-	GridView gvSelectedTag;
-	ArrayAdapter<String> gridAdapter;
-	ArrayList<String> tagList;
+	private long id;
+	private EditText etAddTag;
+	private GridView gvSelectedTag;
+	private ArrayAdapter<String> gridAdapter;
+	private ArrayList<String> tagList;
+	private List<String> newTagList = new ArrayList<String>();
+	private List<BubbleTag> selectedTagList = new ArrayList<BubbleTag>();
+	
+	private List<BubbleTag> bubbleTagList = new ArrayList<BubbleTag>();
+	private List<BubbleTag> bubbleTagListPartial = new ArrayList<BubbleTag>();
+	private boolean bSameTagExists = false;
+	private BubbleTagAdapter adapter;
+	private ListView lvTagList;
 	
 	private KillReceiver mKillReceiver;
 	
@@ -55,23 +74,44 @@ public class TagSelectActivity extends SherlockActivity {
 		setContentView(R.layout.activity_tagselect);
 		
 		Intent intent = this.getIntent();
-		//strEmail = intent.getStringExtra("email");
 		id = intent.getLongExtra("id", -1);
 		
 		etAddTag = (EditText) findViewById(R.id.editTextAddTag);
-		btnAddTag = (Button) findViewById(R.id.buttonAddTag);
-		btnAddTag.setEnabled(false);
 		gvSelectedTag = (GridView) findViewById(R.id.gridViewSelectedTag);
+		
 		
 		tagList = new ArrayList<String>();
 		gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tagList);
 		gvSelectedTag.setAdapter(gridAdapter);
+		lvTagList = (ListView) findViewById(R.id.listViewTagSuggest);
+		lvTagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
+				CheckBox cbTagSelected = (CheckBox) view.findViewById(R.id.checkBoxTagSelected);
+				if (cbTagSelected.getVisibility() == View.VISIBLE)
+					cbTagSelected.setChecked(!cbTagSelected.isChecked());
+				
+				if (position == 0 && checkAddNewTag()) {
+					newTagList.add(etAddTag.getText().toString());
+					adapter.notifyDataSetChanged();
+					etAddTag.setText("");
+					etAddTag.clearFocus();
+					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(etAddTag.getWindowToken(), 0);
+				}
+			}
+			
+		});
+		
+		adapter = new BubbleTagAdapter(bubbleTagListPartial);
+		lvTagList.setAdapter(adapter);
 		
 		etAddTag.addTextChangedListener(new TextWatcher() {
 	        @Override
 	        public void onTextChanged(CharSequence s, int start, int before, int count)
 	        {
-	            checkEnableAddTagButton();
+	        	AlterAdapter();
+	        	lvTagList.setSelection(0);
 	        }
 	        @Override
 	        public void beforeTextChanged(CharSequence s, int start, int count, int after)
@@ -89,6 +129,8 @@ public class TagSelectActivity extends SherlockActivity {
 	    registerReceiver(mKillReceiver, IntentFilter.create(ACTION_KILL_COMMAND, ACTION_KILL_DATATYPE));
 	    
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	    
+	    new BackgroundTask().execute();
 	}
 	
 	@Override
@@ -107,9 +149,15 @@ public class TagSelectActivity extends SherlockActivity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.i("MENU", "item: " + item.toString() + ", id: " + item.getGroupId() + ", order: " + item.getOrder());
 		if (item.toString().equals("Create")) {
-			String[] tagArray = (String[]) tagList.toArray(new String[tagList.size()]);
+			String[] tagArray = new String[newTagList.size() + selectedTagList.size()];
+			int index = 0;
+			for(int i=0; i<newTagList.size(); i++) {
+				tagArray[index++] = newTagList.get(i);
+			}
+			for(int i=0; i<selectedTagList.size(); i++) {
+				tagArray[index++] = selectedTagList.get(i).getText();
+			}
 			Intent intent = new Intent(this, BubbleCreateActivity.class);
 			intent.putExtra("tag", tagArray);
 			intent.putExtra("id", id);
@@ -152,11 +200,8 @@ public class TagSelectActivity extends SherlockActivity {
 		
         private class DispLocListener implements LocationListener {
         	public void onLocationChanged(Location location) {
-        		// TextView�� ������Ʈ �Ѵ�.
-        		Log.d("GetLocation","5!!");
         		tvLatitude.setText(Double.toString(location.getLatitude()));
         		tvLongitude.setText(Double.toString(location.getLongitude()));  
-        		Log.d("GetLocation","6!!");
         	}
         	public void onProviderDisabled(String provider) { 
         	}
@@ -166,25 +211,6 @@ public class TagSelectActivity extends SherlockActivity {
         	}
         }
         
-	public void checkEnableAddTagButton() {
-		boolean isEmpty = etAddTag.getText().toString().isEmpty();
-		
-		if(!isEmpty) {
-			btnAddTag.setEnabled(true);
-		} else {
-			btnAddTag.setEnabled(false);
-		}
-	}
-
-	public void onClickAddTag(View v) {
-		if(etAddTag.getText().toString().isEmpty())
-			return;
-		
-		tagList.add(etAddTag.getText().toString());
-		etAddTag.setText("");
-		gridAdapter.notifyDataSetChanged();
-	}
-	
 	public void onClickButtonCreateBack(View v) {
 		Intent intent = new Intent();
 		setResult(Activity.RESULT_CANCELED, intent);
@@ -205,5 +231,194 @@ public class TagSelectActivity extends SherlockActivity {
 	    public void onReceive(Context context, Intent intent) {
 	    	finish();
 	    }
+	}
+	
+	private boolean checkAddNewTag() {
+		boolean isEditTextEmpty = etAddTag.getText().toString().isEmpty();
+		return !isEditTextEmpty && !bSameTagExists;
+	}
+	
+	private void AlterAdapter() {
+        if (etAddTag.getText().toString().isEmpty()) {
+        	bubbleTagListPartial.clear();
+        	for (int i = 0; i < bubbleTagList.size(); i++) {
+                bubbleTagListPartial.add(bubbleTagList.get(i));
+            }
+            adapter.notifyDataSetChanged();
+        }
+        else {
+        	bubbleTagListPartial.clear();
+        	bSameTagExists = false;
+            for (int i = 0; i < bubbleTagList.size(); i++) {
+                if (bubbleTagList.get(i).getText().toUpperCase().contains(etAddTag.getText().toString().toUpperCase())) {
+                	bubbleTagListPartial.add(bubbleTagList.get(i));
+                }
+                if (bubbleTagList.get(i).getText().equals(etAddTag.getText().toString())) {
+                	bSameTagExists = true;
+                }
+            }
+            adapter.notifyDataSetChanged();
+        }
+    }
+	
+	class BubbleTagAdapter extends BaseAdapter {
+		private List<BubbleTag> bubbleTag;
+		private boolean bAddLocation = false;
+		private boolean bAddNewTag = false;
+		
+		public BubbleTagAdapter(List<BubbleTag> bubbleTag) {
+			super();
+			this.bubbleTag = bubbleTag;			
+		}
+
+		@Override
+		public int getCount() {
+			int count = bubbleTag.size() + newTagList.size();
+			bAddLocation = false;
+			bAddNewTag = false;
+			if (etAddTag.getText().toString().isEmpty()) {
+				bAddLocation = true;
+				count += 1;
+			} else if (!bSameTagExists) {
+				bAddNewTag = true;
+				count += 1;
+			}
+			
+			return count;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		private boolean doUpdateCheckBox(String text) {
+			for(int i=0; i<selectedTagList.size(); i++) {
+				if(text.equals(selectedTagList.get(i).getText())) {
+					return true;
+				}
+			}
+			return false;
+		}
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			final BubbleTag currentTag;
+			final int _position;
+			int actualPosition;
+			ImageView ivTagIcon;
+			TextView tvTagName;
+			CheckBox cbTagSelected;
+			
+			if(convertView == null) {
+				LayoutInflater inflater = LayoutInflater.from(TagSelectActivity.this);
+				convertView = inflater.inflate(R.layout.listview_tagselect, parent, false);
+			}
+			ivTagIcon = (ImageView) convertView.findViewById(R.id.imageViewTagIcon);
+			tvTagName = (TextView) convertView.findViewById(R.id.textViewTagName);
+			cbTagSelected = (CheckBox) convertView.findViewById(R.id.checkBoxTagSelected);
+			
+			boolean setCheckBox = false;
+			if (bAddLocation || bAddNewTag) {
+				if (position == 0) {
+					actualPosition = position;
+					if(bAddLocation) {
+						ivTagIcon.setVisibility(View.VISIBLE);
+						tvTagName.setText("위치 태그 추가");
+						cbTagSelected.setVisibility(View.INVISIBLE);
+					} else if(bAddNewTag) {
+						ivTagIcon.setVisibility(View.VISIBLE);
+						tvTagName.setText("새 태그 \"" + etAddTag.getText().toString() + "\" 추가");
+						cbTagSelected.setVisibility(View.INVISIBLE);
+					}
+				} else {
+					actualPosition = position - 1;
+					
+					if (actualPosition < newTagList.size()) {
+						tvTagName.setText(newTagList.get(actualPosition));
+					} else {
+						actualPosition -= newTagList.size();
+						currentTag = bubbleTag.get(actualPosition);
+												
+						tvTagName.setText(currentTag.getText());
+						setCheckBox = doUpdateCheckBox(currentTag.getText());
+					}
+					ivTagIcon.setVisibility(View.INVISIBLE);
+					cbTagSelected.setVisibility(View.VISIBLE);
+					
+				}
+			} else {
+				actualPosition = position;
+				if (actualPosition < newTagList.size()) {
+					tvTagName.setText(newTagList.get(actualPosition));
+				} else {
+					actualPosition -= newTagList.size();
+					currentTag = bubbleTag.get(actualPosition);
+					
+					tvTagName.setText(currentTag.getText());
+					setCheckBox = doUpdateCheckBox(currentTag.getText());
+				}
+				ivTagIcon.setVisibility(View.INVISIBLE);
+				cbTagSelected.setVisibility(View.VISIBLE);
+				
+			}
+			_position = actualPosition;
+			
+			cbTagSelected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					if(isChecked) {
+						if(!selectedTagList.contains(bubbleTagListPartial.get(_position)))
+							selectedTagList.add(bubbleTagListPartial.get(_position));
+					} else {
+						selectedTagList.remove(bubbleTagListPartial.get(_position));
+					}
+				}				
+			});
+			cbTagSelected.setChecked(setCheckBox);
+			
+			return convertView;
+		}		
+	}
+	
+	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
+		@Override
+		protected Long doInBackground(String... arg0) {
+			this.updateListView();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			//progressBar.setVisibility(View.INVISIBLE);
+			AlterAdapter();
+			//adapter = new BubbleTagAdapter(bubbleTagListPartial);
+			//lvTagList.setAdapter(adapter);
+			//adapter.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			//progressBar.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
+		
+		private void updateListView() {
+			bubbleTagList = BubbleTag.getAllBubbleTags();
+		}
 	}
 }

@@ -78,14 +78,15 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		progressBar = (ProgressBar) findViewById(R.id.progressBarUserProfile);
 		ivUserProfile = (ImageView) findViewById(R.id.imageViewUserProfile);
 		
-		if(id == selectedId) {
+		Log.i("ME", "id: " + id + ", selectedId: " + selectedId);
+		if(id.equals(selectedId)) {
 			btnSetting.setVisibility(View.VISIBLE);
 		} else {
 			btnSetting.setVisibility(View.INVISIBLE);
 		}
 		
 		bEnableTabListener = false;
-		if(id == selectedId) {
+		if(id.equals(selectedId)) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 			for (int i = 0; i < 3; i++) {
 	            ActionBar.Tab tab = getSupportActionBar().newTab();

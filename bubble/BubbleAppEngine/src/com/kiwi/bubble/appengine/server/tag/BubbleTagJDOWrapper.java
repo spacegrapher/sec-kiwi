@@ -18,6 +18,22 @@ public class BubbleTagJDOWrapper {
 		}
 	}
 	
+	public static List<BubbleTag> getAllTags() {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Query query = pm.newQuery(BubbleTag.class);
+		query.setOrdering("text asc");
+		
+		List<BubbleTag> ret = null;
+		try {
+			ret = (List<BubbleTag>) query.execute();
+		} finally {
+			query.closeAll();
+		}
+		
+		return ret;
+	}
+	
 	public static List<BubbleTag> getTagById(long id) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		

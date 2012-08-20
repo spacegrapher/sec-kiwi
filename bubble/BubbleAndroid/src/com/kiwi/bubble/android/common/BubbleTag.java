@@ -63,14 +63,22 @@ public class BubbleTag extends ModelBase {
 		this.location = location;
 	}
 	
+	public static List<BubbleTag> getAllBubbleTags() {
+		String pageUrl = Constant.SERVER_DOMAIN_URL + "/tag";
+		DefaultHttpClient client = new DefaultHttpClient();
+		
+		String response = HttpGetUtil.doGetWithResponse(pageUrl, client);
+		final List<BubbleTag> tags = ObjectParsers.parseBubbleTag(response);
+		
+		return tags;
+	}
+	
 	public static BubbleTag getBubbleTag(Long id) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/tag";
 		DefaultHttpClient client = new DefaultHttpClient();
 		
 		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + String.valueOf(id), client);
 		final List<BubbleTag> tags = ObjectParsers.parseBubbleTag(response);
-		
-		//assert(tags.size() == 1);
 		
 		return tags.size()==0?null:tags.get(0);
 	}
