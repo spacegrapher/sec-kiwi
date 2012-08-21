@@ -42,7 +42,6 @@ public class BubbleDetailActivity extends SherlockActivity {
 	private LinearLayout llComments;
 	private ProgressBar progressBar;
 	private TextView tvName;
-	private TextView tvTitle;
 	private TextView tvDate;
 	private TextView tvText;
 	private TextView tvTag;
@@ -61,7 +60,6 @@ public class BubbleDetailActivity extends SherlockActivity {
 		llComments = (LinearLayout) findViewById(R.id.linearLayoutBubbleDetailComments);
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleDetail);
 		tvName = (TextView) findViewById(R.id.textViewBubbleDetailName);
-		tvTitle = (TextView) findViewById(R.id.textViewBubbleDetailTitle);
 		tvDate = (TextView) findViewById(R.id.textViewBubbleDetailDate);
 		tvText = (TextView) findViewById(R.id.textViewBubbleDetailText);
 		tvTag = (TextView) findViewById(R.id.textViewBubbleDetailTag);
@@ -108,7 +106,6 @@ public class BubbleDetailActivity extends SherlockActivity {
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
 			tvName.setText(userInfo.getName());
-			tvTitle.setText(bubble.getTitle());
 			tvDate.setText(bubble.getPostTime().toString());
 			tvText.setText(bubble.getText());
 			tvTag.setText(strTag);

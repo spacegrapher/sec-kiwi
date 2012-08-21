@@ -8,13 +8,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
+import android.text.Spannable;
 import android.text.TextWatcher;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,10 +49,7 @@ public class TagSelectActivity extends SherlockActivity {
 	
 	private long id;
 	private EditText etAddTag;
-	private GridView gvSelectedTag;
-	private ArrayAdapter<String> gridAdapter;
 	private ArrayList<String> tagList;
-	private List<String> newTagList = new ArrayList<String>();
 	private List<BubbleTag> selectedTagList = new ArrayList<BubbleTag>();
 	
 	private List<BubbleTag> bubbleTagList = new ArrayList<BubbleTag>();
@@ -56,6 +57,7 @@ public class TagSelectActivity extends SherlockActivity {
 	private boolean bSameTagExists = false;
 	private BubbleTagAdapter adapter;
 	private ListView lvTagList;
+	private TextView tvSelectedTag;
 	
 	private KillReceiver mKillReceiver;
 	
@@ -77,28 +79,49 @@ public class TagSelectActivity extends SherlockActivity {
 		id = intent.getLongExtra("id", -1);
 		
 		etAddTag = (EditText) findViewById(R.id.editTextAddTag);
-		gvSelectedTag = (GridView) findViewById(R.id.gridViewSelectedTag);
-		
+		tvSelectedTag = (TextView) findViewById(R.id.textViewSelectedTag);
 		
 		tagList = new ArrayList<String>();
-		gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tagList);
-		gvSelectedTag.setAdapter(gridAdapter);
 		lvTagList = (ListView) findViewById(R.id.listViewTagSuggest);
 		lvTagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
-				CheckBox cbTagSelected = (CheckBox) view.findViewById(R.id.checkBoxTagSelected);
-				if (cbTagSelected.getVisibility() == View.VISIBLE)
-					cbTagSelected.setChecked(!cbTagSelected.isChecked());
+				BubbleTag currentTag = null;
 				
-				if (position == 0 && checkAddNewTag()) {
-					newTagList.add(etAddTag.getText().toString());
-					adapter.notifyDataSetChanged();
-					etAddTag.setText("");
-					etAddTag.clearFocus();
-					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(etAddTag.getWindowToken(), 0);
+				
+				if (etAddTag.getText().toString().isEmpty()) {
+					// EditText is empty
+					// First row is add location
+					if (position == 0) {
+						// Add location
+					} else {
+						currentTag = bubbleTagListPartial.get(position - 1);
+					}
+				} else if (checkAddNewTag()) {
+					// First row is new tag
+					if (position == 0) {
+						currentTag = new BubbleTag(BubbleTag.TAG_TYPE_TEXT);
+						currentTag.setText(etAddTag.getText().toString());
+					} else {
+						currentTag = bubbleTagListPartial.get(position - 1);
+					}
+				} else {
+					// First row is the first existing tag
+					currentTag = bubbleTagListPartial.get(position);
 				}
+				
+				
+				if (selectedTagList.contains(currentTag)) {
+					selectedTagList.remove(currentTag);
+				} else {
+					selectedTagList.add(currentTag);
+				}
+				
+				updateSelectedTextView();
+				etAddTag.setText("");
+				etAddTag.clearFocus();
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(etAddTag.getWindowToken(), 0);
 			}
 			
 		});
@@ -150,11 +173,8 @@ public class TagSelectActivity extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.toString().equals("Create")) {
-			String[] tagArray = new String[newTagList.size() + selectedTagList.size()];
+			String[] tagArray = new String[selectedTagList.size()];
 			int index = 0;
-			for(int i=0; i<newTagList.size(); i++) {
-				tagArray[index++] = newTagList.get(i);
-			}
 			for(int i=0; i<selectedTagList.size(); i++) {
 				tagArray[index++] = selectedTagList.get(i).getText();
 			}
@@ -211,26 +231,34 @@ public class TagSelectActivity extends SherlockActivity {
         	}
         }
         
-	public void onClickButtonCreateBack(View v) {
-		Intent intent = new Intent();
-		setResult(Activity.RESULT_CANCELED, intent);
-		finish();
-	}
-	
-	public void onClickButtonCreatePost(View v) {
-		String[] tagArray = (String[]) tagList.toArray(new String[tagList.size()]);
-		Intent intent = new Intent(this, BubbleCreateActivity.class);
-		intent.putExtra("tag", tagArray);
-		//intent.putExtra("email", strEmail);
-		intent.putExtra("id", id);
-		startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
-	}
-	
 	private final class KillReceiver extends BroadcastReceiver {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
 	    	finish();
 	    }
+	}
+	
+	private void updateSelectedTextView() {
+		String text = new String();
+		
+		int[] start = new int[selectedTagList.size()];
+		int[] end = new int[selectedTagList.size()];
+		start[0] = 0;
+		for(int i=0; i<selectedTagList.size(); i++) {
+			if (i > 0) {
+				text += " ";
+				start[i] = end[i-1] + 1;
+			}
+			text += selectedTagList.get(i).getText();
+			end[i] = start[i] + selectedTagList.get(i).getText().length();
+		}		
+		
+		tvSelectedTag.setText(text, TextView.BufferType.SPANNABLE);
+		Spannable sText = (Spannable)tvSelectedTag.getText();
+		
+		for(int i=0; i<selectedTagList.size(); i++) {
+			sText.setSpan(new BackgroundColorSpan(Color.YELLOW), start[i], end[i], 0);
+		}
 	}
 	
 	private boolean checkAddNewTag() {
@@ -273,7 +301,7 @@ public class TagSelectActivity extends SherlockActivity {
 
 		@Override
 		public int getCount() {
-			int count = bubbleTag.size() + newTagList.size();
+			int count = bubbleTag.size();
 			bAddLocation = false;
 			bAddNewTag = false;
 			if (etAddTag.getText().toString().isEmpty()) {
@@ -299,22 +327,12 @@ public class TagSelectActivity extends SherlockActivity {
 			return 0;
 		}
 
-		private boolean doUpdateCheckBox(String text) {
-			for(int i=0; i<selectedTagList.size(); i++) {
-				if(text.equals(selectedTagList.get(i).getText())) {
-					return true;
-				}
-			}
-			return false;
-		}
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final BubbleTag currentTag;
-			final int _position;
 			int actualPosition;
 			ImageView ivTagIcon;
 			TextView tvTagName;
-			CheckBox cbTagSelected;
 			
 			if(convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(TagSelectActivity.this);
@@ -322,66 +340,31 @@ public class TagSelectActivity extends SherlockActivity {
 			}
 			ivTagIcon = (ImageView) convertView.findViewById(R.id.imageViewTagIcon);
 			tvTagName = (TextView) convertView.findViewById(R.id.textViewTagName);
-			cbTagSelected = (CheckBox) convertView.findViewById(R.id.checkBoxTagSelected);
 			
-			boolean setCheckBox = false;
+			
 			if (bAddLocation || bAddNewTag) {
 				if (position == 0) {
 					actualPosition = position;
 					if(bAddLocation) {
 						ivTagIcon.setVisibility(View.VISIBLE);
 						tvTagName.setText("위치 태그 추가");
-						cbTagSelected.setVisibility(View.INVISIBLE);
 					} else if(bAddNewTag) {
 						ivTagIcon.setVisibility(View.VISIBLE);
 						tvTagName.setText("새 태그 \"" + etAddTag.getText().toString() + "\" 추가");
-						cbTagSelected.setVisibility(View.INVISIBLE);
 					}
 				} else {
 					actualPosition = position - 1;
 					
-					if (actualPosition < newTagList.size()) {
-						tvTagName.setText(newTagList.get(actualPosition));
-					} else {
-						actualPosition -= newTagList.size();
-						currentTag = bubbleTag.get(actualPosition);
-												
-						tvTagName.setText(currentTag.getText());
-						setCheckBox = doUpdateCheckBox(currentTag.getText());
-					}
+					currentTag = bubbleTag.get(actualPosition);
+					tvTagName.setText(currentTag.getText());
 					ivTagIcon.setVisibility(View.INVISIBLE);
-					cbTagSelected.setVisibility(View.VISIBLE);
-					
 				}
 			} else {
 				actualPosition = position;
-				if (actualPosition < newTagList.size()) {
-					tvTagName.setText(newTagList.get(actualPosition));
-				} else {
-					actualPosition -= newTagList.size();
-					currentTag = bubbleTag.get(actualPosition);
-					
-					tvTagName.setText(currentTag.getText());
-					setCheckBox = doUpdateCheckBox(currentTag.getText());
-				}
+				currentTag = bubbleTag.get(actualPosition);
+				tvTagName.setText(currentTag.getText());
 				ivTagIcon.setVisibility(View.INVISIBLE);
-				cbTagSelected.setVisibility(View.VISIBLE);
-				
 			}
-			_position = actualPosition;
-			
-			cbTagSelected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					if(isChecked) {
-						if(!selectedTagList.contains(bubbleTagListPartial.get(_position)))
-							selectedTagList.add(bubbleTagListPartial.get(_position));
-					} else {
-						selectedTagList.remove(bubbleTagListPartial.get(_position));
-					}
-				}				
-			});
-			cbTagSelected.setChecked(setCheckBox);
 			
 			return convertView;
 		}		

@@ -3,22 +3,6 @@
     android:layout_height="match_parent"
     android:background="#ECF9C6"
     android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:background="@drawable/gradient_background"
-        android:visibility="gone" >
-
-        <Button
-            android:id="@+id/buttonBubbleDetailBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onClickButtonBack"
-            android:text="Back" />
-
-    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -98,13 +82,23 @@
                                             android:textColor="#666666"
                                             android:textSize="5pt" />
 
-                                        <TextView
-                                            android:id="@+id/textViewBubbleDetailTitle"
-                                            android:layout_width="fill_parent"
-                                            android:layout_height="fill_parent"
-                                            android:layout_weight="1"
-                                            android:text="TextView"
-                                            android:textSize="8pt" />
+                                        <HorizontalScrollView
+                                            android:id="@+id/horizontalScrollView1"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:descendantFocusability="blocksDescendants"
+                                            android:scrollbarAlwaysDrawVerticalTrack="false"
+                                            android:scrollbars="none"
+                                            android:visibility="visible" >
+
+                                            <LinearLayout
+                                                android:id="@+id/linearLayoutBubbleListViewTag"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:orientation="horizontal" >
+                                            </LinearLayout>
+                                        </HorizontalScrollView>
+
                                     </LinearLayout>
                                 </LinearLayout>
                             </TableRow>

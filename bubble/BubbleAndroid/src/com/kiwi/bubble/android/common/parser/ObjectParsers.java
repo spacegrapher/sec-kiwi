@@ -64,13 +64,13 @@ public class ObjectParsers {
 			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>(?:.|\\s)*", content));
 			Long authorId = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</author>(?:.|\\s)*", content));
 			Long date = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</date>(?:.|\\s)*", content));
-			String title = ObjectParsers.regex(".*>([^>]*)</title>(?:.|\\s)*", content);
+			//String title = ObjectParsers.regex(".*>([^>]*)</title>(?:.|\\s)*", content);
 			String text = ObjectParsers.regex(".*>((?:.|\\s)*)</text>(?:.|\\s)*", content);
 			
 			List<Long> tags = parseBubbleTagId(content);
 			//Log.i("PARSER", "author: " + authorId + ", date: " + date + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
 			
-			BubbleData bd = new BubbleData(authorId, title, text);
+			BubbleData bd = new BubbleData(authorId, text);
 			bd.setId(id);
 			Date dateData = new Date(date);
 			

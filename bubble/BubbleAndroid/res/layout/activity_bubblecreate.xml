@@ -3,109 +3,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ECF9C6"
-    android:orientation="vertical"
-    android:padding="5dp" >
+    android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/gradient_background"
-        android:visibility="gone" >
-
-        <Button
-            android:id="@+id/buttonBubbleCreateBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onClickButtonCreateBack"
-            android:text="Back" />
-
-
-
-
-
-
-
-
-
-
-        <TextView
-            android:id="@+id/textViewBubbleCreateDummy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Create Bubble" />
-
-
-
-
-
-
-        <Button
-            android:id="@+id/buttonBubbleCreatePost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onClickButtonCreatePost"
-            android:text="Post" />
-
-    </LinearLayout>
-
     <TextView
         android:id="@+id/textViewBubbleCreateTag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
-
-    <EditText
-        android:id="@+id/editTextBubbleCreateTitle"
+        android:drawableLeft="@drawable/icon_tag"
+        android:gravity="center_vertical"
+        android:lineSpacingMultiplier="1.2"
+        android:padding="5dp"
+        android:paddingBottom="10dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="제목 입력" >
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:visibility="gone" >
+
+        <EditText
+            android:id="@+id/editTextBubbleCreateTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="제목 입력" />
 
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/editTextBubbleCreateText"
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:ems="10"
-        android:hint="내용 입력"
-        android:inputType="textMultiLine" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
+
+        <EditText
+            android:id="@+id/editTextBubbleCreateText"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="무슨 생각을 하고 계신가요?"
+            android:imeOptions="actionDone"
+            android:inputType="textMultiLine|textNoSuggestions" >
 
+            <requestFocus />
+        </EditText>
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+    <ImageView
+        android:id="@+id/imageViewBubbleResultPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/buttonBubbleTakePhoto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="사진 첨부" />
-
-        <ImageView
-            android:id="@+id/imageViewBubbleResultPhoto"
-            android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:src="@android:drawable/editbox_dropdown_light_frame" />
+        android:background="#FFFFFF"
+        android:onClick="onClickPhoto"
+        android:scaleType="center"
+        android:src="@drawable/icon_camera" />
 
-    </LinearLayout>
 </LinearLayout>
 
     </LinearLayout>

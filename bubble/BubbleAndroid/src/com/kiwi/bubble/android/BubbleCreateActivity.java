@@ -11,25 +11,30 @@ import java.util.Map;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.Spannable;
+import android.text.style.BackgroundColorSpan;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -37,17 +42,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 
-public class BubbleCreateActivity extends SherlockActivity implements OnClickListener {
+public class BubbleCreateActivity extends SherlockActivity {
 	private EditText editTextTitle;
 	private EditText editTextText;
-	private EditText editTextTag;
-	private Button buttonPost;
 	private long id;
-	//private String strEmail;
 	private List<String> strTagList;
 	private TextView tvTag;
 	
-	private Button buttonCamera;
 	private ImageView imageviewPhoto;
 	private Bitmap bmpPhoto;
 	private static final int PICK_FROM_CAMERA = 0;
@@ -64,58 +65,28 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		Intent intent = this.getIntent();
 		strTagList = Arrays.asList(intent.getStringArrayExtra("tag"));
 		id = intent.getLongExtra("id", -1);
-		//strEmail = intent.getStringExtra("email");		
-		
 		
 		tvTag = (TextView) findViewById(R.id.textViewBubbleCreateTag);
-		tvTag.setText(strTagList.toString());
+		//tvTag.setText(strTagList.toString());
+		updateSelectedTextView(strTagList);
 		editTextTitle = (EditText) findViewById(R.id.editTextBubbleCreateTitle);
 		editTextText = (EditText) findViewById(R.id.editTextBubbleCreateText);
-		//editTextTag = (EditText) findViewById(R.id.editTextBubbleCreateTag);
-		buttonPost = (Button) findViewById(R.id.buttonBubbleCreatePost);
-		buttonPost.setEnabled(false);
 		imageviewPhoto = (ImageView) findViewById(R.id.imageViewBubbleResultPhoto);
-		buttonCamera = (Button) findViewById(R.id.buttonBubbleTakePhoto);
 		
-		buttonCamera.setOnClickListener(this);
 		
-	
-		editTextTitle.addTextChangedListener(new TextWatcher() {
-	        @Override
-	        public void onTextChanged(CharSequence s, int start, int before, int count)
-	        {
-	            checkEnablePostButton();
-	        }
-	        @Override
-	        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-	        {
-	        }
-
-	        @Override
-	        public void afterTextChanged(Editable s)
-	        {               
-	        }
-		}
-	    );
-		
-		editTextText.addTextChangedListener(new TextWatcher() {
-	        @Override
-	        public void onTextChanged(CharSequence s, int start, int before, int count)
-	        {
-	            checkEnablePostButton();
-	        }
-	        @Override
-	        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-	        {
-	        }
-
-	        @Override
-	        public void afterTextChanged(Editable s)
-	        {               
-	        }
-		}
-	    );
-		
+		editTextText.setOnEditorActionListener(new OnEditorActionListener() {
+		    @Override
+		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		        boolean handled = false;
+		        if (actionId == EditorInfo.IME_ACTION_DONE) {
+		            // Hide the keyboard
+		        	InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+					handled = true;
+		        }
+		        return handled;
+		    }
+		});
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
@@ -142,18 +113,33 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		finish();
 	}
 	
-	public void checkEnablePostButton() {
-		boolean isTitleEmpty = editTextTitle.getText().toString().isEmpty();
-		boolean isTextEmpty = editTextText.getText().toString().isEmpty();
-		
-		if(!isTitleEmpty && !isTextEmpty) {
-			buttonPost.setEnabled(true);
-		} else {
-			buttonPost.setEnabled(false);
+	public void onClickButtonCreatePost(View v) {
+		if (!editTextText.getText().toString().isEmpty()) {
+			new BackgroundTask().execute();
 		}
 	}
-	public void onClickButtonCreatePost(View v) {
-		new BackgroundTask().execute();
+	
+	private void updateSelectedTextView(List<String> selectedTagList) {
+		String text = new String();
+		
+		int[] start = new int[selectedTagList.size()];
+		int[] end = new int[selectedTagList.size()];
+		start[0] = 0;
+		for(int i=0; i<selectedTagList.size(); i++) {
+			if (i > 0) {
+				text += " ";
+				start[i] = end[i-1] + 1;
+			}
+			text += selectedTagList.get(i);
+			end[i] = start[i] + selectedTagList.get(i).length();
+		}		
+		
+		tvTag.setText(text, TextView.BufferType.SPANNABLE);
+		Spannable sText = (Spannable)tvTag.getText();
+		
+		for(int i=0; i<selectedTagList.size(); i++) {
+			sText.setSpan(new BackgroundColorSpan(Color.YELLOW), start[i], end[i], 0);
+		}
 	}
 	
 	private void doTakePhotoAction()
@@ -193,6 +179,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 				{
 					bmpPhoto = extras.getParcelable("data");
 					imageviewPhoto.setImageBitmap(bmpPhoto);
+					imageviewPhoto.setScaleType(ScaleType.CENTER_CROP);
 				}
 	
 				File f = new File(mImageCaptureUri.getPath());
@@ -214,8 +201,8 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 				Intent intent = new Intent("com.android.camera.action.CROP");
 				intent.setDataAndType(mImageCaptureUri, "image/*");
 	
-				intent.putExtra("outputX", 500);
-				intent.putExtra("outputY", 500);
+				intent.putExtra("outputX", 400);
+				intent.putExtra("outputY", 400);
 				intent.putExtra("aspectX", 1);
 				intent.putExtra("aspectY", 1);
 				intent.putExtra("scale", true);
@@ -227,10 +214,7 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		}
 	}
 
-	@Override
-	public void onClick(View v)
-	{
-		if(v.getId() == R.id.buttonBubbleTakePhoto){
+	public void onClickPhoto(View v) {
 		DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
 		{
 			@Override
@@ -259,31 +243,40 @@ public class BubbleCreateActivity extends SherlockActivity implements OnClickLis
 		};
 		
 		new AlertDialog.Builder(this)
-			.setTitle("Select Image")
-			.setPositiveButton("Camera", cameraListener)
-			.setNeutralButton("Gallery", albumListener)
-			.setNegativeButton("Cancel", cancelListener)
+			.setTitle("사진 선택")
+			.setPositiveButton("카메라", cameraListener)
+			.setNeutralButton("갤러리", albumListener)
+			.setNegativeButton("취소", cancelListener)
 			.show();
-		}		
 	}
 	
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
 		private ProgressDialog progressDialog;
-
+		
+		private String convertTagListToString(List<String> tagList) {
+			String ret = new String();
+			
+			for(int i=0; i<tagList.size(); i++) {
+				if(i>0)
+					ret += ",";
+				ret += tagList.get(i);
+			}
+			
+			return ret;
+		}
+		
 		@Override
 		protected Long doInBackground(String... arg0) {
 			String pageUrl = Constant.SERVER_DOMAIN_URL + "/create";
 			
-			String strTitle = editTextTitle.getText().toString();
 			String strText = editTextText.getText().toString();
-			String strTag = strTagList.toString().substring(1, strTagList.toString().length()-1);
+			String strTag = convertTagListToString(strTagList);
 			
 			HttpPostUtil util = new HttpPostUtil();
 			
 			String bubbleId = new String();
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("id", String.valueOf(id));
-			param.put("title", strTitle);
 			param.put("text", strText);
 			param.put("tag", strTag);
 			

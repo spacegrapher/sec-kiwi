@@ -18,18 +18,15 @@
             android:layout_weight="0"
             android:paddingRight="10dp"
             android:src="@drawable/icon_plus" />
-
+
         <TextView
             android:id="@+id/textViewTagName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:text="TextView" />
-
-        <CheckBox
-            android:id="@+id/checkBoxTagSelected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

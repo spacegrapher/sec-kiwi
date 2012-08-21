@@ -11,7 +11,7 @@ public class BubbleDataXMLConverter {
 		content += addTag("id", data.getId().toString());
 		content += addTag("author", data.getAuthorId().toString());
 		content += addTag("date", String.valueOf(data.getPostTime().getTime()));
-		content += addTag("title", data.getTitle());
+		//content += addTag("title", data.getTitle());
 		content += addTag("text", data.getText());
 		content += BubbleTagXMLConverter.convertTagIdListToXml(data.getTag());
 		

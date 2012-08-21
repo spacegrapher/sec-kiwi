@@ -16,9 +16,6 @@ public class BubbleData extends ModelBase {
 	private Long authorId;
 	
 	@Persistent
-	private String title;
-	
-	@Persistent
 	private String text;
 	
 	@Persistent
@@ -30,10 +27,9 @@ public class BubbleData extends ModelBase {
 	@Persistent
 	private List<Long> tag;
 
-	public BubbleData(Long id, String title, String text) {
+	public BubbleData(Long id, String text) {
 		super();
 		this.authorId = id;
-		this.title = title;
 		this.text = text;
 	}
 
@@ -43,14 +39,6 @@ public class BubbleData extends ModelBase {
 
 	public void setAuthorId(Long id) {
 		this.authorId = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getText() {

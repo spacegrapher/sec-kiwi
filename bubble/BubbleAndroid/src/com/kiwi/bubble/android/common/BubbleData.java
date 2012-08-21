@@ -14,8 +14,6 @@ public class BubbleData extends ModelBase {
 	private Long authorId;
 	private UserInfo authorInfo;
 	
-	private String title;
-	
 	private String text;
 	
 	private Bitmap photo;
@@ -29,10 +27,9 @@ public class BubbleData extends ModelBase {
 	
 	private List<BubbleComment> comments;
 
-	public BubbleData(Long id, String title, String text) {
+	public BubbleData(Long id, String text) {
 		super();
 		this.authorId = id;
-		this.title = title;
 		this.text = text;
 		this.photo = null;
 	}
@@ -51,14 +48,6 @@ public class BubbleData extends ModelBase {
 
 	public void setAuthorInfo(UserInfo authorInfo) {
 		this.authorInfo = authorInfo;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getText() {
