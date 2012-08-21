@@ -289,6 +289,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			adapter = new BubbleListAdapter(bubbles);
 			lvBubbleList.setAdapter(adapter);
 			adapter.notifyDataSetChanged();
+			new BackgroundPhotoTask().execute();
 		}
 
 		@Override
@@ -318,7 +319,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 				UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId());
 								
 				// Get User Image
-				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+				/*String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
 				DefaultHttpClient userImageClient = new DefaultHttpClient();
 				String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
 				//Log.i("USER", "userImageRes: " + userImageRes);
@@ -327,7 +328,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
 									
 					userInfo.setImage(bmp);
-				}
+				}*/
 				bubble.setAuthorInfo(userInfo);
 				
 				// Get Tag
@@ -343,6 +344,69 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 				// Get Comments
 				List<BubbleComment> comments = BubbleComment.getCommentData(bubble.getId().longValue());
 				bubble.setComments(comments);
+				
+				// Get Photo
+				/*String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";
+				DefaultHttpClient photoClient = new DefaultHttpClient();
+				String photoRes = HttpGetUtil.doGetWithResponse(photoUrl + "?bubbleid=" + bubble.getId(), photoClient);
+				if(!photoRes.equals("")) {
+					byte[] photoByte = Base64.decode(photoRes, Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+									
+					bubble.setPhoto(bmp);
+				}*/
+				
+				bubbles.set(i, bubble);
+			}
+		}
+	}
+	
+	private class BackgroundPhotoTask extends AsyncTask<String, Integer, Long> {
+		@Override
+		protected Long doInBackground(String... arg0) {
+			this.loadPhoto();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			//progressBar.setVisibility(View.INVISIBLE);
+			//adapter = new BubbleListAdapter(bubbles);
+			//lvBubbleList.setAdapter(adapter);
+			adapter.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			//progressBar.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
+		
+		private void loadPhoto() {
+			for(int i=0; i<bubbles.size(); i++) {
+				BubbleData bubble = bubbles.get(i);
+				
+				UserInfo userInfo = bubble.getAuthorInfo();
+				// Get User Image
+				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+				DefaultHttpClient userImageClient = new DefaultHttpClient();
+				String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
+				//Log.i("USER", "userImageRes: " + userImageRes);
+				if(!userImageRes.equals("")) {
+					byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+									
+					userInfo.setImage(bmp);
+				}
+				bubble.setAuthorInfo(userInfo);
 				
 				// Get Photo
 				String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";

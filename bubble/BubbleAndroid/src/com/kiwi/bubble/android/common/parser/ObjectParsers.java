@@ -13,14 +13,18 @@ import com.kiwi.bubble.android.common.UserInfo;
 
 public class ObjectParsers {
 	public static UserInfo parseUserInfo(String response) {
-		//List<UserInfo> data = new ArrayList<UserInfo>();
 		String content = ObjectParsers.regex("<user>(.*)</user>", response);
 		
-		String email = ObjectParsers.regex(".*>([^>]*)</email>.*", content);
-		String name = ObjectParsers.regex(".*>([^>]*)</name>.*", content);
+		String email = null;
+		String name = null;
+		Pattern pattern = Pattern.compile("<email>([^>]*)</email><name>([^>]*)</name>");
+		Matcher matcher = pattern.matcher(content);
+		if(matcher.matches()) {
+			email = matcher.group(1);
+			name = matcher.group(2);
+		}
 		
 		UserInfo user = new UserInfo(email, name);
-		//data.add(user);
 		
 		return user;
 	}
@@ -36,10 +40,19 @@ public class ObjectParsers {
 				continue;
 			}
 			
-			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>.*", content));
-			Long authorId = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</author>.*", content));
-			Long date = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</date>.*", content));
-			String text = ObjectParsers.regex(".*>([^>]*)</text>.*", content);
+			Long id = null;
+			Long authorId = null;
+			Long date = null;
+			String text = null;
+			
+			Pattern pattern = Pattern.compile("<id>([^>]*)</id><author>([^>]*)</author><date>([^>]*)</date><text>((?:.|\\s)*)</text>.*", Pattern.MULTILINE);
+			Matcher matcher = pattern.matcher(content);
+			if(matcher.matches()) {
+				id = Long.valueOf(matcher.group(1));
+				authorId = Long.valueOf(matcher.group(2));
+				date = Long.valueOf(matcher.group(3));
+				text = matcher.group(4);
+			}
 						
 			Date dateData = new Date(date);
 			
@@ -55,21 +68,26 @@ public class ObjectParsers {
 		String insideContents = ObjectParsers.regex("<bubbles>((?:.|\\s)*)</bubbles>", response);
 		
 		String[] contents = insideContents.split("<bubble>");
-		//Log.i("PARSER", "insideContents: " + insideContents + ", contents: " + contents.toString());
 		for (String content : contents) {
 			if (content.equals("")) {
 				continue;
 			}
-			//Log.i("PARSER", "content: " + content);
-			Long id = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</id>(?:.|\\s)*", content));
-			Long authorId = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</author>(?:.|\\s)*", content));
-			Long date = Long.valueOf(ObjectParsers.regex(".*>([^>]*)</date>(?:.|\\s)*", content));
-			//String title = ObjectParsers.regex(".*>([^>]*)</title>(?:.|\\s)*", content);
-			String text = ObjectParsers.regex(".*>((?:.|\\s)*)</text>(?:.|\\s)*", content);
+			
+			Long id = null;
+			Long authorId = null;
+			Long date = null;
+			String text = null;
+			Pattern pattern = Pattern.compile("<id>([^>]*)</id><author>([^>]*)</author><date>([^>]*)</date><text>((?:.|\\s)*)</text>.*", Pattern.MULTILINE);
+			Matcher matcher = pattern.matcher(content);
+			if(matcher.matches()) {
+				id = Long.valueOf(matcher.group(1));
+				authorId = Long.valueOf(matcher.group(2));
+				date = Long.valueOf(matcher.group(3));
+				text = matcher.group(4);
+			}
 			
 			List<Long> tags = parseBubbleTagId(content);
-			//Log.i("PARSER", "author: " + authorId + ", date: " + date + ", title: " + title + ", text: " + text + ", tag: " + tags.toString());
-			
+						
 			BubbleData bd = new BubbleData(authorId, text);
 			bd.setId(id);
 			Date dateData = new Date(date);
@@ -86,7 +104,6 @@ public class ObjectParsers {
 		String insideContents = ObjectParsers.regex("(?:.|\\s)*<tags>(.*)</tags>.*", response);
 		
 		String[] tagContents = insideContents.split("<tag>");
-		//Log.i("PARSER", "response: " + response + ", insideContents: " + insideContents + ", tagContents: " + tagContents.toString());
 		for (String tagContent : tagContents) {
 			if (tagContent.equals("")) {
 				continue;
@@ -104,7 +121,6 @@ public class ObjectParsers {
 		String insideContents = ObjectParsers.regex("<tags>(.*)</tags>", response);
 		
 		String[] tagContents = insideContents.split("<tag>");
-		//Log.i("PARSER", "response: " + response + ", insideContents: " + insideContents + ", tagContents: " + tagContents.toString());
 		for (String tagContent : tagContents) {
 			if (tagContent.equals("")) {
 				continue;
