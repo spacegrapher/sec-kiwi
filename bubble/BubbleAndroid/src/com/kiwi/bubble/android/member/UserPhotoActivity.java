@@ -144,8 +144,8 @@ public class UserPhotoActivity extends SherlockActivity {
 				Intent intent = new Intent("com.android.camera.action.CROP");
 				intent.setDataAndType(mImageCaptureUri, "image/*");
 	
-				intent.putExtra("outputX", 500);
-				intent.putExtra("outputY", 500);
+				intent.putExtra("outputX", 400);
+				intent.putExtra("outputY", 400);
 				intent.putExtra("aspectX", 1);
 				intent.putExtra("aspectY", 1);
 				intent.putExtra("scale", true);
