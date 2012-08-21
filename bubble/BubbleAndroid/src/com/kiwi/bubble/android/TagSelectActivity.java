@@ -152,6 +152,7 @@ public class TagSelectActivity extends SherlockActivity {
 	    registerReceiver(mKillReceiver, IntentFilter.create(ACTION_KILL_COMMAND, ACTION_KILL_DATATYPE));
 	    
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	    getSupportActionBar().setTitle("태그 선택하기");
 	    
 	    new BackgroundTask().execute();
 	}
@@ -165,6 +166,7 @@ public class TagSelectActivity extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Create")
+		.setIcon(R.drawable.icon_new_tag)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
 		return true;
@@ -182,7 +184,11 @@ public class TagSelectActivity extends SherlockActivity {
 			intent.putExtra("tag", tagArray);
 			intent.putExtra("id", id);
 			startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
-		} 
+		} else if (item.getItemId() == android.R.id.home) {
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_CANCELED, intent);
+			finish();
+		}
 		return true;
 	}
 	

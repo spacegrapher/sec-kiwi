@@ -78,7 +78,6 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		progressBar = (ProgressBar) findViewById(R.id.progressBarUserProfile);
 		ivUserProfile = (ImageView) findViewById(R.id.imageViewUserProfile);
 		
-		Log.i("ME", "id: " + id + ", selectedId: " + selectedId);
 		if(id.equals(selectedId)) {
 			btnSetting.setVisibility(View.VISIBLE);
 		} else {

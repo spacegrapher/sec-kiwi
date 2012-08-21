@@ -88,6 +88,7 @@ public class BubbleCreateActivity extends SherlockActivity {
 		    }
 		});
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle("버블 생성하기");
 	}
 	
 	@Override
@@ -103,7 +104,9 @@ public class BubbleCreateActivity extends SherlockActivity {
 		Log.i("MENU", "item: " + item.toString() + ", id: " + item.getGroupId() + ", order: " + item.getOrder());
 		if (item.toString().equals("Post")) {
 			onClickButtonCreatePost(null);
-		} 
+		} else if (item.getItemId() == android.R.id.home) {
+			onClickButtonCreateBack(null);
+		}
 		return true;
 	}
 
@@ -120,6 +123,9 @@ public class BubbleCreateActivity extends SherlockActivity {
 	}
 	
 	private void updateSelectedTextView(List<String> selectedTagList) {
+		if (selectedTagList.size() <= 0)
+			return;
+		
 		String text = new String();
 		
 		int[] start = new int[selectedTagList.size()];

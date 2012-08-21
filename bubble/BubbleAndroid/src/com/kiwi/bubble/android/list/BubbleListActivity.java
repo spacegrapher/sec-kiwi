@@ -90,9 +90,11 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Refresh")
+		.setIcon(R.drawable.icon_refresh)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
 		menu.add("Tag")
+		.setIcon(R.drawable.icon_tag)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
 		return true;
