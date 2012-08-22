@@ -68,4 +68,48 @@ public class BubbleDataJDOWrapper {
 		
 		return ret;
 	}
+	
+	public static List<BubbleData> getBubbleByTag(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Query query = pm.newQuery(BubbleData.class);
+		query.setFilter("tag.contains(tagId)");
+		query.declareParameters("Long tagId");
+		query.setOrdering("postTime desc");
+		
+		List<BubbleData> ret = null;
+		
+		try {
+			ret = (List<BubbleData>) query.execute(id);
+		} finally {
+			query.closeAll();
+		}
+		
+		return ret;
+	}
+	
+	public static List<BubbleData> getBubbleByTags(List<Long> id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Query query = pm.newQuery(BubbleData.class);
+		String filter = new String();
+		for(int i=0; i<id.size(); i++) {
+			if (i>0) filter += " && ";
+			filter += "tag.contains(tagId.get(" + i + ")";
+		}
+		query.setFilter("tag.contains(tagId)");
+		query.declareImports("import java.util.List");
+		query.declareParameters("List tagId");
+		query.setOrdering("postTime desc");
+		query.setRange(0, id.size());
+		List<BubbleData> ret = null;
+		
+		try {
+			ret = (List<BubbleData>) query.execute(id);
+		} finally {
+			query.closeAll();
+		}
+		
+		return ret;
+	}
 }

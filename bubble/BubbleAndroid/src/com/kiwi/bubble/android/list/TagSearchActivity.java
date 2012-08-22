@@ -1,17 +1,21 @@
-package com.kiwi.bubble.android.member;
+package com.kiwi.bubble.android.list;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Spannable;
+import android.text.style.BackgroundColorSpan;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
@@ -21,12 +25,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -42,72 +46,45 @@ import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
-import com.kiwi.bubble.android.list.BubbleDetailActivity;
-import com.kiwi.bubble.android.list.BubbleListActivity;
-import com.kiwi.bubble.android.ExploreActivity;
+import com.kiwi.bubble.android.member.UserPhotoActivity;
+import com.kiwi.bubble.android.member.UserProfileActivity;
 
-
-public class UserProfileActivity extends SherlockActivity implements ActionBar.TabListener {
+public class TagSearchActivity extends SherlockActivity {
 	private static final int REQUEST_CODE_CREATE = 101;
 	private Long id;
-	private Long selectedId;
-	private TextView tvName;
-	private TextView tvEmail;
-	private Button btnSetting;
+	private String strInputTag;
 	private ListView lvBubbleList;
-	private LinearLayout llBody;
-	private ProgressBar progressBar;
-	private UserBubbleListAdapter adapter;
-	private UserInfo userInfo;
+	private BubbleListAdapter adapter;
 	private List<BubbleData> bubbles;
-	private String[] tabLabel = {"Bubble", "Explore", "Me"};
-	private boolean bEnableTabListener;
-	private ImageView ivUserProfile;
-	
+	private ProgressBar progressBar;
+	private TextView tvTagSearch;
+	private List<String> strTagList;
+	private boolean isMultipleTag = false;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {		
+	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_userprofile);
+		setContentView(R.layout.activity_tagsearch);
 		
 		Intent intent = this.getIntent();
 		id = Long.valueOf(intent.getLongExtra("id", -1));
-		selectedId = Long.valueOf(intent.getLongExtra("selectedid", -1));
-	 
-		tvName = (TextView) findViewById(R.id.textViewUserProfileName);
-		tvEmail = (TextView) findViewById(R.id.textViewUserProfileEmail);
-		btnSetting = (Button) findViewById(R.id.buttonUserProfileSetting);
-		lvBubbleList = (ListView) findViewById(R.id.listViewUserBubbleList);
-		llBody = (LinearLayout) findViewById(R.id.linearLayoutUserProfileBody);
-		progressBar = (ProgressBar) findViewById(R.id.progressBarUserProfile);
-		ivUserProfile = (ImageView) findViewById(R.id.imageViewUserProfile);
-		
-		if(id.equals(selectedId)) {
-			btnSetting.setVisibility(View.VISIBLE);
+		strInputTag = intent.getStringExtra("tag");
+		if (strInputTag == null) {
+			strTagList = Arrays.asList(intent.getStringArrayExtra("tags"));
+			isMultipleTag = true;
 		} else {
-			btnSetting.setVisibility(View.INVISIBLE);
+			strTagList = new ArrayList<String>();
+			strTagList.add(strInputTag);
 		}
 		
-		bEnableTabListener = false;
-		if(id.equals(selectedId)) {
-			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			for (int i = 0; i < 3; i++) {
-	            ActionBar.Tab tab = getSupportActionBar().newTab();
-	            tab.setText(tabLabel[i]);
-	            tab.setTabListener(this);
-	            getSupportActionBar().addTab(tab);
-	        }
-			getSupportActionBar().setSelectedNavigationItem(2);
-			bEnableTabListener = true;
-		} else {
-			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		}
-		
+		progressBar = (ProgressBar) findViewById(R.id.progressBarTagSearchList);
+		tvTagSearch = (TextView) findViewById(R.id.textViewTagSearch);
+		lvBubbleList = (ListView) findViewById(R.id.listViewTagSearchList);
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
-				Intent intent = new Intent(UserProfileActivity.this, BubbleDetailActivity.class);
+				Intent intent = new Intent(TagSearchActivity.this, BubbleDetailActivity.class);
 				intent.putExtra("bubbleid", bubbles.get(position).getId());
 				intent.putExtra("authorid", id.longValue());
 				startActivity(intent);
@@ -115,57 +92,31 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			
 		});
 		
-		ivUserProfile.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(UserProfileActivity.this, UserPhotoActivity.class);
-				intent.putExtra("id", id.longValue());
-				intent.putExtra("editable", true);
-				startActivity(intent);
-			}
-		});
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		new BackgroundTask().execute();
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if(id.equals(selectedId)) {
-			menu.add("Refresh")
-			.setIcon(R.drawable.icon_refresh)
-	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-			
-			menu.add("Tag")
-			.setIcon(R.drawable.icon_tag)
-	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		}
-		
 		return true;
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(id.equals(selectedId)) {
-			Log.i("MENU", "item: " + item.toString() + ", id: " + item.getGroupId() + ", order: " + item.getOrder());
-			if (item.toString().equals("Refresh")) {
-				new BackgroundTask().execute();
-			} else if (item.toString().equals("Tag")) {
-				Intent intent = new Intent(this, TagSelectActivity.class);
-				intent.putExtra("id", id.longValue());
-				startActivityForResult(intent, REQUEST_CODE_CREATE);
-			}
+		if (item.getItemId() == android.R.id.home) {
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_CANCELED, intent);
+			finish();
 		}
+		
 		return true;
 	}
-	
-	public void onClickButtonBack(View v) {
-		finish();
-	}
-	
-	class UserBubbleListAdapter extends BaseAdapter {
+
+	class BubbleListAdapter extends BaseAdapter {
 		private List<BubbleData> bubbleData;
 		
-		public UserBubbleListAdapter(List<BubbleData> bubbleData) {
+		public BubbleListAdapter(List<BubbleData> bubbleData) {
 			super();
 			this.bubbleData = bubbleData;
 		}
@@ -200,7 +151,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			final long lSelectedId;
 			
 			if(convertView == null) {
-				LayoutInflater inflater = LayoutInflater.from(UserProfileActivity.this);
+				LayoutInflater inflater = LayoutInflater.from(TagSearchActivity.this);
 				convertView = inflater.inflate(R.layout.listview_bubblelist, parent, false);
 			}
 			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListViewName);
@@ -217,7 +168,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			tvName.setText("" + currentBubble.getAuthorInfo().getName());
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
-			tvTagCount.setText("Tag: " + currentBubble.getTag().size() + ", Comments: " + currentBubble.getComments().size());
+			tvTagCount.setText("태그: " + currentBubble.getTag().size() + ", 댓글: " + currentBubble.getComments().size());
 			
 			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
 			if(userImage != null) {
@@ -234,7 +185,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			for(int i=0; i<currentBubble.getTag().size(); i++) {
 				BubbleTag tag = currentBubble.getRealTag().get(i);
 				
-				TextView tagText = new TextView(UserProfileActivity.this);
+				TextView tagText = new TextView(TagSearchActivity.this);
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 				params.setMargins(0, 0, 10, 0);
 				tagText.setLayoutParams(params);
@@ -244,122 +195,118 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				llTag.addView(tagText);
 			}
 			
+			tvName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(TagSearchActivity.this, UserProfileActivity.class);
+					intent.putExtra("id", id.longValue());
+					intent.putExtra("selectedid", currentBubble.getAuthorId().longValue());
+					startActivity(intent);
+					if(id.longValue() == currentBubble.getAuthorId().longValue())
+						overridePendingTransition(0, 0);
+				}
+				
+			});
+			
+			ivBubbleUserImage.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(TagSearchActivity.this, UserPhotoActivity.class);
+					intent.putExtra("id", currentBubble.getAuthorId().longValue());
+					intent.putExtra("editable", false);
+					startActivity(intent);
+				}
+			});
+			
 			return convertView;
 		}		
 	}
 
-	@Override
-	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		if (bEnableTabListener) {
-			Log.i("USER", "tab : " + tab.getPosition() + " selected");
-			switch (tab.getPosition()) {
-			case 0:
-			{
-				Intent intent = new Intent(UserProfileActivity.this, BubbleListActivity.class);
-				intent.putExtra("id", id.longValue());
-				intent.putExtra("selectedid", id.longValue());
-				startActivity(intent);
-				overridePendingTransition(0, 0);
-			}
-				break;
-			case 1:
-			{
-				Intent intent = new Intent(UserProfileActivity.this, ExploreActivity.class);
-				intent.putExtra("id", id.longValue());
-				startActivity(intent);
-				overridePendingTransition(0, 0);
-			}
-				break;
-			case 2:
-				break;
-			}
-		}
-	}
-
-	@Override
-	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		if (bEnableTabListener) {
-			
-		}		
-	}
-
-	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		if (bEnableTabListener) {
-			
-		}		
-	}
-	
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
 		@Override
 		protected Long doInBackground(String... arg0) {
-			getUserInfo();
-			updateListView();
+			this.updateListView();
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
-			tvName.setText(userInfo.getName());
-			tvEmail.setText(userInfo.getEmail());
-			
-			final Bitmap userImage = userInfo.getImage();
-			if(userImage != null) {
-				ivUserProfile.setImageBitmap(userImage);
-			}
-			
-			adapter = new UserBubbleListAdapter(bubbles);
+			progressBar.setVisibility(View.INVISIBLE);
+			adapter = new BubbleListAdapter(bubbles);
 			lvBubbleList.setAdapter(adapter);
 			adapter.notifyDataSetChanged();
+			setTagListText(strTagList);
 			
-			progressBar.setVisibility(View.INVISIBLE);
-			llBody.setVisibility(View.VISIBLE);
+			new BackgroundPhotoTask().execute();
 		}
 
 		@Override
 		protected void onPreExecute() {
+			// TODO Auto-generated method stub
 			super.onPreExecute();
 			progressBar.setVisibility(View.VISIBLE);
-			llBody.setVisibility(View.INVISIBLE);
+		}
+		
+		private void setTagListText(List<String> selectedTagList) {
+			if (selectedTagList.size() <= 0)
+				return;
+			
+			String text = "태그 검색: ";
+			
+			int[] start = new int[selectedTagList.size()];
+			int[] end = new int[selectedTagList.size()];
+			start[0] = text.length();
+			for(int i=0; i<selectedTagList.size(); i++) {
+				if (i > 0) {
+					text += " ";
+					start[i] = end[i-1] + 1;
+				}
+				text += selectedTagList.get(i);
+				end[i] = start[i] + selectedTagList.get(i).length();
+			}		
+			
+			tvTagSearch.setText(text, TextView.BufferType.SPANNABLE);
+			Spannable sText = (Spannable)tvTagSearch.getText();
+			
+			for(int i=0; i<selectedTagList.size(); i++) {
+				sText.setSpan(new BackgroundColorSpan(Color.YELLOW), start[i], end[i], 0);
+			}
 		}
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
 			super.onProgressUpdate(values);
 		}
 		
-		private void getUserInfo() {
-			userInfo = UserInfo.getUserInfo(selectedId.longValue());
-			
-			// Get User Image
-			String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
-			DefaultHttpClient userImageClient = new DefaultHttpClient();
-			String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + selectedId.longValue(), userImageClient);
-			//Log.i("USER", "userImageRes: " + userImageRes);
-			if(!userImageRes.equals("")) {
-				byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
-				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
-								
-				userInfo.setImage(bmp);
-			}
-		}
-		
 		private void updateListView() {
-			String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/tag/search";
 			DefaultHttpClient client = new DefaultHttpClient();
 			
-			String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + selectedId.toString(), client);
-			bubbles = ObjectParsers.parseBubbleData(response);
+			String strInputTagNoSpace = new String();
+			
+			if (isMultipleTag) {
+				for(int i=0; i<strTagList.size(); i++) {
+					String strTemp = strTagList.get(i).replace(" ", "%20");
+					if (i>0) strInputTagNoSpace += ",";
+					strInputTagNoSpace += strTemp;					
+				}
+			} else {
+				strInputTagNoSpace = strInputTag.replace(" ", "%20");
+			}
+			
+			String response = HttpGetUtil.doGetWithResponse(pageUrl + "?tag=" + strInputTagNoSpace, client);
+			bubbles = ObjectParsers.parseBubbleData(response);			
 			
 			for(int i=0; i<bubbles.size(); i++) {
 				BubbleData bubble = bubbles.get(i);
 				
 				// Get UserInfo
 				UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId());
-				
+								
 				// Get User Image
-				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+				/*String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
 				DefaultHttpClient userImageClient = new DefaultHttpClient();
 				String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
 				//Log.i("USER", "userImageRes: " + userImageRes);
@@ -368,8 +315,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
 									
 					userInfo.setImage(bmp);
-				}
-				
+				}*/
 				bubble.setAuthorInfo(userInfo);
 				
 				// Get Tag
@@ -385,6 +331,69 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				// Get Comments
 				List<BubbleComment> comments = BubbleComment.getCommentData(bubble.getId().longValue());
 				bubble.setComments(comments);
+				
+				// Get Photo
+				/*String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";
+				DefaultHttpClient photoClient = new DefaultHttpClient();
+				String photoRes = HttpGetUtil.doGetWithResponse(photoUrl + "?bubbleid=" + bubble.getId(), photoClient);
+				if(!photoRes.equals("")) {
+					byte[] photoByte = Base64.decode(photoRes, Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+									
+					bubble.setPhoto(bmp);
+				}*/
+				
+				bubbles.set(i, bubble);
+			}
+		}
+	}
+	
+	private class BackgroundPhotoTask extends AsyncTask<String, Integer, Long> {
+		@Override
+		protected Long doInBackground(String... arg0) {
+			this.loadPhoto();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			//progressBar.setVisibility(View.INVISIBLE);
+			//adapter = new BubbleListAdapter(bubbles);
+			//lvBubbleList.setAdapter(adapter);
+			adapter.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			//progressBar.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
+		
+		private void loadPhoto() {
+			for(int i=0; i<bubbles.size(); i++) {
+				BubbleData bubble = bubbles.get(i);
+				
+				UserInfo userInfo = bubble.getAuthorInfo();
+				// Get User Image
+				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+				DefaultHttpClient userImageClient = new DefaultHttpClient();
+				String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
+				//Log.i("USER", "userImageRes: " + userImageRes);
+				if(!userImageRes.equals("")) {
+					byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+									
+					userInfo.setImage(bmp);
+				}
+				bubble.setAuthorInfo(userInfo);
 				
 				// Get Photo
 				String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";

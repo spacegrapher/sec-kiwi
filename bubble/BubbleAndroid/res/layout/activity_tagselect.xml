@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ECF9C6"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/textViewSelectedTag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:background="#ECF9C6"
         android:drawableLeft="@drawable/icon_tag"
         android:focusable="true"
         android:focusableInTouchMode="true"

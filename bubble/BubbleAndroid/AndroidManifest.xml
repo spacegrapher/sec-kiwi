@@ -30,8 +30,10 @@
         <activity android:name=".member.UserPhotoActivity" />
         <activity android:name=".list.BubbleListActivity" />
         <activity android:name=".list.BubbleDetailActivity" />
+        <activity android:name=".list.TagSearchActivity" />
         <activity android:name=".BubbleCreateActivity" />
         <activity android:name=".TagSelectActivity" />
+        <activity android:name=".ExploreActivity" />
     <uses-library android:name="com.google.android.maps" android:required="true"/>
         <activity android:name="BubbleMap"></activity>
     </application>

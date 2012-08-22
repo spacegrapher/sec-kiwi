@@ -41,6 +41,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kiwi.bubble.android.common.BubbleTag;
+import com.kiwi.bubble.android.list.TagSearchActivity;
 
 public class TagSelectActivity extends SherlockActivity {
 	private static final int REQUEST_BUBBLE_CREATE = 101;
@@ -48,6 +49,7 @@ public class TagSelectActivity extends SherlockActivity {
 	public static final String ACTION_KILL_DATATYPE = "content://ACTION_KILL_DATATYPE";
 	
 	private long id;
+	private boolean isSearch;
 	private EditText etAddTag;
 	private ArrayList<String> tagList;
 	private List<BubbleTag> selectedTagList = new ArrayList<BubbleTag>();
@@ -77,8 +79,13 @@ public class TagSelectActivity extends SherlockActivity {
 		
 		Intent intent = this.getIntent();
 		id = intent.getLongExtra("id", -1);
+		isSearch = intent.getBooleanExtra("search", false);
 		
 		etAddTag = (EditText) findViewById(R.id.editTextAddTag);
+		if (isSearch) {
+			etAddTag.setFocusableInTouchMode(true);
+			etAddTag.requestFocus();
+		}
 		tvSelectedTag = (TextView) findViewById(R.id.textViewSelectedTag);
 		
 		tagList = new ArrayList<String>();
@@ -86,8 +93,7 @@ public class TagSelectActivity extends SherlockActivity {
 		lvTagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
-				BubbleTag currentTag = null;
-				
+				BubbleTag currentTag = null;				
 				
 				if (etAddTag.getText().toString().isEmpty()) {
 					// EditText is empty
@@ -180,9 +186,9 @@ public class TagSelectActivity extends SherlockActivity {
 			for(int i=0; i<selectedTagList.size(); i++) {
 				tagArray[index++] = selectedTagList.get(i).getText();
 			}
-			Intent intent = new Intent(this, BubbleCreateActivity.class);
-			intent.putExtra("tag", tagArray);
+			Intent intent = new Intent(this, TagSearchActivity.class);
 			intent.putExtra("id", id);
+			intent.putExtra("tags", tagArray);			
 			startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
 		} else if (item.getItemId() == android.R.id.home) {
 			Intent intent = new Intent();

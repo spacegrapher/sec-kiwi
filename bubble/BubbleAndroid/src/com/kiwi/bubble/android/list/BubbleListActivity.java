@@ -33,6 +33,7 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.kiwi.bubble.android.ExploreActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.TagSelectActivity;
 import com.kiwi.bubble.android.common.BubbleComment;
@@ -53,6 +54,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 	private List<BubbleData> bubbles;
 	private String[] tabLabel = {"Bubble", "Explore", "Me"};
 	private ProgressBar progressBar;
+	private boolean bEnableTabListener;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 		Intent intent = this.getIntent();
 		id = Long.valueOf(intent.getLongExtra("id", -1));
 		
+		bEnableTabListener = false;
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		for (int i = 0; i < tabLabel.length; i++) {
             ActionBar.Tab tab = getSupportActionBar().newTab();
@@ -71,6 +74,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
             getSupportActionBar().addTab(tab);
         }
 		getSupportActionBar().setSelectedNavigationItem(0);
+		bEnableTabListener = true;
         
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleList);
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
@@ -205,7 +209,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 				ivBubblePhoto.setVisibility(View.GONE);
 			
 			for(int i=0; i<currentBubble.getTag().size(); i++) {
-				BubbleTag tag = currentBubble.getRealTag().get(i);
+				final BubbleTag tag = currentBubble.getRealTag().get(i);
 				
 				TextView tagText = new TextView(BubbleListActivity.this);
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -214,6 +218,16 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 				tagText.setBackgroundColor(0xFFFFFF00);
 				tagText.setTextSize(TypedValue.COMPLEX_UNIT_PT, 6);
 				tagText.setText(tag.getText());
+				tagText.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(BubbleListActivity.this, TagSearchActivity.class);
+						intent.putExtra("id",  id.longValue());
+						intent.putExtra("tag", tag.getText());
+						startActivity(intent);
+					}
+					
+				});
 				llTag.addView(tagText);
 			}
 			
@@ -246,33 +260,44 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		Log.i("TAB", "position: " + tab.getPosition());
-		switch (tab.getPosition()) {
-		case 0:
-			break;
-		case 1:
-			break;
-		case 2:
-			Intent intent = new Intent(BubbleListActivity.this, UserProfileActivity.class);
-			intent.putExtra("id", id.longValue());
-			intent.putExtra("selectedid", id.longValue());
-			startActivity(intent);
-			overridePendingTransition(0, 0);
-			break;
+		if (bEnableTabListener) {
+			Log.i("TAB", "position: " + tab.getPosition());
+			switch (tab.getPosition()) {
+			case 0:
+				break;
+			case 1:
+			{
+				Intent intent = new Intent(BubbleListActivity.this, ExploreActivity.class);
+				intent.putExtra("id", id.longValue());
+				startActivity(intent);
+				overridePendingTransition(0, 0);
+			}
+				break;
+			case 2:
+			{
+				Intent intent = new Intent(BubbleListActivity.this, UserProfileActivity.class);
+				intent.putExtra("id", id.longValue());
+				intent.putExtra("selectedid", id.longValue());
+				startActivity(intent);
+				overridePendingTransition(0, 0);
+			}
+				break;
+			}
 		}
-		
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
+		if (bEnableTabListener) {
+			
+		}		
 	}
 
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
+		if (bEnableTabListener) {
+			
+		}		
 	}
 	
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {

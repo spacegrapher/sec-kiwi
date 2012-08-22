@@ -82,6 +82,16 @@
   </servlet-mapping>
   
   <servlet>
+  	<servlet-name>TagSearchServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.tag.TagSearchServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>TagSearchServlet</servlet-name>
+  	<url-pattern>/tag/search</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
   	<servlet-name>BubbleDataImageServlet</servlet-name>
   	<servlet-class>com.kiwi.bubble.appengine.server.bubbledata.BubbleDataImageServlet</servlet-class>
   </servlet>
