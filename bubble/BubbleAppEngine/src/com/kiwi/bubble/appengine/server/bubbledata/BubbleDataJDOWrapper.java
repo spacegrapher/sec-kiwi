@@ -95,17 +95,14 @@ public class BubbleDataJDOWrapper {
 		String filter = new String();
 		for(int i=0; i<id.size(); i++) {
 			if (i>0) filter += " && ";
-			filter += "tag.contains(tagId.get(" + i + ")";
+			filter += "tag.contains(" + id.get(i) + ")";
 		}
-		query.setFilter("tag.contains(tagId)");
-		query.declareImports("import java.util.List");
-		query.declareParameters("List tagId");
+		query.setFilter(filter);
 		query.setOrdering("postTime desc");
-		query.setRange(0, id.size());
 		List<BubbleData> ret = null;
 		
 		try {
-			ret = (List<BubbleData>) query.execute(id);
+			ret = (List<BubbleData>) query.execute();
 		} finally {
 			query.closeAll();
 		}
