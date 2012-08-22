@@ -181,15 +181,27 @@ public class TagSelectActivity extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.toString().equals("Create")) {
-			String[] tagArray = new String[selectedTagList.size()];
-			int index = 0;
-			for(int i=0; i<selectedTagList.size(); i++) {
-				tagArray[index++] = selectedTagList.get(i).getText();
+			if (isSearch) {
+				String[] tagArray = new String[selectedTagList.size()];
+				int index = 0;
+				for(int i=0; i<selectedTagList.size(); i++) {
+					tagArray[index++] = selectedTagList.get(i).getText();
+				}
+				Intent intent = new Intent(this, TagSearchActivity.class);
+				intent.putExtra("id", id);
+				intent.putExtra("tags", tagArray);			
+				startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
+			} else {
+				String[] tagArray = new String[selectedTagList.size()];
+				int index = 0;
+				for(int i=0; i<selectedTagList.size(); i++) {
+					tagArray[index++] = selectedTagList.get(i).getText();
+				}
+				Intent intent = new Intent(this, BubbleCreateActivity.class);
+				intent.putExtra("tag", tagArray);
+				intent.putExtra("id", id);
+				startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
 			}
-			Intent intent = new Intent(this, TagSearchActivity.class);
-			intent.putExtra("id", id);
-			intent.putExtra("tags", tagArray);			
-			startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
 		} else if (item.getItemId() == android.R.id.home) {
 			Intent intent = new Intent();
 			setResult(Activity.RESULT_CANCELED, intent);
