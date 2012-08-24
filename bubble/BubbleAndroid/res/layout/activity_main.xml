@@ -3,7 +3,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/bubble_title"
     android:gravity="bottom"
     android:orientation="vertical" >
 
@@ -12,15 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:layout_weight="0.31"
         android:paddingBottom="10dp"
-        android:src="@drawable/bubble_logo" />
-
+        android:src="@drawable/bubble_logo"
+        android:visibility="invisible" />
+
     <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:ems="10"
         android:hint="Email address"
         android:inputType="textEmailAddress"
@@ -28,38 +30,38 @@
 
         <requestFocus />
     </EditText>
-
+
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
         android:text="qqqq" />
-
+
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:onClick="onClickLogin"
         android:text="로그인" />
-
+
     <View
         android:id="@+id/view2"
         android:layout_width="wrap_content"
-        android:layout_height="170dp" />
-
+        android:layout_height="140dp" />
+
     <Button
         android:id="@+id/buttonSignup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:onClick="onClickSignup"
         android:text="회원가입" />
 

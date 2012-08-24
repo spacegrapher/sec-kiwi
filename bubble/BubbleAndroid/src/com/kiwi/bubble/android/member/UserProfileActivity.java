@@ -99,6 +99,8 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 	            getSupportActionBar().addTab(tab);
 	        }
 			getSupportActionBar().setSelectedNavigationItem(2);
+			getSupportActionBar().setDisplayOptions(getSupportActionBar().DISPLAY_USE_LOGO | getSupportActionBar().DISPLAY_SHOW_HOME);
+			getSupportActionBar().setLogo(R.drawable.bubble_logo);
 			bEnableTabListener = true;
 		} else {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -74,6 +74,8 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
             getSupportActionBar().addTab(tab);
         }
 		getSupportActionBar().setSelectedNavigationItem(0);
+		getSupportActionBar().setDisplayOptions(getSupportActionBar().DISPLAY_USE_LOGO | getSupportActionBar().DISPLAY_SHOW_HOME);
+		getSupportActionBar().setLogo(R.drawable.bubble_logo);
 		bEnableTabListener = true;
         
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleList);

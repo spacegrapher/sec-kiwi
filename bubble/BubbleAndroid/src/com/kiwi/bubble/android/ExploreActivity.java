@@ -78,6 +78,8 @@ public class ExploreActivity extends SherlockActivity implements ActionBar.TabLi
             getSupportActionBar().addTab(tab);
         }
 		getSupportActionBar().setSelectedNavigationItem(1);
+		getSupportActionBar().setDisplayOptions(getSupportActionBar().DISPLAY_USE_LOGO | getSupportActionBar().DISPLAY_SHOW_HOME);
+		getSupportActionBar().setLogo(R.drawable.bubble_logo);
 		bEnableTabListener = true;
         
 		progressBar = (ProgressBar) findViewById(R.id.progressBarExplore);
