@@ -77,13 +77,15 @@ public class ObjectParsers {
 			Long authorId = null;
 			Long date = null;
 			String text = null;
-			Pattern pattern = Pattern.compile("<id>([^>]*)</id><author>([^>]*)</author><date>([^>]*)</date><text>((?:.|\\s)*)</text>.*", Pattern.MULTILINE);
+			int commentCount = 0;
+			Pattern pattern = Pattern.compile("<id>([^>]*)</id><author>([^>]*)</author><date>([^>]*)</date><text>((?:.|\\s)*)</text><comment>([^>]*)</comment>.*", Pattern.MULTILINE);
 			Matcher matcher = pattern.matcher(content);
 			if(matcher.matches()) {
 				id = Long.valueOf(matcher.group(1));
 				authorId = Long.valueOf(matcher.group(2));
 				date = Long.valueOf(matcher.group(3));
 				text = matcher.group(4);
+				commentCount = Integer.parseInt(matcher.group(5));
 			}
 			
 			List<Long> tags = parseBubbleTagId(content);
@@ -94,6 +96,7 @@ public class ObjectParsers {
 			
 			bd.setPostTime(dateData);
 			bd.setTag(tags);
+			bd.setCommentCount(commentCount);
 			data.add(bd);
 		}
 		return data;		

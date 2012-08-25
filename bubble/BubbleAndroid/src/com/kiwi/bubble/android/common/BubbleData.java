@@ -26,12 +26,19 @@ public class BubbleData extends ModelBase {
 	private List<BubbleTag> realTag;
 	
 	private List<BubbleComment> comments;
+	private int commentCount;
 
 	public BubbleData(Long id, String text) {
 		super();
 		this.authorId = id;
 		this.text = text;
 		this.photo = null;
+		this.postTime = null;
+		this.geopoint = null;
+		this.tag = null;
+		this.realTag = null;
+		this.comments = null;
+		this.commentCount = 0;
 	}
 
 	public Long getAuthorId() {
@@ -104,6 +111,14 @@ public class BubbleData extends ModelBase {
 
 	public void setComments(List<BubbleComment> comments) {
 		this.comments = comments;
+	}
+
+	public int getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(int commentCount) {
+		this.commentCount = commentCount;
 	}
 
 	public static BubbleData getBubbleData(long id) {

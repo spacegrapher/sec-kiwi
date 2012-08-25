@@ -13,6 +13,7 @@ public class BubbleDataXMLConverter {
 		content += addTag("date", String.valueOf(data.getPostTime().getTime()));
 		//content += addTag("title", data.getTitle());
 		content += addTag("text", data.getText());
+		content += addTag("comment", String.valueOf(data.getCommentCount()));
 		content += BubbleTagXMLConverter.convertTagIdListToXml(data.getTag());
 		
 		String ret = addTag("bubble", content);

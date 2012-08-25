@@ -1,12 +1,18 @@
 package com.kiwi.bubble.appengine.server.bubbledata;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.kiwi.bubble.appengine.server.comment.BubbleComment;
+import com.kiwi.bubble.appengine.server.comment.BubbleCommentJDOWrapper;
+import com.kiwi.bubble.appengine.server.tag.BubbleTag;
+import com.kiwi.bubble.appengine.server.tag.BubbleTagJDOWrapper;
 
 
 public class BubbleListServlet extends HttpServlet {
@@ -24,13 +30,16 @@ public class BubbleListServlet extends HttpServlet {
 		else
 			bubbleData = BubbleDataJDOWrapper.getBubbleByAuthorId(Long.valueOf(id));
 		
+		for(int i=0; i<bubbleData.size(); i++) {			
+			List<BubbleComment> comment = BubbleCommentJDOWrapper.getBubbleByBubbleId(Long.valueOf(bubbleData.get(i).getId()));
+			bubbleData.get(i).setCommentCount(comment.size());
+		}
+		
 		String ret = BubbleDataXMLConverter.convertDataListToXml(bubbleData);
 		
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
 		resp.setCharacterEncoding("utf-8");
-		
-		//System.out.println("[BubbleListServlet] " + ret);
 		resp.getWriter().write(ret);
 	}
 

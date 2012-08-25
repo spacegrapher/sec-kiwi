@@ -47,6 +47,7 @@ public class BubbleCreateServlet extends HttpServlet {
 				List<BubbleTag> existingTag = BubbleTagJDOWrapper.getTagByText(tags[i]);
 				if(existingTag.isEmpty()) {
 					BubbleTag tag = new BubbleTag(BubbleTag.TAG_TYPE_TEXT);
+					System.out.println("Tag: " + tags[i]);
 					tag.setText(tags[i]);
 					BubbleTagJDOWrapper.insertTag(tag);
 					tagList.add(tag.getId());
@@ -54,10 +55,10 @@ public class BubbleCreateServlet extends HttpServlet {
 					tagList.add(existingTag.get(0).getId());
 				}
 			}
-			bubbleData.setTag(tagList);
-			bubbleData.setPostTime(new Date());
+			bubbleData.setTag(tagList);			
 		}
 		
+		bubbleData.setPostTime(new Date());
 		BubbleDataJDOWrapper.insertBubble(bubbleData);
 		
 		System.out.println("bubbleid: " + bubbleData.getId());

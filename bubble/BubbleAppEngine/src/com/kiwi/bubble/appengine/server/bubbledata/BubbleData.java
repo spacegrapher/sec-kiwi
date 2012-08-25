@@ -26,6 +26,8 @@ public class BubbleData extends ModelBase {
 	
 	@Persistent
 	private List<Long> tag;
+		
+	private int commentCount;
 
 	public BubbleData(Long id, String text) {
 		super();
@@ -71,6 +73,14 @@ public class BubbleData extends ModelBase {
 
 	public void setTag(List<Long> tag) {
 		this.tag = tag;
+	}
+
+	public int getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(int commentCount) {
+		this.commentCount = commentCount;
 	}
 	
 	

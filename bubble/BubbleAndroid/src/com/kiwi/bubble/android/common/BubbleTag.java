@@ -82,4 +82,14 @@ public class BubbleTag extends ModelBase {
 		
 		return tags.size()==0?null:tags.get(0);
 	}
+	
+	public static List<BubbleTag> getBubbleTagMultiple(String id) {
+		String pageUrl = Constant.SERVER_DOMAIN_URL + "/tag";
+		DefaultHttpClient client = new DefaultHttpClient();
+		
+		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
+		final List<BubbleTag> tags = ObjectParsers.parseBubbleTag(response);
+		
+		return tags;
+	}
 }
