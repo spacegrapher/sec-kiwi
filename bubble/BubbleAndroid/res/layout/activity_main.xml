@@ -16,7 +16,7 @@
         android:paddingBottom="10dp"
         android:src="@drawable/bubble_logo"
         android:visibility="invisible" />
-
+
     <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
@@ -24,13 +24,13 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:ems="10"
-        android:hint="Email address"
+        android:hint="이메일 주소"
         android:inputType="textEmailAddress"
         android:text="a@a.com" >
 
         <requestFocus />
     </EditText>
-
+
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:ems="10"
-        android:hint="Password"
+        android:hint="비밀번호"
         android:inputType="textPassword"
         android:text="qqqq" />
 

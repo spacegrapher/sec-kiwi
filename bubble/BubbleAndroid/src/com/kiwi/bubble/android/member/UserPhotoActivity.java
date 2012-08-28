@@ -212,7 +212,8 @@ public class UserPhotoActivity extends SherlockActivity {
 		@Override
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
-			ivUserPhoto.setImageBitmap(profileBitmap);
+			if(profileBitmap != null)
+				ivUserPhoto.setImageBitmap(profileBitmap);
 		}
 
 		@Override
@@ -234,6 +235,8 @@ public class UserPhotoActivity extends SherlockActivity {
 			if(!userImageRes.equals("")) {
 				byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
 				profileBitmap = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
+			} else {
+				profileBitmap = null;
 			}
 	    }
 	}

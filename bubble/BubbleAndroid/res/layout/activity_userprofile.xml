@@ -18,13 +18,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp" >
-
-                <ImageView
-                    android:id="@+id/imageViewUserProfile"
+
+                <FrameLayout
                     android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:background="#FFFFFF"
-                    android:src="@drawable/empty_profile_picture" />
+                    android:layout_height="100dp" >
+
+                    <ImageView
+                        android:id="@+id/imageViewUserProfile"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="#FFFFFF"
+                        android:src="@drawable/empty_profile_picture" />
+
+                    <TextView
+                        android:id="@+id/textViewUserPhotoEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:background="#99999980"
+                        android:gravity="center"
+                        android:text="사진 변경"
+                        android:textColor="#FFFFFF" />
+
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -49,12 +65,14 @@
                         android:text="TextView" />
 
                     <Button
-                        android:id="@+id/buttonUserProfileSetting"
+                        android:id="@+id/buttonUserProfileAddFriend"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="세팅" />
+                        android:onClick="onClickAddFriend"
+                        android:text="친구 추가" />
 
                 </LinearLayout>
+
             </LinearLayout>
 
             <ListView

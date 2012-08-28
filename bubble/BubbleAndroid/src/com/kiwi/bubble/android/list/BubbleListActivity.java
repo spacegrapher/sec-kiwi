@@ -336,7 +336,7 @@ public class BubbleListActivity extends SherlockActivity implements ActionBar.Ta
 			String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
 			DefaultHttpClient client = new DefaultHttpClient();
 			
-			String response = HttpGetUtil.doGetWithResponse(pageUrl, client);
+			String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
 			bubbles = ObjectParsers.parseBubbleData(response);			
 			
 			for(int i=0; i<bubbles.size(); i++) {

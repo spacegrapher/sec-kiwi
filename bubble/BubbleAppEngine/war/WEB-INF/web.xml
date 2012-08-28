@@ -32,6 +32,16 @@
   </servlet-mapping>
   
   <servlet>
+  	<servlet-name>FriendServlet</servlet-name>
+  	<servlet-class>com.kiwi.bubble.appengine.server.userinfo.FriendServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>FriendServlet</servlet-name>
+  	<url-pattern>/friend</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
   	<servlet-name>BubbleCreateServlet</servlet-name>
   	<servlet-class>com.kiwi.bubble.appengine.server.bubbledata.BubbleCreateServlet</servlet-class>
   </servlet>

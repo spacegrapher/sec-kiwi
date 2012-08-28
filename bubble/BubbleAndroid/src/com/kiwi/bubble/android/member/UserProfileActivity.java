@@ -1,10 +1,15 @@
 package com.kiwi.bubble.android.member;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,6 +46,7 @@ import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
+import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 import com.kiwi.bubble.android.list.BubbleDetailActivity;
 import com.kiwi.bubble.android.list.BubbleListActivity;
@@ -53,7 +59,8 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 	private Long selectedId;
 	private TextView tvName;
 	private TextView tvEmail;
-	private Button btnSetting;
+	private TextView tvPhotoEdit;
+	private Button btnAddFriend;
 	private ListView lvBubbleList;
 	private LinearLayout llBody;
 	private ProgressBar progressBar;
@@ -63,41 +70,44 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 	private String[] tabLabel = {"Bubble", "Explore", "Me"};
 	private boolean bEnableTabListener;
 	private ImageView ivUserProfile;
-	
-	
+	private boolean isFriend;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {		
 		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_userprofile);
-		
+
 		Intent intent = this.getIntent();
 		id = Long.valueOf(intent.getLongExtra("id", -1));
 		selectedId = Long.valueOf(intent.getLongExtra("selectedid", -1));
-	 
+
 		tvName = (TextView) findViewById(R.id.textViewUserProfileName);
 		tvEmail = (TextView) findViewById(R.id.textViewUserProfileEmail);
-		btnSetting = (Button) findViewById(R.id.buttonUserProfileSetting);
+		tvPhotoEdit = (TextView) findViewById(R.id.textViewUserPhotoEdit);
+		btnAddFriend = (Button) findViewById(R.id.buttonUserProfileAddFriend);
 		lvBubbleList = (ListView) findViewById(R.id.listViewUserBubbleList);
 		llBody = (LinearLayout) findViewById(R.id.linearLayoutUserProfileBody);
 		progressBar = (ProgressBar) findViewById(R.id.progressBarUserProfile);
 		ivUserProfile = (ImageView) findViewById(R.id.imageViewUserProfile);
-		
+
 		if(id.equals(selectedId)) {
-			btnSetting.setVisibility(View.VISIBLE);
+			tvPhotoEdit.setVisibility(View.VISIBLE);
+			btnAddFriend.setVisibility(View.INVISIBLE);
 		} else {
-			btnSetting.setVisibility(View.INVISIBLE);
+			tvPhotoEdit.setVisibility(View.INVISIBLE);
+			btnAddFriend.setVisibility(View.VISIBLE);
 		}
-		
+
 		bEnableTabListener = false;
 		if(id.equals(selectedId)) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 			for (int i = 0; i < 3; i++) {
-	            ActionBar.Tab tab = getSupportActionBar().newTab();
-	            tab.setText(tabLabel[i]);
-	            tab.setTabListener(this);
-	            getSupportActionBar().addTab(tab);
-	        }
+				ActionBar.Tab tab = getSupportActionBar().newTab();
+				tab.setText(tabLabel[i]);
+				tab.setTabListener(this);
+				getSupportActionBar().addTab(tab);
+			}
 			getSupportActionBar().setSelectedNavigationItem(2);
 			getSupportActionBar().setDisplayOptions(getSupportActionBar().DISPLAY_USE_LOGO | getSupportActionBar().DISPLAY_SHOW_HOME);
 			getSupportActionBar().setLogo(R.drawable.bubble_logo);
@@ -105,7 +115,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		} else {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
-		
+
 		lvBubbleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
@@ -114,37 +124,44 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				intent.putExtra("authorid", id.longValue());
 				startActivity(intent);
 			}
-			
+
 		});
-		
+
 		ivUserProfile.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(UserProfileActivity.this, UserPhotoActivity.class);
-				intent.putExtra("id", id.longValue());
-				intent.putExtra("editable", true);
+				intent.putExtra("id", selectedId.longValue());
+				if(id.equals(selectedId)) {
+					intent.putExtra("editable", true);
+				} else {
+					intent.putExtra("editable", false);
+				}
 				startActivity(intent);
 			}
 		});
-		
+
 		new BackgroundTask().execute();
+		if(!id.equals(selectedId)) {
+			new CheckFriendTask().execute();
+		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if(id.equals(selectedId)) {
 			menu.add("Refresh")
 			.setIcon(R.drawable.icon_refresh)
-	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-			
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
 			menu.add("Tag")
 			.setIcon(R.drawable.icon_tag)
-	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(id.equals(selectedId)) {
@@ -159,14 +176,55 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		}
 		return true;
 	}
-	
+
 	public void onClickButtonBack(View v) {
 		finish();
 	}
+
+	public void onClickAddFriend(View v) {
+		if (isFriend) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					postFriendRequest();					
+				}
+			}).setNegativeButton("취소", new DialogInterface.OnClickListener() {				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			}).setMessage("정말 친구를 끊으시겠습니까?");
+			builder.show();
+		} else {
+			postFriendRequest();
+		}
+		
+	}
 	
+	private void postFriendRequest() {
+		String pageUrl = Constant.SERVER_DOMAIN_URL + "/friend";
+
+		HttpPostUtil util = new HttpPostUtil();
+
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("id", String.valueOf(id));
+		param.put("friendid", String.valueOf(selectedId));
+		String ret = null;
+
+		try {
+			ret = util.httpPostData(pageUrl, param);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		while (!ret.equals("OK"));
+		new CheckFriendTask().execute();
+	}
+
 	class UserBubbleListAdapter extends BaseAdapter {
 		private List<BubbleData> bubbleData;
-		
+
 		public UserBubbleListAdapter(List<BubbleData> bubbleData) {
 			super();
 			this.bubbleData = bubbleData;
@@ -200,7 +258,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			ImageView ivBubblePhoto;
 			ImageView ivBubbleUserImage;
 			final long lSelectedId;
-			
+
 			if(convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(UserProfileActivity.this);
 				convertView = inflater.inflate(R.layout.listview_bubblelist, parent, false);
@@ -213,29 +271,29 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			ivBubbleUserImage = (ImageView) convertView.findViewById(R.id.imageViewBubbleUserImage);
 			llTag = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListViewTag);
 			llTag.removeAllViews();
-			
+
 			currentBubble = bubbleData.get(position);
-			
+
 			tvName.setText("" + currentBubble.getAuthorInfo().getName());
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
 			tvTagCount.setText("Tag: " + currentBubble.getTag().size() + ", Comments: " + currentBubble.getComments().size());
-			
+
 			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
 			if(userImage != null) {
 				ivBubbleUserImage.setImageBitmap(userImage);
 			}
-			
+
 			final Bitmap photo = currentBubble.getPhoto();
 			if(photo != null) {
 				ivBubblePhoto.setImageBitmap(photo);
 				ivBubblePhoto.setVisibility(View.VISIBLE);
 			} else
 				ivBubblePhoto.setVisibility(View.GONE);
-			
+
 			for(int i=0; i<currentBubble.getTag().size(); i++) {
 				BubbleTag tag = currentBubble.getRealTag().get(i);
-				
+
 				TextView tagText = new TextView(UserProfileActivity.this);
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 				params.setMargins(0, 0, 10, 0);
@@ -245,7 +303,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				tagText.setText(tag.getText());
 				llTag.addView(tagText);
 			}
-			
+
 			return convertView;
 		}		
 	}
@@ -263,7 +321,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				startActivity(intent);
 				overridePendingTransition(0, 0);
 			}
-				break;
+			break;
 			case 1:
 			{
 				Intent intent = new Intent(UserProfileActivity.this, ExploreActivity.class);
@@ -271,7 +329,7 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				startActivity(intent);
 				overridePendingTransition(0, 0);
 			}
-				break;
+			break;
 			case 2:
 				break;
 			}
@@ -281,17 +339,64 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 		if (bEnableTabListener) {
-			
+
 		}		
 	}
 
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		if (bEnableTabListener) {
-			
+
 		}		
 	}
-	
+
+	private class CheckFriendTask extends AsyncTask<String, Integer, Long> {
+		@Override
+		protected Long doInBackground(String... arg0) {
+			checkFriend();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+
+			if(id.equals(selectedId)) {
+				btnAddFriend.setVisibility(View.INVISIBLE);
+			} else {
+				if (isFriend) {
+					btnAddFriend.setText("친구");
+				} else {
+					btnAddFriend.setText("친구 추가");
+				}
+				btnAddFriend.setVisibility(View.VISIBLE);
+			}
+			
+			btnAddFriend.invalidate();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();			
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+		
+		private void checkFriend() {
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/friend";
+			DefaultHttpClient client = new DefaultHttpClient();
+
+			String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id.toString() + "&friendid=" + selectedId.toString(), client);
+			if(response.equals("OK")) {
+				isFriend = true;
+			} else {
+				isFriend = false;
+			}
+		}
+	}
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
 		@Override
 		protected Long doInBackground(String... arg0) {
@@ -303,18 +408,19 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		@Override
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
+
 			tvName.setText(userInfo.getName());
 			tvEmail.setText(userInfo.getEmail());
-			
+
 			final Bitmap userImage = userInfo.getImage();
 			if(userImage != null) {
 				ivUserProfile.setImageBitmap(userImage);
 			}
-			
+
 			adapter = new UserBubbleListAdapter(bubbles);
 			lvBubbleList.setAdapter(adapter);
 			adapter.notifyDataSetChanged();
-			
+
 			progressBar.setVisibility(View.INVISIBLE);
 			llBody.setVisibility(View.VISIBLE);
 		}
@@ -330,10 +436,10 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
 		}
-		
+
 		private void getUserInfo() {
 			userInfo = UserInfo.getUserInfo(selectedId.longValue());
-			
+
 			// Get User Image
 			String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
 			DefaultHttpClient userImageClient = new DefaultHttpClient();
@@ -342,24 +448,26 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 			if(!userImageRes.equals("")) {
 				byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
 				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
-								
+
 				userInfo.setImage(bmp);
 			}
 		}
+
 		
+
 		private void updateListView() {
 			String pageUrl = Constant.SERVER_DOMAIN_URL + "/list";
 			DefaultHttpClient client = new DefaultHttpClient();
-			
+
 			String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + selectedId.toString(), client);
 			bubbles = ObjectParsers.parseBubbleData(response);
-			
+
 			for(int i=0; i<bubbles.size(); i++) {
 				BubbleData bubble = bubbles.get(i);
-				
+
 				// Get UserInfo
 				UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId());
-				
+
 				// Get User Image
 				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
 				DefaultHttpClient userImageClient = new DefaultHttpClient();
@@ -368,26 +476,26 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				if(!userImageRes.equals("")) {
 					byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
-									
+
 					userInfo.setImage(bmp);
 				}
-				
+
 				bubble.setAuthorInfo(userInfo);
-				
+
 				// Get Tag
 				List<Long> longTag = bubble.getTag();
 				List<BubbleTag> bubbleTag = new ArrayList<BubbleTag>();
-				
+
 				for(int j=0; j<longTag.size(); j++) {
 					BubbleTag tag = BubbleTag.getBubbleTag(longTag.get(j));
 					bubbleTag.add(tag);
 				}
 				bubble.setRealTag(bubbleTag);
-				
+
 				// Get Comments
 				List<BubbleComment> comments = BubbleComment.getCommentData(bubble.getId().longValue());
 				bubble.setComments(comments);
-				
+
 				// Get Photo
 				String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";
 				DefaultHttpClient photoClient = new DefaultHttpClient();
@@ -395,10 +503,10 @@ public class UserProfileActivity extends SherlockActivity implements ActionBar.T
 				if(!photoRes.equals("")) {
 					byte[] photoByte = Base64.decode(photoRes, Base64.DEFAULT);
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
-									
+
 					bubble.setPhoto(bmp);
 				}
-				
+
 				bubbles.set(i, bubble);
 			}
 		}

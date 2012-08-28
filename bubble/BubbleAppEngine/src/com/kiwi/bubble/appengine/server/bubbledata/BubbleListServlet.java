@@ -13,6 +13,8 @@ import com.kiwi.bubble.appengine.server.comment.BubbleComment;
 import com.kiwi.bubble.appengine.server.comment.BubbleCommentJDOWrapper;
 import com.kiwi.bubble.appengine.server.tag.BubbleTag;
 import com.kiwi.bubble.appengine.server.tag.BubbleTagJDOWrapper;
+import com.kiwi.bubble.appengine.server.userinfo.UserInfo;
+import com.kiwi.bubble.appengine.server.userinfo.UserInfoJDOWrapper;
 
 
 public class BubbleListServlet extends HttpServlet {
@@ -24,11 +26,14 @@ public class BubbleListServlet extends HttpServlet {
 				
 		List<BubbleData> bubbleData = null;
 		
-		if(id == null) {
+		if(id == null) {			
 			bubbleData = BubbleDataJDOWrapper.getAllBubbles();
 		}
-		else
-			bubbleData = BubbleDataJDOWrapper.getBubbleByAuthorId(Long.valueOf(id));
+		else {
+			UserInfo userInfo = UserInfoJDOWrapper.getUserById(Long.valueOf(id)).get(0);
+			bubbleData = BubbleDataJDOWrapper.getFriendBubbles(Long.valueOf(id), userInfo.getFriends());
+			//bubbleData = BubbleDataJDOWrapper.getBubbleByAuthorId(Long.valueOf(id));
+		}
 		
 		for(int i=0; i<bubbleData.size(); i++) {			
 			List<BubbleComment> comment = BubbleCommentJDOWrapper.getBubbleByBubbleId(Long.valueOf(bubbleData.get(i).getId()));

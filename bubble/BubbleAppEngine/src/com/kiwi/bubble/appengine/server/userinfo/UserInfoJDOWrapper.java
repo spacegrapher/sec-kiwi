@@ -5,6 +5,7 @@ import java.util.List;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
+import com.google.appengine.api.datastore.Blob;
 import com.kiwi.bubble.appengine.server.PMF;
 
 public class UserInfoJDOWrapper {
@@ -20,6 +21,20 @@ public class UserInfoJDOWrapper {
 		} else {
 			System.err.println("ERROR: Duplicate input");
 		}
+	}
+	
+	public static void addUserFriend(Long id, Long friendId) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+	    try {
+	    	UserInfo userInfo = pm.getObjectById(UserInfo.class, id);
+	    	if (userInfo.isFriend(friendId)) {
+	    		userInfo.removeFriend(friendId);
+	    	} else {
+	    		userInfo.addFriend(friendId);
+	    	}
+	    } finally {
+	        pm.close();
+	    }
 	}
 	
 	public static List<UserInfo> getUserByEmail(String email) {
