@@ -187,7 +187,7 @@ public class ExploreActivity extends SherlockActivity implements ActionBar.TabLi
 			TextView tvName;
 			TextView tvDate;
 			TextView tvText;
-			TextView tvTagCount;
+			TextView tvCommentCount;
 			LinearLayout llTag;
 			ImageView ivBubblePhoto;
 			ImageView ivBubbleUserImage;
@@ -200,7 +200,7 @@ public class ExploreActivity extends SherlockActivity implements ActionBar.TabLi
 			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListViewName);
 			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListViewDate);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
-			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
+			tvCommentCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewCommentCount);
 			ivBubblePhoto = (ImageView) convertView.findViewById(R.id.imageViewBubbleImage);
 			ivBubbleUserImage = (ImageView) convertView.findViewById(R.id.imageViewBubbleUserImage);
 			llTag = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListViewTag);
@@ -211,7 +211,7 @@ public class ExploreActivity extends SherlockActivity implements ActionBar.TabLi
 			tvName.setText("" + currentBubble.getAuthorInfo().getName());
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
-			tvTagCount.setText("태그: " + currentBubble.getTag().size() + ", 댓글: " + currentBubble.getComments().size());
+			tvCommentCount.setText("" + currentBubble.getComments().size());
 			
 			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
 			if(userImage != null) {

@@ -27,6 +27,8 @@ public class BubbleData extends ModelBase {
 	
 	private List<BubbleComment> comments;
 	private int commentCount;
+	
+	private boolean isFavorite;
 
 	public BubbleData(Long id, String text) {
 		super();
@@ -39,6 +41,7 @@ public class BubbleData extends ModelBase {
 		this.realTag = null;
 		this.comments = null;
 		this.commentCount = 0;
+		this.isFavorite = false;
 	}
 
 	public Long getAuthorId() {
@@ -119,6 +122,14 @@ public class BubbleData extends ModelBase {
 
 	public void setCommentCount(int commentCount) {
 		this.commentCount = commentCount;
+	}
+
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+
+	public void setFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
 	}
 
 	public static BubbleData getBubbleData(long id) {

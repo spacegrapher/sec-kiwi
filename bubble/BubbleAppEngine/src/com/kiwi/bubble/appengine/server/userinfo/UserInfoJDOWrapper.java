@@ -37,6 +37,20 @@ public class UserInfoJDOWrapper {
 	    }
 	}
 	
+	public static void addFavorite(Long id, Long bubbleId) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+	    try {
+	    	UserInfo userInfo = pm.getObjectById(UserInfo.class, id);
+	    	if (userInfo.isFavorite(bubbleId)) {
+	    		userInfo.removeFavorite(bubbleId);
+	    	} else {
+	    		userInfo.addFavorite(bubbleId);
+	    	}
+	    } finally {
+	        pm.close();
+	    }
+	}
+	
 	public static List<UserInfo> getUserByEmail(String email) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		

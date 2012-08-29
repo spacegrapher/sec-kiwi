@@ -33,7 +33,6 @@ import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 
-
 public class UserPhotoActivity extends SherlockActivity {
 	private Long id;
 	private boolean bIsEditable;
@@ -59,8 +58,12 @@ public class UserPhotoActivity extends SherlockActivity {
 		
 		ivUserPhoto = (ImageView) findViewById(R.id.imageViewUserPhoto);
 	 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
 		new BackgroundFetchProfileTask().execute();
 	}
 	

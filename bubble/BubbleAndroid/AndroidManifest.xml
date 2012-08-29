@@ -18,6 +18,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait" 
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,17 +26,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".member.SignupActivity" />
-        <activity android:name=".member.UserProfileActivity" />
-        <activity android:name=".member.UserPhotoActivity" />
-        <activity android:name=".list.BubbleListActivity" />
-        <activity android:name=".list.BubbleDetailActivity" />
-        <activity android:name=".list.TagSearchActivity" />
-        <activity android:name=".BubbleCreateActivity" />
-        <activity android:name=".TagSelectActivity" />
-        <activity android:name=".ExploreActivity" />
+        <activity android:name=".member.SignupActivity" android:screenOrientation="portrait" />
+        <activity android:name=".member.UserProfileActivity" android:screenOrientation="portrait" />
+        <activity android:name=".member.UserPhotoActivity" android:screenOrientation="portrait" />
+        <activity android:name=".list.BubbleListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".list.BubbleDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".list.TagSearchActivity" android:screenOrientation="portrait" />
+        <activity android:name=".BubbleCreateActivity" android:screenOrientation="portrait" />
+        <activity android:name=".TagSelectActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ExploreActivity" android:screenOrientation="portrait" />
     <uses-library android:name="com.google.android.maps" android:required="true"/>
-        <activity android:name="BubbleMap"></activity>
+        <activity android:name="BubbleMap" android:screenOrientation="portrait" ></activity>
     </application>
     
 </manifest>

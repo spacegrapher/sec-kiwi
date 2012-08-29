@@ -1,8 +1,11 @@
 package com.kiwi.bubble.android.list;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -20,8 +23,10 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -45,6 +50,7 @@ import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
 import com.kiwi.bubble.android.common.UserInfo;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
+import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 import com.kiwi.bubble.android.member.UserPhotoActivity;
 import com.kiwi.bubble.android.member.UserProfileActivity;
@@ -144,11 +150,12 @@ public class TagSearchActivity extends SherlockActivity {
 			TextView tvName;
 			TextView tvDate;
 			TextView tvText;
-			TextView tvTagCount;
+			TextView tvCommentCount;
 			LinearLayout llTag;
 			ImageView ivBubblePhoto;
 			ImageView ivBubbleUserImage;
-			final long lSelectedId;
+			final ImageView ivBubbleFavorite;
+			final LinearLayout llCommentButton;
 			
 			if(convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(TagSearchActivity.this);
@@ -157,9 +164,11 @@ public class TagSearchActivity extends SherlockActivity {
 			tvName = (TextView)convertView.findViewById(R.id.textViewBubbleListViewName);
 			tvDate = (TextView)convertView.findViewById(R.id.textViewBubbleListViewDate);
 			tvText = (TextView)convertView.findViewById(R.id.textViewBubbleListViewText);
-			tvTagCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewTagCount);
+			tvCommentCount = (TextView)convertView.findViewById(R.id.textViewBubbleListViewCommentCount);
 			ivBubblePhoto = (ImageView) convertView.findViewById(R.id.imageViewBubbleImage);
 			ivBubbleUserImage = (ImageView) convertView.findViewById(R.id.imageViewBubbleUserImage);
+			ivBubbleFavorite = (ImageView) convertView.findViewById(R.id.imageViewBubbleListFavorite);
+			llCommentButton = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListCommentButton);
 			llTag = (LinearLayout)convertView.findViewById(R.id.linearLayoutBubbleListViewTag);
 			llTag.removeAllViews();
 			
@@ -168,7 +177,7 @@ public class TagSearchActivity extends SherlockActivity {
 			tvName.setText("" + currentBubble.getAuthorInfo().getName());
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
-			tvTagCount.setText("태그: " + currentBubble.getTag().size() + ", 댓글: " + currentBubble.getComments().size());
+			tvCommentCount.setText("" + currentBubble.getComments().size());
 			
 			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
 			if(userImage != null) {
@@ -181,6 +190,12 @@ public class TagSearchActivity extends SherlockActivity {
 				ivBubblePhoto.setVisibility(View.VISIBLE);
 			} else
 				ivBubblePhoto.setVisibility(View.GONE);
+			
+			if(currentBubble.isFavorite()) {
+				ivBubbleFavorite.setImageResource(R.drawable.icon_star);
+			} else {
+				ivBubbleFavorite.setImageResource(R.drawable.icon_empty_star);
+			}
 			
 			for(int i=0; i<currentBubble.getTag().size(); i++) {
 				BubbleTag tag = currentBubble.getRealTag().get(i);
@@ -216,6 +231,76 @@ public class TagSearchActivity extends SherlockActivity {
 					intent.putExtra("editable", false);
 					startActivity(intent);
 				}
+			});
+			
+			ivBubblePhoto.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(TagSearchActivity.this, BubbleDetailActivity.class);
+					intent.putExtra("bubbleid", currentBubble.getId());
+					intent.putExtra("authorid", id.longValue());
+					startActivity(intent);	
+				}
+			});
+			
+			llCommentButton.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						llCommentButton.setBackgroundColor(0xFF999999);
+						llCommentButton.invalidate();
+						break;
+					case MotionEvent.ACTION_UP:
+						llCommentButton.setBackgroundColor(0);
+						llCommentButton.invalidate();
+						Intent intent = new Intent(TagSearchActivity.this, BubbleDetailActivity.class);
+						intent.putExtra("bubbleid", currentBubble.getId());
+						intent.putExtra("authorid", id.longValue());
+						startActivity(intent);	
+						break;
+					}
+					
+					return true;
+				}
+				
+			});
+			
+			ivBubbleFavorite.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						ivBubbleFavorite.setBackgroundColor(0xFF999999);
+						ivBubbleFavorite.invalidate();
+						break;
+					case MotionEvent.ACTION_UP:
+						ivBubbleFavorite.setBackgroundColor(0);
+						ivBubbleFavorite.invalidate();
+						
+						String pageUrl = Constant.SERVER_DOMAIN_URL + "/favorite";
+
+						HttpPostUtil util = new HttpPostUtil();
+
+						Map<String, String> param = new HashMap<String, String>();
+						param.put("id", String.valueOf(id));
+						param.put("bubbleid", String.valueOf(currentBubble.getId()));
+						String ret = null;
+
+						try {
+							ret = util.httpPostData(pageUrl, param);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						currentBubble.setFavorite(!currentBubble.isFavorite());
+						adapter.notifyDataSetChanged();
+						break;						
+					}
+					
+					return true;
+				}
+				
 			});
 			
 			return convertView;

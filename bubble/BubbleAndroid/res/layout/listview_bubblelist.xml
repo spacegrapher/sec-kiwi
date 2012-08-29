@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants"
+    android:background="#ECF9C6"
     android:orientation="vertical"
     android:padding="10dp" >
 
@@ -67,26 +67,55 @@
         android:background="#FFFFFF"
         android:padding="5dp"
         android:text="TextView" />
-
+
     <ImageView
         android:id="@+id/imageViewBubbleImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
+        android:paddingBottom="5dp"
         android:src="@drawable/ic_launcher" />
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#EEEEEE"
-        android:gravity="right"
-        android:padding="5dp" >
-
-        <TextView
-            android:id="@+id/textViewBubbleListViewTagCount"
+        android:gravity="right" >
+
+        <ImageView
+            android:id="@+id/imageViewBubbleListFavorite"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:layout_height="35dp"
+            android:clickable="true"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:src="@drawable/icon_empty_star" />
+
+        <LinearLayout
+            android:id="@+id/linearLayoutBubbleListCommentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true" >
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:duplicateParentState="true"
+                android:paddingLeft="5dp"
+                android:src="@drawable/icon_comment" />
+
+            <TextView
+                android:id="@+id/textViewBubbleListViewCommentCount"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="fill_vertical"
+                android:duplicateParentState="true"
+                android:gravity="center_vertical"
+                android:paddingRight="5dp"
+                android:text="TextView" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

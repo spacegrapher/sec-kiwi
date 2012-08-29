@@ -70,6 +70,18 @@ public class UserInfo extends ModelBase {
 	public void setFavorites(List<Long> favorites) {
 		this.favorites = favorites;
 	}
+	
+	public void addFavorite(Long favorite) {
+		favorites.add(favorite);
+	}
+	
+	public void removeFavorite(Long favorite) {
+		favorites.remove(favorite);
+	}
+	
+	public boolean isFavorite(Long favorite) {
+		return favorites.contains(favorite);
+	}
 
 	public List<Long> getFriends() {
 		return friends;

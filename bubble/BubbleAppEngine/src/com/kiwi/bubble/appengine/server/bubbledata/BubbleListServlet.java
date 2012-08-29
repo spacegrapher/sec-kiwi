@@ -23,6 +23,7 @@ public class BubbleListServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String id = req.getParameter("id");
+		String showFriend = req.getParameter("friend");
 				
 		List<BubbleData> bubbleData = null;
 		
@@ -30,9 +31,12 @@ public class BubbleListServlet extends HttpServlet {
 			bubbleData = BubbleDataJDOWrapper.getAllBubbles();
 		}
 		else {
-			UserInfo userInfo = UserInfoJDOWrapper.getUserById(Long.valueOf(id)).get(0);
-			bubbleData = BubbleDataJDOWrapper.getFriendBubbles(Long.valueOf(id), userInfo.getFriends());
-			//bubbleData = BubbleDataJDOWrapper.getBubbleByAuthorId(Long.valueOf(id));
+			if(showFriend.equals("true")) {
+				UserInfo userInfo = UserInfoJDOWrapper.getUserById(Long.valueOf(id)).get(0);
+				bubbleData = BubbleDataJDOWrapper.getFriendBubbles(Long.valueOf(id), userInfo.getFriends());
+			} else {
+				bubbleData = BubbleDataJDOWrapper.getBubbleByAuthorId(Long.valueOf(id));
+			}
 		}
 		
 		for(int i=0; i<bubbleData.size(); i++) {			
