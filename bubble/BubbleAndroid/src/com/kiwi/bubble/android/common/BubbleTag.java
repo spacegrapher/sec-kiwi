@@ -21,7 +21,7 @@ public class BubbleTag extends ModelBase {
 	
 	private String location;
 	
-	private long id;
+	//private long id;
 
 	public BubbleTag(int type) {
 		super();

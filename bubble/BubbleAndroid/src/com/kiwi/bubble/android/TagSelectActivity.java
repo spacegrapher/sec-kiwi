@@ -10,12 +10,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.style.BackgroundColorSpan;
@@ -25,14 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,13 +37,15 @@ import com.kiwi.bubble.android.list.TagSearchActivity;
 
 public class TagSelectActivity extends SherlockActivity {
 	private static final int REQUEST_BUBBLE_CREATE = 101;
+	private static final int OPTIONS_MENU_SEARCH = 0;
+	private static final int OPTIONS_MENU_CREATE = 1;
+
 	public static final String ACTION_KILL_COMMAND = "ACTION_KILL_COMMAND";
 	public static final String ACTION_KILL_DATATYPE = "content://ACTION_KILL_DATATYPE";
 
 	private long id;
 	private boolean isSearch;
 	private EditText etAddTag;
-	private ArrayList<String> tagList;
 	private List<BubbleTag> selectedTagList = new ArrayList<BubbleTag>();
 
 	private List<BubbleTag> bubbleTagList = new ArrayList<BubbleTag>();
@@ -63,12 +57,13 @@ public class TagSelectActivity extends SherlockActivity {
 
 	private KillReceiver mKillReceiver;
 
-	/*+GPS+*/
-	private LocationListener locListenD;
-	private Button buttonLocation;
+	/* +GPS+ */
+	//private LocationListener locListenD;
+	//private Button buttonLocation;
 	public TextView tvLatitude;
 	public TextView tvLongitude;
 	public Location loc;
+
 	/*-GPS-*/
 
 	@Override
@@ -88,18 +83,19 @@ public class TagSelectActivity extends SherlockActivity {
 		}
 		tvSelectedTag = (TextView) findViewById(R.id.textViewSelectedTag);
 
-		tagList = new ArrayList<String>();
 		lvTagList = (ListView) findViewById(R.id.listViewTagSuggest);
 		lvTagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long _id) {
-				BubbleTag currentTag = null;				
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long _id) {
+				BubbleTag currentTag = null;
 
 				if (etAddTag.getText().toString().isEmpty()) {
 					// EditText is empty
 					// First row is add location
 					if (position == 0) {
 						// Add location
+						return;
 					} else {
 						currentTag = bubbleTagListPartial.get(position - 1);
 					}
@@ -116,7 +112,6 @@ public class TagSelectActivity extends SherlockActivity {
 					currentTag = bubbleTagListPartial.get(position);
 				}
 
-
 				if (selectedTagList.contains(currentTag)) {
 					selectedTagList.remove(currentTag);
 				} else {
@@ -126,7 +121,7 @@ public class TagSelectActivity extends SherlockActivity {
 				updateSelectedTextView();
 				etAddTag.setText("");
 				etAddTag.clearFocus();
-				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(etAddTag.getWindowToken(), 0);
 			}
 
@@ -137,25 +132,25 @@ public class TagSelectActivity extends SherlockActivity {
 
 		etAddTag.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count)
-			{
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 				AlterAdapter();
 				lvTagList.setSelection(0);
 			}
+
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after)
-			{
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
 			}
 
 			@Override
-			public void afterTextChanged(Editable s)
-			{               
+			public void afterTextChanged(Editable s) {
 			}
-		}
-				);
+		});
 
 		mKillReceiver = new KillReceiver();
-		registerReceiver(mKillReceiver, IntentFilter.create(ACTION_KILL_COMMAND, ACTION_KILL_DATATYPE));
+		registerReceiver(mKillReceiver,
+				IntentFilter.create(ACTION_KILL_COMMAND, ACTION_KILL_DATATYPE));
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle("태그 선택하기");
@@ -172,13 +167,17 @@ public class TagSelectActivity extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (isSearch) {
-			menu.add("Search")
-			.setIcon(R.drawable.icon_search)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			menu.add(0, OPTIONS_MENU_SEARCH, 0, "Search")
+					.setIcon(R.drawable.icon_search)
+					.setShowAsAction(
+							MenuItem.SHOW_AS_ACTION_IF_ROOM
+									| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		} else {
-			menu.add("Create")
-			.setIcon(R.drawable.icon_new_tag)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			menu.add(0, OPTIONS_MENU_CREATE, 0, "Create")
+					.setIcon(R.drawable.icon_new_tag)
+					.setShowAsAction(
+							MenuItem.SHOW_AS_ACTION_IF_ROOM
+									| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		}
 
 		return true;
@@ -186,78 +185,86 @@ public class TagSelectActivity extends SherlockActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.toString().equals("Create")) {
+		switch (item.getItemId()) {
+		case OPTIONS_MENU_SEARCH: {
 			String[] tagArray = new String[selectedTagList.size()];
 			int index = 0;
-			for(int i=0; i<selectedTagList.size(); i++) {
+			for (int i = 0; i < selectedTagList.size(); i++) {
+				tagArray[index++] = selectedTagList.get(i).getText();
+			}
+			Intent intent = new Intent(this, TagSearchActivity.class);
+			intent.putExtra("id", id);
+			intent.putExtra("tags", tagArray);
+			startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
+		}
+			return true;
+		case OPTIONS_MENU_CREATE: {
+			String[] tagArray = new String[selectedTagList.size()];
+			int index = 0;
+			for (int i = 0; i < selectedTagList.size(); i++) {
 				tagArray[index++] = selectedTagList.get(i).getText();
 			}
 			Intent intent = new Intent(this, BubbleCreateActivity.class);
 			intent.putExtra("tag", tagArray);
 			intent.putExtra("id", id);
 			startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
-		} else if (item.toString().equals("Search")) {
-			String[] tagArray = new String[selectedTagList.size()];
-			int index = 0;
-			for(int i=0; i<selectedTagList.size(); i++) {
-				tagArray[index++] = selectedTagList.get(i).getText();
-			}
-			Intent intent = new Intent(this, TagSearchActivity.class);
-			intent.putExtra("id", id);
-			intent.putExtra("tags", tagArray);			
-			startActivityForResult(intent, REQUEST_BUBBLE_CREATE);
-		} else if (item.getItemId() == android.R.id.home) {
+		}
+			return true;
+		case android.R.id.home:
 			Intent intent = new Intent();
 			setResult(Activity.RESULT_CANCELED, intent);
 			finish();
+			return true;
 		}
-		return true;
+
+		return false;
 	}
 
-	public void onClickAddLocation(View v){
+	public void onClickAddLocation(View v) {
 		// �ؽ�Ʈ�並 ã�´�
-		tvLatitude = (TextView)findViewById(R.id.tvLatitude);
-		tvLongitude = (TextView)findViewById(R.id.tvLongitude);
+		tvLatitude = (TextView) findViewById(R.id.tvLatitude);
+		tvLongitude = (TextView) findViewById(R.id.tvLongitude);
 
-		Log.d("GetLocation","1!!");
-		LocationManager lm =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		Log.d("GetLocation", "1!!");
+		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			Log.d("GetLocation","ERROR!!");
+		if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			Log.d("GetLocation", "ERROR!!");
 		}
 
+		Log.d("GetLocation", "1-1!!");
+		//Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-		Log.d("GetLocation","1-1!!");
-		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		Log.d("GetLocation", "2!!");
 
-		Log.d("GetLocation","2!!");
+		// double latitude = loc.getLatitude();//37.519576;
+		// double longitude = loc.getLongitude();//126.940245;
 
-		//double latitude = loc.getLatitude();//37.519576;
-		//double longitude = loc.getLongitude();//126.940245;
+		// String pos = String.format("geo:%f,%f?z=16", latitude, longitude);
+		// Uri uri = Uri.parse(pos);
+		// Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+		// startActivity(intent);
 
-		//String pos = String.format("geo:%f,%f?z=16", latitude, longitude);
-		//Uri uri = Uri.parse(pos);
-		//Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		//startActivity(intent);
-
-
-		Intent intent = new Intent(TagSelectActivity.this,BubbleMap.class);
+		Intent intent = new Intent(TagSelectActivity.this, BubbleMap.class);
 		startActivity(intent);
 
 	}
 
-	private class DispLocListener implements LocationListener {
+	/*private class DispLocListener implements LocationListener {
 		public void onLocationChanged(Location location) {
 			tvLatitude.setText(Double.toString(location.getLatitude()));
-			tvLongitude.setText(Double.toString(location.getLongitude()));  
+			tvLongitude.setText(Double.toString(location.getLongitude()));
 		}
-		public void onProviderDisabled(String provider) { 
+
+		public void onProviderDisabled(String provider) {
 		}
+
 		public void onProviderEnabled(String provider) {
 		}
-		public void onStatusChanged(String provider, int status, Bundle extras) { 
+
+		public void onStatusChanged(String provider, int status, Bundle extras) {
 		}
-	}
+	}*/
 
 	private final class KillReceiver extends BroadcastReceiver {
 		@Override
@@ -272,20 +279,21 @@ public class TagSelectActivity extends SherlockActivity {
 		int[] start = new int[selectedTagList.size()];
 		int[] end = new int[selectedTagList.size()];
 		start[0] = 0;
-		for(int i=0; i<selectedTagList.size(); i++) {
+		for (int i = 0; i < selectedTagList.size(); i++) {
 			if (i > 0) {
 				text += " ";
-				start[i] = end[i-1] + 1;
+				start[i] = end[i - 1] + 1;
 			}
 			text += selectedTagList.get(i).getText();
 			end[i] = start[i] + selectedTagList.get(i).getText().length();
-		}		
+		}
 
 		tvSelectedTag.setText(text, TextView.BufferType.SPANNABLE);
-		Spannable sText = (Spannable)tvSelectedTag.getText();
+		Spannable sText = (Spannable) tvSelectedTag.getText();
 
-		for(int i=0; i<selectedTagList.size(); i++) {
-			sText.setSpan(new BackgroundColorSpan(Color.YELLOW), start[i], end[i], 0);
+		for (int i = 0; i < selectedTagList.size(); i++) {
+			sText.setSpan(new BackgroundColorSpan(Color.YELLOW), start[i],
+					end[i], 0);
 		}
 	}
 
@@ -301,15 +309,16 @@ public class TagSelectActivity extends SherlockActivity {
 				bubbleTagListPartial.add(bubbleTagList.get(i));
 			}
 			adapter.notifyDataSetChanged();
-		}
-		else {
+		} else {
 			bubbleTagListPartial.clear();
 			bSameTagExists = false;
 			for (int i = 0; i < bubbleTagList.size(); i++) {
-				if (bubbleTagList.get(i).getText().toUpperCase().contains(etAddTag.getText().toString().toUpperCase())) {
+				if (bubbleTagList.get(i).getText().toUpperCase()
+						.contains(etAddTag.getText().toString().toUpperCase())) {
 					bubbleTagListPartial.add(bubbleTagList.get(i));
 				}
-				if (bubbleTagList.get(i).getText().equals(etAddTag.getText().toString())) {
+				if (bubbleTagList.get(i).getText()
+						.equals(etAddTag.getText().toString())) {
 					bSameTagExists = true;
 				}
 			}
@@ -324,7 +333,7 @@ public class TagSelectActivity extends SherlockActivity {
 
 		public BubbleTagAdapter(List<BubbleTag> bubbleTag) {
 			super();
-			this.bubbleTag = bubbleTag;			
+			this.bubbleTag = bubbleTag;
 		}
 
 		@Override
@@ -345,13 +354,11 @@ public class TagSelectActivity extends SherlockActivity {
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
@@ -362,23 +369,27 @@ public class TagSelectActivity extends SherlockActivity {
 			ImageView ivTagIcon;
 			TextView tvTagName;
 
-			if(convertView == null) {
-				LayoutInflater inflater = LayoutInflater.from(TagSelectActivity.this);
-				convertView = inflater.inflate(R.layout.listview_tagselect, parent, false);
+			if (convertView == null) {
+				LayoutInflater inflater = LayoutInflater
+						.from(TagSelectActivity.this);
+				convertView = inflater.inflate(R.layout.listview_tagselect,
+						parent, false);
 			}
-			ivTagIcon = (ImageView) convertView.findViewById(R.id.imageViewTagIcon);
-			tvTagName = (TextView) convertView.findViewById(R.id.textViewTagName);
-
+			ivTagIcon = (ImageView) convertView
+					.findViewById(R.id.imageViewTagIcon);
+			tvTagName = (TextView) convertView
+					.findViewById(R.id.textViewTagName);
 
 			if (bAddLocation || bAddNewTag) {
 				if (position == 0) {
 					actualPosition = position;
-					if(bAddLocation) {
+					if (bAddLocation) {
 						ivTagIcon.setVisibility(View.VISIBLE);
 						tvTagName.setText("위치 태그 추가");
-					} else if(bAddNewTag) {
+					} else if (bAddNewTag) {
 						ivTagIcon.setVisibility(View.VISIBLE);
-						tvTagName.setText("새 태그 \"" + etAddTag.getText().toString() + "\" 추가");
+						tvTagName.setText("새 태그 \""
+								+ etAddTag.getText().toString() + "\" 추가");
 					}
 				} else {
 					actualPosition = position - 1;
@@ -395,7 +406,7 @@ public class TagSelectActivity extends SherlockActivity {
 			}
 
 			return convertView;
-		}		
+		}
 	}
 
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
@@ -408,23 +419,21 @@ public class TagSelectActivity extends SherlockActivity {
 		@Override
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
-			//progressBar.setVisibility(View.INVISIBLE);
+			// progressBar.setVisibility(View.INVISIBLE);
 			AlterAdapter();
-			//adapter = new BubbleTagAdapter(bubbleTagListPartial);
-			//lvTagList.setAdapter(adapter);
-			//adapter.notifyDataSetChanged();
+			// adapter = new BubbleTagAdapter(bubbleTagListPartial);
+			// lvTagList.setAdapter(adapter);
+			// adapter.notifyDataSetChanged();
 		}
 
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
 			super.onPreExecute();
-			//progressBar.setVisibility(View.VISIBLE);
+			// progressBar.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			// TODO Auto-generated method stub
 			super.onProgressUpdate(values);
 		}
 

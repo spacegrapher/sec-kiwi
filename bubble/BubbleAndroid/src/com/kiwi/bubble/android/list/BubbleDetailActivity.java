@@ -39,7 +39,6 @@ import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 import com.kiwi.bubble.android.member.UserProfileActivity;
 
-
 public class BubbleDetailActivity extends SherlockActivity {
 	private LinearLayout llBody;
 	private LinearLayout llComments;
@@ -53,13 +52,13 @@ public class BubbleDetailActivity extends SherlockActivity {
 	private ImageView ivPhoto;
 	private Long bubbleId;
 	private Long authorId;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Sherlock_Light);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bubbledetail);
-		
+
 		llBody = (LinearLayout) findViewById(R.id.linearLayoutBubbleDetailBody);
 		llComments = (LinearLayout) findViewById(R.id.linearLayoutBubbleDetailComments);
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleDetail);
@@ -70,50 +69,52 @@ public class BubbleDetailActivity extends SherlockActivity {
 		etComment = (EditText) findViewById(R.id.editTextBubbleDetailComment);
 		ivUserImage = (ImageView) findViewById(R.id.imageViewBubbleDetailProfile);
 		ivPhoto = (ImageView) findViewById(R.id.imageViewBubbleDetailImage);
-				
+
 		Intent intent = this.getIntent();
 		bubbleId = Long.valueOf(intent.getLongExtra("bubbleid", -1));
 		authorId = Long.valueOf(intent.getLongExtra("authorid", -1));
-		
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		new BackgroundTask(true).execute();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
 			Intent intent = new Intent();
 			setResult(Activity.RESULT_CANCELED, intent);
 			finish();
+			return true;
 		}
-		return true;
+
+		return false;
 	}
 
 	public void onClickButtonBack(View v) {
 		finish();
 	}
-	
+
 	public void onClickSubmitComment(View v) {
 		new CommentTask().execute();
 	}
-	
+
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
 		BubbleData bubble;
 		UserInfo userInfo;
-		String strTag;
 		List<BubbleComment> comments;
 		boolean bHideBody;
-		
+
 		public BackgroundTask(boolean hideBody) {
 			super();
 			bHideBody = hideBody;
 		}
-		
+
 		@Override
 		protected Long doInBackground(String... arg0) {
 			getBubbleData();
@@ -127,25 +128,27 @@ public class BubbleDetailActivity extends SherlockActivity {
 			tvName.setText(userInfo.getName());
 			tvDate.setText(bubble.getPostTime().toString());
 			tvText.setText(bubble.getText());
-			
+
 			final Bitmap userImage = userInfo.getImage();
-			if(userImage != null) {
+			if (userImage != null) {
 				ivUserImage.setImageBitmap(userImage);
 			}
-			
+
 			Bitmap photo = bubble.getPhoto();
-			if(photo != null) {
+			if (photo != null) {
 				ivPhoto.setImageBitmap(photo);
 				ivPhoto.setVisibility(View.VISIBLE);
 			} else
 				ivPhoto.setVisibility(View.GONE);
-			
+
 			llTag.removeAllViews();
-			for(int i=0; i<bubble.getTag().size(); i++) {
+			for (int i = 0; i < bubble.getTag().size(); i++) {
 				final BubbleTag tag = bubble.getRealTag().get(i);
-				
+
 				TextView tagText = new TextView(BubbleDetailActivity.this);
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+						LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 				params.setMargins(0, 0, 10, 0);
 				tagText.setLayoutParams(params);
 				tagText.setBackgroundColor(0xFFFFFF00);
@@ -154,167 +157,190 @@ public class BubbleDetailActivity extends SherlockActivity {
 				tagText.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Intent intent = new Intent(BubbleDetailActivity.this, TagSearchActivity.class);
-						intent.putExtra("id",  bubbleId.longValue());
+						Intent intent = new Intent(BubbleDetailActivity.this,
+								TagSearchActivity.class);
+						intent.putExtra("id", bubbleId.longValue());
 						intent.putExtra("tag", tag.getText());
 						startActivity(intent);
 					}
-					
+
 				});
 				llTag.addView(tagText);
 			}
-			
+
 			llComments.removeAllViews();
-			for(int i=0; i<comments.size(); i++) {
+			for (int i = 0; i < comments.size(); i++) {
 				final BubbleComment comment = comments.get(i);
-				LayoutInflater inflater = (LayoutInflater)getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				View commentView = inflater.inflate(R.layout.listview_bubblecomment, null);
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				LayoutInflater inflater = (LayoutInflater) getBaseContext()
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View commentView = inflater.inflate(
+						R.layout.listview_bubblecomment, null);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+						LinearLayout.LayoutParams.MATCH_PARENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 				commentView.setLayoutParams(params);
-				TextView tvcName = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewName);
-				TextView tvcText = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewText);
-				TextView tvcDate = (TextView)commentView.findViewById(R.id.textViewBubbleListCommentViewDate);
-				ImageView ivCommentPhoto = (ImageView)commentView.findViewById(R.id.imageViewBubbleCommentPhoto);
+				TextView tvcName = (TextView) commentView
+						.findViewById(R.id.textViewBubbleListCommentViewName);
+				TextView tvcText = (TextView) commentView
+						.findViewById(R.id.textViewBubbleListCommentViewText);
+				TextView tvcDate = (TextView) commentView
+						.findViewById(R.id.textViewBubbleListCommentViewDate);
+				ImageView ivCommentPhoto = (ImageView) commentView
+						.findViewById(R.id.imageViewBubbleCommentPhoto);
 				tvcName.setText("" + comment.getAuthorInfo().getName());
 				tvcText.setText(comment.getText());
 				tvcDate.setText(comment.getPostTime().toString());
 				llComments.addView(commentView);
-				
+
 				final Bitmap commentPhoto = comment.getAuthorInfo().getImage();
-				if(commentPhoto != null) {
+				if (commentPhoto != null) {
 					ivCommentPhoto.setImageBitmap(commentPhoto);
 				}
-				
+
 				tvcName.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Intent intent = new Intent(BubbleDetailActivity.this, UserProfileActivity.class);
+						Intent intent = new Intent(BubbleDetailActivity.this,
+								UserProfileActivity.class);
 						intent.putExtra("id", authorId.longValue());
-						intent.putExtra("selectedid", comment.getAuthorId().longValue());
+						intent.putExtra("selectedid", comment.getAuthorId()
+								.longValue());
 						startActivity(intent);
-						if(authorId.longValue() == comment.getAuthorId().longValue())
+						if (authorId.longValue() == comment.getAuthorId()
+								.longValue())
 							overridePendingTransition(0, 0);
 					}
-					
+
 				});
 			}
-			
+
 			tvName.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(BubbleDetailActivity.this, UserProfileActivity.class);
+					Intent intent = new Intent(BubbleDetailActivity.this,
+							UserProfileActivity.class);
 					intent.putExtra("id", authorId.longValue());
-					intent.putExtra("selectedid", bubble.getAuthorId().longValue());
+					intent.putExtra("selectedid", bubble.getAuthorId()
+							.longValue());
 					startActivity(intent);
-					if(authorId.longValue() == bubble.getAuthorId().longValue())
+					if (authorId.longValue() == bubble.getAuthorId()
+							.longValue())
 						overridePendingTransition(0, 0);
 				}
-				
+
 			});
-			
-			if(bHideBody) llBody.setVisibility(View.VISIBLE);
+
+			if (bHideBody)
+				llBody.setVisibility(View.VISIBLE);
 			progressBar.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
 			super.onPreExecute();
 			progressBar.setVisibility(View.VISIBLE);
-			if(bHideBody) llBody.setVisibility(View.INVISIBLE);
+			if (bHideBody)
+				llBody.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			// TODO Auto-generated method stub
 			super.onProgressUpdate(values);
 		}
-		
+
 		private void getBubbleData() {
 			bubble = BubbleData.getBubbleData(bubbleId.longValue());
 			userInfo = UserInfo.getUserInfo(bubble.getAuthorId().longValue());
-			
+
 			// Get User Image
 			String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
 			DefaultHttpClient userImageClient = new DefaultHttpClient();
-			String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + bubble.getAuthorId(), userImageClient);
-			if(!userImageRes.equals("")) {
+			String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl
+					+ "?id=" + bubble.getAuthorId(), userImageClient);
+			if (!userImageRes.equals("")) {
 				byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
-				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
-								
+				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
+						photoByte.length);
+
 				userInfo.setImage(bmp);
 			}
-			
+
 			// Get Tag
 			List<Long> longTag = bubble.getTag();
 			if (longTag.size() != 0) {
 				List<BubbleTag> bubbleTag = null;
 				String tagStr = new String();
-				
-				for(int j=0; j<longTag.size(); j++) {
-					if(j>0) tagStr += ",";
+
+				for (int j = 0; j < longTag.size(); j++) {
+					if (j > 0)
+						tagStr += ",";
 					tagStr += longTag.get(j);
 				}
 				bubbleTag = BubbleTag.getBubbleTagMultiple(tagStr);
 				bubble.setRealTag(bubbleTag);
 			}
-			
+
 			// Get Photo
 			String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";
 			DefaultHttpClient photoClient = new DefaultHttpClient();
-			String photoRes = HttpGetUtil.doGetWithResponse(photoUrl + "?bubbleid=" + bubble.getId(), photoClient);
-			if(!photoRes.equals("")) {
+			String photoRes = HttpGetUtil.doGetWithResponse(photoUrl
+					+ "?bubbleid=" + bubble.getId(), photoClient);
+			if (!photoRes.equals("")) {
 				byte[] photoByte = Base64.decode(photoRes, Base64.DEFAULT);
-				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
-								
+				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
+						photoByte.length);
+
 				bubble.setPhoto(bmp);
 			}
 		}
-		
-		private void getCommentData() {		
+
+		private void getCommentData() {
 			comments = BubbleComment.getCommentData(bubbleId.longValue());
-			
-			for(int i=0; i<comments.size(); i++) {
+
+			for (int i = 0; i < comments.size(); i++) {
 				BubbleComment comment = comments.get(i);
-				UserInfo commentAuthor = UserInfo.getUserInfo(comment.getAuthorId().longValue());
+				UserInfo commentAuthor = UserInfo.getUserInfo(comment
+						.getAuthorId().longValue());
 				// Get User Image
 				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
 				DefaultHttpClient userImageClient = new DefaultHttpClient();
-				String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" + comment.getAuthorId().longValue(), userImageClient);
-				if(!userImageRes.equals("")) {
-					byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
-					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0, photoByte.length);
-									
+				String userImageRes = HttpGetUtil.doGetWithResponse(
+						userImageUrl + "?id="
+								+ comment.getAuthorId().longValue(),
+						userImageClient);
+				if (!userImageRes.equals("")) {
+					byte[] photoByte = Base64.decode(userImageRes,
+							Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
+							photoByte.length);
+
 					commentAuthor.setImage(bmp);
 				}
-				
+
 				comment.setAuthorInfo(commentAuthor);
 				comments.set(i, comment);
 			}
 		}
 	}
-	
+
 	private class CommentTask extends AsyncTask<String, Integer, Long> {
-		
+
 		private ProgressDialog progressDialog;
 
 		@Override
 		protected Long doInBackground(String... arg0) {
 			String pageUrl = Constant.SERVER_DOMAIN_URL + "/comment";
-			
+
 			String strComment = etComment.getText().toString();
-					
+
 			HttpPostUtil util = new HttpPostUtil();
-			HashMap result = new HashMap();
-			String resultStr = new String();
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("bubbleid", bubbleId.toString());
 			param.put("authorid", authorId.toString());
 			param.put("comment", strComment);
-			
-			
+
 			try {
-				resultStr = util.httpPostData(pageUrl, param);
+				util.httpPostData(pageUrl, param);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -334,8 +360,9 @@ public class BubbleDetailActivity extends SherlockActivity {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-			
+			inputManager.hideSoftInputFromWindow(getCurrentFocus()
+					.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
 			progressDialog = new ProgressDialog(BubbleDetailActivity.this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			progressDialog.setMessage("댓글 게시 중...");
@@ -345,7 +372,6 @@ public class BubbleDetailActivity extends SherlockActivity {
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			// TODO Auto-generated method stub
 			super.onProgressUpdate(values);
 		}
 	}

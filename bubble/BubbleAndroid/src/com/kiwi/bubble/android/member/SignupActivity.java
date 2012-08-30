@@ -17,49 +17,48 @@ import com.kiwi.bubble.android.common.TEA;
 import com.kiwi.bubble.android.common.parser.HttpPostUtil;
 
 public class SignupActivity extends Activity {
-	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+		setContentView(R.layout.activity_signup);
 	}
 
 	public void onClickCreateAccount(View v) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/signup";
 		TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
-		
-		EditText editTextEmail = (EditText)findViewById(R.id.editTextSignupEmail);
-		EditText editTextName = (EditText)findViewById(R.id.editTextSignupName);
-		EditText editTextPassword = (EditText)findViewById(R.id.editTextSignupPassword);
-		
+
+		EditText editTextEmail = (EditText) findViewById(R.id.editTextSignupEmail);
+		EditText editTextName = (EditText) findViewById(R.id.editTextSignupName);
+		EditText editTextPassword = (EditText) findViewById(R.id.editTextSignupPassword);
+
 		String strEmail = editTextEmail.getText().toString();
 		String strName = editTextName.getText().toString();
-		String strPassword = new String(tea.encrypt(editTextPassword.getText().toString().getBytes()));
-		
-		if(strEmail.isEmpty()) {
-			Toast.makeText(SignupActivity.this, "Please enter email address", 0).show();
-		} else if(strName.isEmpty()) {
-			Toast.makeText(SignupActivity.this, "Please enter your name", 0).show();
-		} else if(strPassword.isEmpty()) {
-			Toast.makeText(SignupActivity.this, "Please enter password", 0).show();
-		} else {		
+		String strPassword = new String(tea.encrypt(editTextPassword.getText()
+				.toString().getBytes()));
+
+		if (strEmail.isEmpty()) {
+			Toast.makeText(SignupActivity.this, "이메일 주소를 입력해 주세요", Toast.LENGTH_SHORT)
+					.show();
+		} else if (strName.isEmpty()) {
+			Toast.makeText(SignupActivity.this, "이름을 입력해 주세요", Toast.LENGTH_SHORT)
+					.show();
+		} else if (strPassword.isEmpty()) {
+			Toast.makeText(SignupActivity.this, "비밀번호를 입력해 주세요", Toast.LENGTH_SHORT)
+					.show();
+		} else {
 			HttpPostUtil util = new HttpPostUtil();
-			HashMap result = new HashMap();
-			String resultStr = new String();
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("email", strEmail);
 			param.put("name", strName);
 			param.put("password", strPassword);
-			
+
 			try {
-				resultStr = util.httpPostData(pageUrl, param);
+				util.httpPostData(pageUrl, param);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			//Toast.makeText(SignupActivity.this, "Account created!\n" + resultStr, 0).show();
-			
+
 			Intent intent = new Intent();
 			setResult(Activity.RESULT_OK, intent);
 			finish();

@@ -25,80 +25,80 @@ public class MainActivity extends Activity {
 	private static final int REQUEST_CODE_SIGNUP = 101;
 	private EditText editTextEmail;
 	private EditText editTextPassword;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        
-        Typeface tf = Typeface.createFromAsset(getAssets(), "font/Roboto-Regular.ttf");
-        
-        editTextEmail = (EditText)findViewById(R.id.editTextEmail);
-        editTextPassword = (EditText)findViewById(R.id.editTextPassword);
-        
-        editTextEmail.setTypeface(tf);
-        editTextPassword.setTypeface(tf);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 
-    public void onClickLogin(View v) {
-    	new BackgroundTask().execute();
-    }
-    
-    public void onClickSignup(View v) {
-    	Intent intent = new Intent(this, SignupActivity.class);
+		Typeface tf = Typeface.createFromAsset(getAssets(),
+				"font/Roboto-Regular.ttf");
+
+		editTextEmail = (EditText) findViewById(R.id.editTextEmail);
+		editTextPassword = (EditText) findViewById(R.id.editTextPassword);
+
+		editTextEmail.setTypeface(tf);
+		editTextPassword.setTypeface(tf);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	public void onClickLogin(View v) {
+		new BackgroundTask().execute();
+	}
+
+	public void onClickSignup(View v) {
+		Intent intent = new Intent(this, SignupActivity.class);
 		startActivityForResult(intent, REQUEST_CODE_SIGNUP);
-    }
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (resultCode == Activity.RESULT_OK){
+
+		if (resultCode == Activity.RESULT_OK) {
 			if (requestCode == REQUEST_CODE_SIGNUP) {
-				Toast.makeText(MainActivity.this, "Account Created!", 0).show();
+				Toast.makeText(MainActivity.this, "계정이 생성되었습니다", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
-    
+
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
 		String resultStr;
 		ProgressDialog progressDialog;
-		
+
 		@Override
 		protected Long doInBackground(String... arg0) {
 			resultStr = new String();
 			String pageUrl = Constant.SERVER_DOMAIN_URL;
-	    	TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
-			
+			TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
+
 			String strEmail = editTextEmail.getText().toString();
-			String strPassword = new String(tea.encrypt(editTextPassword.getText().toString().getBytes()));
-			
-			if(strEmail.isEmpty()) {
-				Toast.makeText(MainActivity.this, "이메일 주소를 입력하세요", 0).show();
-			} else if(strPassword.isEmpty()) {
-				Toast.makeText(MainActivity.this, "비밀번호를 입력하세요", 0).show();
-			} else {		
+			String strPassword = new String(tea.encrypt(editTextPassword
+					.getText().toString().getBytes()));
+
+			if (strEmail.isEmpty()) {
+				Toast.makeText(MainActivity.this, "이메일 주소를 입력하세요", Toast.LENGTH_SHORT).show();
+			} else if (strPassword.isEmpty()) {
+				Toast.makeText(MainActivity.this, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
+			} else {
 				HttpPostUtil util = new HttpPostUtil();
-				HashMap result = new HashMap();
 				Map<String, String> param = new HashMap<String, String>();
 				param.put("email", strEmail);
 				param.put("password", strPassword);
-				
+
 				try {
 					resultStr = util.httpPostData(pageUrl, param);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
-				
+
 			}
-			
+
 			return null;
 		}
 
@@ -107,9 +107,10 @@ public class MainActivity extends Activity {
 			super.onPostExecute(result);
 			progressDialog.hide();
 			if (resultStr.isEmpty()) {
-				Toast.makeText(MainActivity.this, "로그인 정보가 맞지 않습니다", 0).show();
+				Toast.makeText(MainActivity.this, "로그인 정보가 맞지 않습니다", Toast.LENGTH_SHORT).show();
 			} else {
-				Intent intent = new Intent(MainActivity.this, BubbleListActivity.class);
+				Intent intent = new Intent(MainActivity.this,
+						BubbleListActivity.class);
 				intent.putExtra("id", Long.valueOf(resultStr));
 				startActivity(intent);
 			}
@@ -127,10 +128,8 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			// TODO Auto-generated method stub
 			super.onProgressUpdate(values);
 		}
-		
-		
+
 	}
 }

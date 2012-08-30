@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ECF9C6"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <LinearLayout
+        android:id="@+id/linearLayoutExploreList"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/explore_note2" >
+
+        <LinearLayout
+            android:id="@+id/linearLayoutTagList"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="bottom"
+            android:padding="5dp" >
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

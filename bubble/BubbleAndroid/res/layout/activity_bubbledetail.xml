@@ -133,17 +133,18 @@
                                     android:src="@drawable/ic_launcher" />
 
                             </TableRow>
-
+
                             <TableRow
-                                android:id="@+id/tableRow2"
+                                android:id="@+id/tableRowBubbleDetailComments"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="#EEEEEE" >
-
+
                                 <LinearLayout
                                     android:id="@+id/linearLayoutBubbleDetailComments"
-                                    android:layout_width="fill_parent"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:layout_weight="1"
                                     android:background="#EEEEEE"
                                     android:orientation="vertical"
                                     android:visibility="visible" >

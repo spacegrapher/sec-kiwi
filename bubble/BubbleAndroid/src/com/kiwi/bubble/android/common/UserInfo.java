@@ -1,8 +1,5 @@
 package com.kiwi.bubble.android.common;
 
-import java.util.Date;
-import java.util.List;
-
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.graphics.Bitmap;
@@ -15,11 +12,11 @@ public class UserInfo extends ModelBase {
 	
 	private String name;
 	
-	private Date joinDate;
+	//private Date joinDate;
 	
 	private Bitmap image;
 	
-	private List<Long> favorites;
+	//private List<Long> favorites;
 
 	public UserInfo(String email, String name) {
 		super();

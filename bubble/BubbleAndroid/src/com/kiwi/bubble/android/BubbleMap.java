@@ -50,7 +50,6 @@ public class BubbleMap extends MapActivity implements LocationListener{
     
 	@Override
 	protected void onCreate(Bundle arg0) {
-		// TODO Auto-generated method stub
 		super.onCreate(arg0);
 		setContentView(R.layout.activity_map);
 		

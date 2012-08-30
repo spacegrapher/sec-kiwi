@@ -17,8 +17,6 @@ import org.apache.http.protocol.HTTP;
 import android.util.Log;
 
 public class HttpGetUtil {
-	private static final String LOG_TAG = "HttpGetUtil";
-
 	// THIS IS THE GET METHOD YOU WILL BE CALLING
 	// HERE YOU JUST NEED TO PASS IN:
 	// 1) THE URL YOU WANT TO MAKE THE REQUEST TO
