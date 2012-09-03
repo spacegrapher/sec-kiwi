@@ -259,7 +259,7 @@ public class UserPhotoActivity extends SherlockActivity {
 			super.onPreExecute();
 			progressDialog = new ProgressDialog(UserPhotoActivity.this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progressDialog.setMessage("Updating photo...");
+			progressDialog.setMessage("사진 변경 중...");
 			progressDialog.setCancelable(false);
 			progressDialog.show();
 		}

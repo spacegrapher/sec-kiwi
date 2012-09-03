@@ -12,6 +12,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HTTP;
 
 import android.util.Log;
@@ -26,6 +27,7 @@ public class HttpGetUtil {
 		HttpResponse response = null;
 
 		HttpGet getMethod = new HttpGet(mUrl);
+		getMethod.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 		try {
 			response = httpClient.execute(getMethod);
 			//Log.i(LOG_TAG, "STATUS CODE: " + String.valueOf(response.getStatusLine().getStatusCode()));

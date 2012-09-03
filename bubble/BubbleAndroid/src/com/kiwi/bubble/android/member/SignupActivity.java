@@ -1,12 +1,17 @@
 package com.kiwi.bubble.android.member;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap.CompressFormat;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,9 +30,8 @@ public class SignupActivity extends Activity {
 	}
 
 	public void onClickCreateAccount(View v) {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/signup";
 		TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
-
+		
 		EditText editTextEmail = (EditText) findViewById(R.id.editTextSignupEmail);
 		EditText editTextName = (EditText) findViewById(R.id.editTextSignupName);
 		EditText editTextPassword = (EditText) findViewById(R.id.editTextSignupPassword);
@@ -47,11 +51,48 @@ public class SignupActivity extends Activity {
 			Toast.makeText(SignupActivity.this, "비밀번호를 입력해 주세요", Toast.LENGTH_SHORT)
 					.show();
 		} else {
+			new BackgroundTask().execute(strEmail, strName, strPassword);
+		}
+	}
+	
+	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
+		private ProgressDialog progressDialog;
+
+		@Override
+		protected Long doInBackground(String... arg0) {
+			this.signupAccount(arg0[0], arg0[1], arg0[2]);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			progressDialog.hide();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progressDialog = new ProgressDialog(SignupActivity.this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("계정 생성 중...");
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+
+		private void signupAccount(String email, String name, String password) {
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/signup";
+			
 			HttpPostUtil util = new HttpPostUtil();
 			Map<String, String> param = new HashMap<String, String>();
-			param.put("email", strEmail);
-			param.put("name", strName);
-			param.put("password", strPassword);
+			param.put("email", email);
+			param.put("name", name);
+			param.put("password", password);
 
 			try {
 				util.httpPostData(pageUrl, param);

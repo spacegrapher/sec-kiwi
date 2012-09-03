@@ -257,15 +257,22 @@ public class UserProfileActivity extends SherlockActivity implements
 
 	class UserBubbleListAdapter extends BaseAdapter {
 		private List<BubbleData> bubbleData;
+		private int loadedDataSize;
 
 		public UserBubbleListAdapter(List<BubbleData> bubbleData) {
 			super();
 			this.bubbleData = bubbleData;
+			this.loadedDataSize = 0;
 		}
 
+		public void changeData(List<BubbleData> bubbleData, int size) {
+			this.bubbleData = bubbleData;
+			this.loadedDataSize = size;
+			this.notifyDataSetChanged();
+		}
 		@Override
 		public int getCount() {
-			return bubbleData.size();
+			return loadedDataSize;
 		}
 
 		@Override
@@ -322,7 +329,7 @@ public class UserProfileActivity extends SherlockActivity implements
 			tvName.setText("" + currentBubble.getAuthorInfo().getName());
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
-			tvCommentCount.setText("" + currentBubble.getComments().size());
+			tvCommentCount.setText("" + currentBubble.getCommentCount());
 
 			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
 			if (userImage != null) {
@@ -548,22 +555,10 @@ public class UserProfileActivity extends SherlockActivity implements
 
 		@Override
 		protected void onPostExecute(Long result) {
-			super.onPostExecute(result);
+			super.onPostExecute(result);		
 
-			tvName.setText(userInfo.getName());
-			tvEmail.setText(userInfo.getEmail());
-
-			final Bitmap userImage = userInfo.getImage();
-			if (userImage != null) {
-				ivUserProfile.setImageBitmap(userImage);
-			}
-
-			adapter = new UserBubbleListAdapter(bubbles);
-			lvBubbleList.setAdapter(adapter);
-			adapter.notifyDataSetChanged();
-
-			progressBar.setVisibility(View.INVISIBLE);
-			llBody.setVisibility(View.VISIBLE);
+			adapter.changeData(bubbles, bubbles.size());
+			progressBar.setVisibility(View.INVISIBLE);			
 		}
 
 		@Override
@@ -571,11 +566,28 @@ public class UserProfileActivity extends SherlockActivity implements
 			super.onPreExecute();
 			progressBar.setVisibility(View.VISIBLE);
 			llBody.setVisibility(View.INVISIBLE);
+			adapter = new UserBubbleListAdapter(bubbles);
+			lvBubbleList.setAdapter(adapter);
 		}
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
+			if (values[0].equals(0)) {
+				tvName.setText(userInfo.getName());
+				tvEmail.setText(userInfo.getEmail());
+
+				final Bitmap userImage = userInfo.getImage();
+				if (userImage != null) {
+					ivUserProfile.setImageBitmap(userImage);
+				}
+				
+				llBody.setVisibility(View.VISIBLE);
+			} else {
+				adapter.changeData(bubbles, values[0]);
+				
+				new BackgroundPhotoTask().execute(values[0]-1);
+			}
 		}
 
 		private void getUserInfo() {
@@ -586,7 +598,6 @@ public class UserProfileActivity extends SherlockActivity implements
 			DefaultHttpClient userImageClient = new DefaultHttpClient();
 			String userImageRes = HttpGetUtil.doGetWithResponse(userImageUrl
 					+ "?id=" + selectedId.longValue(), userImageClient);
-			// Log.i("USER", "userImageRes: " + userImageRes);
 			if (!userImageRes.equals("")) {
 				byte[] photoByte = Base64.decode(userImageRes, Base64.DEFAULT);
 				Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
@@ -594,6 +605,8 @@ public class UserProfileActivity extends SherlockActivity implements
 
 				userInfo.setImage(bmp);
 			}
+			
+			publishProgress(0);
 		}
 
 		private void updateListView() {
@@ -609,23 +622,6 @@ public class UserProfileActivity extends SherlockActivity implements
 
 				// Get UserInfo
 				UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId());
-
-				// Get User Image
-				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
-				DefaultHttpClient userImageClient = new DefaultHttpClient();
-				String userImageRes = HttpGetUtil.doGetWithResponse(
-						userImageUrl + "?id=" + bubble.getAuthorId(),
-						userImageClient);
-				// Log.i("USER", "userImageRes: " + userImageRes);
-				if (!userImageRes.equals("")) {
-					byte[] photoByte = Base64.decode(userImageRes,
-							Base64.DEFAULT);
-					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
-							photoByte.length);
-
-					userInfo.setImage(bmp);
-				}
-
 				bubble.setAuthorInfo(userInfo);
 
 				// Get Tag
@@ -638,10 +634,71 @@ public class UserProfileActivity extends SherlockActivity implements
 				}
 				bubble.setRealTag(bubbleTag);
 
-				// Get Comments
-				List<BubbleComment> comments = BubbleComment
-						.getCommentData(bubble.getId().longValue());
-				bubble.setComments(comments);
+				// Check favorite
+				String pageUrlFavorite = Constant.SERVER_DOMAIN_URL
+						+ "/favorite";
+				DefaultHttpClient clientFavorite = new DefaultHttpClient();
+
+				String responseFavorite = HttpGetUtil.doGetWithResponse(
+						pageUrlFavorite + "?id=" + id.toString() + "&bubbleid="
+								+ bubble.getId(), clientFavorite);
+				if (responseFavorite.equals("OK")) {
+					bubble.setFavorite(true);
+				} else {
+					bubble.setFavorite(false);
+				}
+
+				bubbles.set(i, bubble);
+				publishProgress(i+1);
+			}
+		}
+	}
+	
+	private class BackgroundPhotoTask extends AsyncTask<Integer, Integer, Long> {
+		@Override
+		protected Long doInBackground(Integer... arg0) {
+			this.loadPhoto(arg0[0]);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			adapter.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+
+		private void loadPhoto(Integer index) {
+			{
+				BubbleData bubble = bubbles.get(index.intValue());
+
+				UserInfo userInfo = bubble.getAuthorInfo();
+				// Get User Image
+				String userImageUrl = Constant.SERVER_DOMAIN_URL + "/userimage";
+				DefaultHttpClient userImageClient = new DefaultHttpClient();
+				String userImageRes = HttpGetUtil.doGetWithResponse(
+						userImageUrl + "?id=" + bubble.getAuthorId(),
+						userImageClient);
+				// Log.i("USER", "userImageRes: " + userImageRes);
+				if (!userImageRes.equals("")) {
+					byte[] photoByte = Base64.decode(userImageRes,
+							Base64.DEFAULT);
+					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
+							photoByte.length);
+					
+					if (bmp != null)
+						userInfo.setImage(bmp);
+				}
+				bubble.setAuthorInfo(userInfo);
 
 				// Get Photo
 				String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";
@@ -656,7 +713,7 @@ public class UserProfileActivity extends SherlockActivity implements
 					bubble.setPhoto(bmp);
 				}
 
-				bubbles.set(i, bubble);
+				bubbles.set(index.intValue(), bubble);
 			}
 		}
 	}

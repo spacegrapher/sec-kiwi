@@ -23,6 +23,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreProtocolPNames;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -60,6 +61,7 @@ public class HttpPostUtil {
 
 	private HttpPost makeHttpPost(Map<String, String> param, String url) {
 		HttpPost request = new HttpPost(url);
+		request.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 		Vector<NameValuePair> nameValue = new Vector<NameValuePair>();
 
 		if (param != null) {

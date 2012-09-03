@@ -1,6 +1,7 @@
 package com.kiwi.bubble.android.list;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,7 @@ public class BubbleListActivity extends SherlockActivity implements
 
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleList);
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
+		bubbles = new ArrayList<BubbleData>();
 
 	}
 
@@ -154,15 +156,22 @@ public class BubbleListActivity extends SherlockActivity implements
 
 	class BubbleListAdapter extends BaseAdapter {
 		private List<BubbleData> bubbleData;
+		private int loadedDataSize;
 
 		public BubbleListAdapter(List<BubbleData> bubbleData) {
 			super();
 			this.bubbleData = bubbleData;
+			this.loadedDataSize = 0;
 		}
 
+		public void changeData(List<BubbleData> bubbleData, int size) {
+			this.bubbleData = bubbleData;
+			this.loadedDataSize = size;
+			this.notifyDataSetChanged();
+		}
 		@Override
 		public int getCount() {
-			return bubbleData.size();
+			return loadedDataSize;
 		}
 
 		@Override
@@ -341,24 +350,13 @@ public class BubbleListActivity extends SherlockActivity implements
 						ivBubbleFavorite.setBackgroundColor(0);
 						ivBubbleFavorite.invalidate();
 
-						String pageUrl = Constant.SERVER_DOMAIN_URL
-								+ "/favorite";
-
-						HttpPostUtil util = new HttpPostUtil();
-
-						Map<String, String> param = new HashMap<String, String>();
-						param.put("id", String.valueOf(id));
-						param.put("bubbleid",
-								String.valueOf(currentBubble.getId()));
-						
-						try {
-							util.httpPostData(pageUrl, param);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-
+						new CheckFavoriteTask().execute(currentBubble.getId());
 						currentBubble.setFavorite(!currentBubble.isFavorite());
-						adapter.notifyDataSetChanged();
+						if (currentBubble.isFavorite()) {							
+							ivBubbleFavorite.setImageResource(R.drawable.icon_star);
+						} else {
+							ivBubbleFavorite.setImageResource(R.drawable.icon_empty_star);
+						}
 						break;
 					}
 
@@ -374,7 +372,6 @@ public class BubbleListActivity extends SherlockActivity implements
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		if (bEnableTabListener) {
-			Log.i("TAB", "position: " + tab.getPosition());
 			switch (tab.getPosition()) {
 			case 0:
 				break;
@@ -413,20 +410,17 @@ public class BubbleListActivity extends SherlockActivity implements
 		}
 	}
 
-	/*private class CheckFavoriteTask extends AsyncTask<String, Integer, Long> {
-		private String bubbleId;
-		private boolean isFavorite = false;
-
+	private class CheckFavoriteTask extends AsyncTask<Long, Integer, Long> {
 		@Override
-		protected Long doInBackground(String... arg0) {
-			bubbleId = arg0[0];
-			checkFavorite();
+		protected Long doInBackground(Long... arg0) {
+			checkFavorite(arg0[0]);
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
+			adapter.notifyDataSetChanged();
 		}
 
 		@Override
@@ -439,19 +433,26 @@ public class BubbleListActivity extends SherlockActivity implements
 			super.onProgressUpdate(values);
 		}
 
-		private void checkFavorite() {
-			String pageUrl = Constant.SERVER_DOMAIN_URL + "/favorite";
-			DefaultHttpClient client = new DefaultHttpClient();
+		private void checkFavorite(Long bubbleId) {
+			String pageUrl = Constant.SERVER_DOMAIN_URL
+					+ "/favorite";
 
-			String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id="
-					+ id.toString() + "&bubbleid=" + bubbleId, client);
-			if (response.equals("OK")) {
-				// isFriend = true;
-			} else {
-				// isFriend = false;
+			HttpPostUtil util = new HttpPostUtil();
+
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("id", String.valueOf(id));
+			param.put("bubbleid",
+					String.valueOf(bubbleId));
+			
+			try {
+				util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+
+			
 		}
-	}*/
+	}
 
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
 		@Override
@@ -464,21 +465,22 @@ public class BubbleListActivity extends SherlockActivity implements
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
 			progressBar.setVisibility(View.INVISIBLE);
-			adapter = new BubbleListAdapter(bubbles);
-			lvBubbleList.setAdapter(adapter);
-			adapter.notifyDataSetChanged();
-			new BackgroundPhotoTask().execute();
+			adapter.changeData(bubbles, bubbles.size());
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			progressBar.setVisibility(View.VISIBLE);
+			adapter = new BubbleListAdapter(bubbles);
+			lvBubbleList.setAdapter(adapter);
 		}
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
+			adapter.changeData(bubbles, values[0]);
+			new BackgroundPhotoTask().execute(values[0]-1);
 		}
 
 		private void updateListView() {
@@ -531,30 +533,27 @@ public class BubbleListActivity extends SherlockActivity implements
 				}
 
 				bubbles.set(i, bubble);
+				publishProgress(i+1);
 			}
 		}
 	}
 
-	private class BackgroundPhotoTask extends AsyncTask<String, Integer, Long> {
+	private class BackgroundPhotoTask extends AsyncTask<Integer, Integer, Long> {
 		@Override
-		protected Long doInBackground(String... arg0) {
-			this.loadPhoto();
+		protected Long doInBackground(Integer... arg0) {
+			this.loadPhoto(arg0[0]);
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
-			// progressBar.setVisibility(View.INVISIBLE);
-			// adapter = new BubbleListAdapter(bubbles);
-			// lvBubbleList.setAdapter(adapter);
 			adapter.notifyDataSetChanged();
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			// progressBar.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -562,9 +561,9 @@ public class BubbleListActivity extends SherlockActivity implements
 			super.onProgressUpdate(values);
 		}
 
-		private void loadPhoto() {
-			for (int i = 0; i < bubbles.size(); i++) {
-				BubbleData bubble = bubbles.get(i);
+		private void loadPhoto(Integer index) {
+			{
+				BubbleData bubble = bubbles.get(index.intValue());
 
 				UserInfo userInfo = bubble.getAuthorInfo();
 				// Get User Image
@@ -579,8 +578,9 @@ public class BubbleListActivity extends SherlockActivity implements
 							Base64.DEFAULT);
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
 							photoByte.length);
-
-					userInfo.setImage(bmp);
+					
+					if (bmp != null)
+						userInfo.setImage(bmp);
 				}
 				bubble.setAuthorInfo(userInfo);
 
@@ -597,7 +597,7 @@ public class BubbleListActivity extends SherlockActivity implements
 					bubble.setPhoto(bmp);
 				}
 
-				bubbles.set(i, bubble);
+				bubbles.set(index.intValue(), bubble);
 			}
 		}
 	}
