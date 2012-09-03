@@ -48,7 +48,18 @@ public class MainActivity extends Activity {
 	}
 
 	public void onClickLogin(View v) {
-		new BackgroundTask().execute();
+		TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
+
+		String strEmail = editTextEmail.getText().toString();
+		String strPassword = editTextPassword.getText().toString();
+
+		if (strEmail.isEmpty()) {
+			Toast.makeText(MainActivity.this, "이메일 주소를 입력하세요", Toast.LENGTH_SHORT).show();
+		} else if (strPassword.isEmpty()) {
+			Toast.makeText(MainActivity.this, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
+		} else {
+			new BackgroundTask().execute(strEmail, new String(tea.encrypt(strPassword.getBytes())));
+		}
 	}
 
 	public void onClickSignup(View v) {
@@ -75,29 +86,17 @@ public class MainActivity extends Activity {
 		protected Long doInBackground(String... arg0) {
 			resultStr = new String();
 			String pageUrl = Constant.SERVER_DOMAIN_URL;
-			TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
+			
+			HttpPostUtil util = new HttpPostUtil();
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("email", arg0[0]);
+			param.put("password", arg0[1]);
 
-			String strEmail = editTextEmail.getText().toString();
-			String strPassword = new String(tea.encrypt(editTextPassword
-					.getText().toString().getBytes()));
-
-			if (strEmail.isEmpty()) {
-				Toast.makeText(MainActivity.this, "이메일 주소를 입력하세요", Toast.LENGTH_SHORT).show();
-			} else if (strPassword.isEmpty()) {
-				Toast.makeText(MainActivity.this, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
-			} else {
-				HttpPostUtil util = new HttpPostUtil();
-				Map<String, String> param = new HashMap<String, String>();
-				param.put("email", strEmail);
-				param.put("password", strPassword);
-
-				try {
-					resultStr = util.httpPostData(pageUrl, param);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			}
+			try {
+				resultStr = util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
 
 			return null;
 		}
