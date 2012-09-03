@@ -275,7 +275,12 @@ public class TagSelectActivity extends SherlockActivity {
 
 	private void updateSelectedTextView() {
 		String text = new String();
-
+		
+		if(selectedTagList.size() == 0) {
+			tvSelectedTag.setText("");
+			return;
+		}
+		
 		int[] start = new int[selectedTagList.size()];
 		int[] end = new int[selectedTagList.size()];
 		start[0] = 0;
