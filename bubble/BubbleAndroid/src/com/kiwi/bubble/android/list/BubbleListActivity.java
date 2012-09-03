@@ -90,13 +90,14 @@ public class BubbleListActivity extends SherlockActivity implements
 		progressBar = (ProgressBar) findViewById(R.id.progressBarBubbleList);
 		lvBubbleList = (ListView) findViewById(R.id.listViewBubbleList);
 		bubbles = new ArrayList<BubbleData>();
+		new BackgroundTask().execute();
 
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		new BackgroundTask().execute();
+		//new BackgroundTask().execute();
 	}
 
 	@Override
@@ -120,7 +121,7 @@ public class BubbleListActivity extends SherlockActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case OPTIONS_MENU_REFRESH:
-			new BackgroundTask().execute();
+			onClickRefresh(null);
 			return true;
 		case OPTIONS_MENU_TAG:
 			Intent intent = new Intent(this, TagSelectActivity.class);
@@ -138,6 +139,7 @@ public class BubbleListActivity extends SherlockActivity implements
 	}
 
 	public void onClickRefresh(View v) {
+		bubbles = new ArrayList<BubbleData>();
 		new BackgroundTask().execute();
 	}
 
@@ -589,7 +591,7 @@ public class BubbleListActivity extends SherlockActivity implements
 				DefaultHttpClient photoClient = new DefaultHttpClient();
 				String photoRes = HttpGetUtil.doGetWithResponse(photoUrl
 						+ "?bubbleid=" + bubble.getId(), photoClient);
-				if (!photoRes.equals("")) {
+				if (photoRes != null && !photoRes.equals("")) {
 					byte[] photoByte = Base64.decode(photoRes, Base64.DEFAULT);
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
 							photoByte.length);

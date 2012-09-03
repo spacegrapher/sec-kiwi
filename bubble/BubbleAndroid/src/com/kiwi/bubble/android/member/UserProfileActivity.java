@@ -152,15 +152,20 @@ public class UserProfileActivity extends SherlockActivity implements
 				startActivity(intent);
 			}
 		});
+		
+		new BackgroundTask().execute();
+		if (!id.equals(selectedId)) {
+			new CheckFriendTask().execute();
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		new BackgroundTask().execute();
+		/*new BackgroundTask().execute();
 		if (!id.equals(selectedId)) {
 			new CheckFriendTask().execute();
-		}
+		}*/
 	}
 
 	@Override
@@ -235,24 +240,7 @@ public class UserProfileActivity extends SherlockActivity implements
 	}
 
 	private void postFriendRequest() {
-		String pageUrl = Constant.SERVER_DOMAIN_URL + "/friend";
-
-		HttpPostUtil util = new HttpPostUtil();
-
-		Map<String, String> param = new HashMap<String, String>();
-		param.put("id", String.valueOf(id));
-		param.put("friendid", String.valueOf(selectedId));
-		String ret = null;
-
-		try {
-			ret = util.httpPostData(pageUrl, param);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		while (!ret.equals("OK"))
-			;
-		new CheckFriendTask().execute();
+		new AddFriendTask().execute();
 	}
 
 	class UserBubbleListAdapter extends BaseAdapter {
@@ -495,6 +483,48 @@ public class UserProfileActivity extends SherlockActivity implements
 		}
 	}
 
+	private class AddFriendTask extends AsyncTask<String, Integer, Long> {
+		@Override
+		protected Long doInBackground(String... arg0) {
+			addFriend();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+
+			new CheckFriendTask().execute();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+
+		private void addFriend() {
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/friend";
+
+			HttpPostUtil util = new HttpPostUtil();
+
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("id", String.valueOf(id));
+			param.put("friendid", String.valueOf(selectedId));
+			//String ret = null;
+
+			try {
+				util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
+		}
+	}
+	
 	private class CheckFriendTask extends AsyncTask<String, Integer, Long> {
 		@Override
 		protected Long doInBackground(String... arg0) {

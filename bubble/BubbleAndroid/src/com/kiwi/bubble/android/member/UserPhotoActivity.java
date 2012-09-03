@@ -24,6 +24,7 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -39,6 +40,7 @@ public class UserPhotoActivity extends SherlockActivity {
 	private Long id;
 	private boolean bIsEditable;
 	private ImageView ivUserPhoto;
+	private ProgressBar pbUserPhoto;
 
 	// private ImageView imageviewPhoto;
 	private Bitmap bmpPhoto;
@@ -58,6 +60,7 @@ public class UserPhotoActivity extends SherlockActivity {
 		bIsEditable = intent.getBooleanExtra("editable", false);
 
 		ivUserPhoto = (ImageView) findViewById(R.id.imageViewUserPhoto);
+		pbUserPhoto = (ProgressBar) findViewById(R.id.progressBarUserPhoto);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
@@ -211,11 +214,13 @@ public class UserPhotoActivity extends SherlockActivity {
 			super.onPostExecute(result);
 			if (profileBitmap != null)
 				ivUserPhoto.setImageBitmap(profileBitmap);
+			pbUserPhoto.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			pbUserPhoto.setVisibility(View.VISIBLE);
 		}
 
 		@Override

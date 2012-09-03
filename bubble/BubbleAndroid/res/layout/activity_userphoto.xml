@@ -3,11 +3,24 @@
     android:layout_height="match_parent"
     android:background="#ECF9C6"
     android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <ImageView
-        android:id="@+id/imageViewUserPhoto"
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/empty_profile_picture" />
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/imageViewUserPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/empty_profile_picture" />
+
+        <ProgressBar
+            android:id="@+id/progressBarUserPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+
+    </FrameLayout>
 
 </LinearLayout>

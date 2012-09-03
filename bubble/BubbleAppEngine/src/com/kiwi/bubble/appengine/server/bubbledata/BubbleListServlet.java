@@ -47,7 +47,7 @@ public class BubbleListServlet extends HttpServlet {
 		String ret = BubbleDataXMLConverter.convertDataListToXml(bubbleData);
 		
 		resp.setContentType("text/xml");
-		resp.setHeader("Cache-Control", "no-cache");
+		//resp.setHeader("Cache-Control", "no-cache");
 		resp.setCharacterEncoding("utf-8");
 		resp.getWriter().write(ret);
 	}

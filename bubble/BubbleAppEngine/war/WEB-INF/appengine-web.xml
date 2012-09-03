@@ -20,13 +20,14 @@
   </static-files>
 
   <!-- Configure java.util.logging -->
-  <system-properties>
+  <!--<system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
     <property name="css_path" value="" />
-  </system-properties>
+  </system-properties>-->
 
-	<ssl-enabled>true</ssl-enabled>
+	<ssl-enabled>false</ssl-enabled>
 	<sessions-enabled>true</sessions-enabled>
+	<async-session-persistence enabled="true" />
   <!--
     HTTP Sessions are disabled by default. To enable HTTP sessions specify:
 
