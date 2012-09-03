@@ -97,7 +97,7 @@ public class TagSearchActivity extends SherlockActivity {
 				});
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+		bubbles = new ArrayList<BubbleData>();
 		new BackgroundTask().execute();
 	}
 
@@ -121,15 +121,22 @@ public class TagSearchActivity extends SherlockActivity {
 
 	class BubbleListAdapter extends BaseAdapter {
 		private List<BubbleData> bubbleData;
+		private int loadedDataSize;
 
 		public BubbleListAdapter(List<BubbleData> bubbleData) {
 			super();
 			this.bubbleData = bubbleData;
+			this.loadedDataSize = 0;
 		}
 
+		public void changeData(List<BubbleData> bubbleData, int size) {
+			this.bubbleData = bubbleData;
+			this.loadedDataSize = size;
+			this.notifyDataSetChanged();
+		}
 		@Override
 		public int getCount() {
-			return bubbleData.size();
+			return loadedDataSize;
 		}
 
 		@Override
@@ -186,7 +193,7 @@ public class TagSearchActivity extends SherlockActivity {
 			tvName.setText("" + currentBubble.getAuthorInfo().getName());
 			tvDate.setText(currentBubble.getPostTime().toString());
 			tvText.setText(currentBubble.getText());
-			tvCommentCount.setText("" + currentBubble.getComments().size());
+			tvCommentCount.setText("" + currentBubble.getCommentCount());
 
 			final Bitmap userImage = currentBubble.getAuthorInfo().getImage();
 			if (userImage != null) {
@@ -337,18 +344,17 @@ public class TagSearchActivity extends SherlockActivity {
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
 			progressBar.setVisibility(View.INVISIBLE);
-			adapter = new BubbleListAdapter(bubbles);
-			lvBubbleList.setAdapter(adapter);
-			adapter.notifyDataSetChanged();
-			setTagListText(strTagList);
-
-			new BackgroundPhotoTask().execute();
+			adapter.changeData(bubbles, bubbles.size());
+			
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			progressBar.setVisibility(View.VISIBLE);
+			adapter = new BubbleListAdapter(bubbles);
+			lvBubbleList.setAdapter(adapter);
+			setTagListText(strTagList);
 		}
 
 		private void setTagListText(List<String> selectedTagList) {
@@ -381,6 +387,8 @@ public class TagSearchActivity extends SherlockActivity {
 		@Override
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
+			adapter.changeData(bubbles, values[0]);
+			new BackgroundPhotoTask().execute(values[0]-1);
 		}
 
 		private void updateListView() {
@@ -409,22 +417,6 @@ public class TagSearchActivity extends SherlockActivity {
 
 				// Get UserInfo
 				UserInfo userInfo = UserInfo.getUserInfo(bubble.getAuthorId());
-
-				// Get User Image
-				/*
-				 * String userImageUrl = Constant.SERVER_DOMAIN_URL +
-				 * "/userimage"; DefaultHttpClient userImageClient = new
-				 * DefaultHttpClient(); String userImageRes =
-				 * HttpGetUtil.doGetWithResponse(userImageUrl + "?id=" +
-				 * bubble.getAuthorId(), userImageClient); //Log.i("USER",
-				 * "userImageRes: " + userImageRes);
-				 * if(!userImageRes.equals("")) { byte[] photoByte =
-				 * Base64.decode(userImageRes, Base64.DEFAULT); Bitmap bmp =
-				 * BitmapFactory.decodeByteArray(photoByte, 0,
-				 * photoByte.length);
-				 * 
-				 * userInfo.setImage(bmp); }
-				 */
 				bubble.setAuthorInfo(userInfo);
 
 				// Get Tag
@@ -437,50 +429,28 @@ public class TagSearchActivity extends SherlockActivity {
 				}
 				bubble.setRealTag(bubbleTag);
 
-				// Get Comments
-				List<BubbleComment> comments = BubbleComment
-						.getCommentData(bubble.getId().longValue());
-				bubble.setComments(comments);
-
-				// Get Photo
-				/*
-				 * String photoUrl = Constant.SERVER_DOMAIN_URL + "/image";
-				 * DefaultHttpClient photoClient = new DefaultHttpClient();
-				 * String photoRes = HttpGetUtil.doGetWithResponse(photoUrl +
-				 * "?bubbleid=" + bubble.getId(), photoClient);
-				 * if(!photoRes.equals("")) { byte[] photoByte =
-				 * Base64.decode(photoRes, Base64.DEFAULT); Bitmap bmp =
-				 * BitmapFactory.decodeByteArray(photoByte, 0,
-				 * photoByte.length);
-				 * 
-				 * bubble.setPhoto(bmp); }
-				 */
-
 				bubbles.set(i, bubble);
+				publishProgress(i+1);
 			}
 		}
 	}
 
-	private class BackgroundPhotoTask extends AsyncTask<String, Integer, Long> {
+	private class BackgroundPhotoTask extends AsyncTask<Integer, Integer, Long> {
 		@Override
-		protected Long doInBackground(String... arg0) {
-			this.loadPhoto();
+		protected Long doInBackground(Integer... arg0) {
+			this.loadPhoto(arg0[0]);
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Long result) {
 			super.onPostExecute(result);
-			// progressBar.setVisibility(View.INVISIBLE);
-			// adapter = new BubbleListAdapter(bubbles);
-			// lvBubbleList.setAdapter(adapter);
 			adapter.notifyDataSetChanged();
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			// progressBar.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -488,9 +458,9 @@ public class TagSearchActivity extends SherlockActivity {
 			super.onProgressUpdate(values);
 		}
 
-		private void loadPhoto() {
-			for (int i = 0; i < bubbles.size(); i++) {
-				BubbleData bubble = bubbles.get(i);
+		private void loadPhoto(Integer index) {
+			{
+				BubbleData bubble = bubbles.get(index.intValue());
 
 				UserInfo userInfo = bubble.getAuthorInfo();
 				// Get User Image
@@ -523,7 +493,7 @@ public class TagSearchActivity extends SherlockActivity {
 					bubble.setPhoto(bmp);
 				}
 
-				bubbles.set(i, bubble);
+				bubbles.set(index.intValue(), bubble);
 			}
 		}
 	}

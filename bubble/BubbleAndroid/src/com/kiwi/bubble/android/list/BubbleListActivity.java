@@ -515,11 +515,6 @@ public class BubbleListActivity extends SherlockActivity implements
 					bubble.setRealTag(bubbleTag);
 				}
 
-				// Get Comments
-				// List<BubbleComment> comments =
-				// BubbleComment.getCommentData(bubble.getId().longValue());
-				// bubble.setComments(comments);
-
 				// Check favorite
 				String pageUrlFavorite = Constant.SERVER_DOMAIN_URL
 						+ "/favorite";
@@ -574,7 +569,6 @@ public class BubbleListActivity extends SherlockActivity implements
 				String userImageRes = HttpGetUtil.doGetWithResponse(
 						userImageUrl + "?id=" + bubble.getAuthorId(),
 						userImageClient);
-				// Log.i("USER", "userImageRes: " + userImageRes);
 				if (!userImageRes.equals("")) {
 					byte[] photoByte = Base64.decode(userImageRes,
 							Base64.DEFAULT);
