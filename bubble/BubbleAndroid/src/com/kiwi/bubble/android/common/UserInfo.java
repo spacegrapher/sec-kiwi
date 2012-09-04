@@ -9,14 +9,14 @@ import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
 public class UserInfo extends ModelBase {
 	private String email;
-	
+
 	private String name;
-	
-	//private Date joinDate;
-	
+
+	// private Date joinDate;
+
 	private Bitmap image;
-	
-	//private List<Long> favorites;
+
+	// private List<Long> favorites;
 
 	public UserInfo(String email, String name) {
 		super();
@@ -40,7 +40,6 @@ public class UserInfo extends ModelBase {
 		this.name = name;
 	}
 
-	
 	public Bitmap getImage() {
 		return image;
 	}
@@ -52,10 +51,11 @@ public class UserInfo extends ModelBase {
 	public static UserInfo getUserInfo(long id) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/user";
 		DefaultHttpClient client = new DefaultHttpClient();
-		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
+
+		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id,
+				client);
 		UserInfo user = ObjectParsers.parseUserInfo(response);
-		
+
 		return user;
-	}	
+	}
 }

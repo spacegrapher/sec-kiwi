@@ -6,27 +6,25 @@ import java.util.List;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
-import com.google.appengine.api.datastore.Blob;
 import com.kiwi.bubble.appengine.server.ModelBase;
-import com.kiwi.bubble.appengine.server.tag.BubbleTag;
 
 @PersistenceCapable
 public class BubbleData extends ModelBase {
 	@Persistent
 	private Long authorId;
-	
+
 	@Persistent
 	private String text;
-	
+
 	@Persistent
 	private Date postTime;
-	
+
 	@Persistent
 	private String geopoint;
-	
+
 	@Persistent
 	private List<Long> tag;
-		
+
 	private int commentCount;
 
 	public BubbleData(Long id, String text) {
@@ -82,6 +80,5 @@ public class BubbleData extends ModelBase {
 	public void setCommentCount(int commentCount) {
 		this.commentCount = commentCount;
 	}
-	
-	
+
 }

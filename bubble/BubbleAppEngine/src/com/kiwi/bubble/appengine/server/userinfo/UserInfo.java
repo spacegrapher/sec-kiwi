@@ -13,19 +13,19 @@ import com.kiwi.bubble.appengine.server.ModelBase;
 public class UserInfo extends ModelBase {
 	@Persistent
 	private String email;
-	
+
 	@Persistent
 	private String name;
-	
+
 	@Persistent
 	private String password;
-	
+
 	@Persistent
 	private Date joinDate;
-	
+
 	@Persistent
 	private List<Long> favorites;
-	
+
 	@Persistent
 	private List<Long> friends;
 
@@ -70,15 +70,15 @@ public class UserInfo extends ModelBase {
 	public void setFavorites(List<Long> favorites) {
 		this.favorites = favorites;
 	}
-	
+
 	public void addFavorite(Long favorite) {
 		favorites.add(favorite);
 	}
-	
+
 	public void removeFavorite(Long favorite) {
 		favorites.remove(favorite);
 	}
-	
+
 	public boolean isFavorite(Long favorite) {
 		return favorites.contains(favorite);
 	}
@@ -90,15 +90,15 @@ public class UserInfo extends ModelBase {
 	public void setFriends(List<Long> friends) {
 		this.friends = friends;
 	}
-	
+
 	public void addFriend(Long friend) {
 		friends.add(friend);
 	}
-	
+
 	public void removeFriend(Long friend) {
 		friends.remove(friend);
 	}
-	
+
 	public boolean isFriend(Long friend) {
 		return friends.contains(friend);
 	}

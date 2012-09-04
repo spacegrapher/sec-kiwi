@@ -113,9 +113,11 @@ public class UserProfileActivity extends SherlockActivity implements
 				getSupportActionBar().addTab(tab);
 			}
 			getSupportActionBar().setSelectedNavigationItem(2);
+			getSupportActionBar();
+			getSupportActionBar();
 			getSupportActionBar().setDisplayOptions(
-					getSupportActionBar().DISPLAY_USE_LOGO
-							| getSupportActionBar().DISPLAY_SHOW_HOME);
+					ActionBar.DISPLAY_USE_LOGO
+							| ActionBar.DISPLAY_SHOW_HOME);
 			getSupportActionBar().setLogo(R.drawable.bubble_logo);
 			bEnableTabListener = true;
 		} else {
@@ -151,7 +153,7 @@ public class UserProfileActivity extends SherlockActivity implements
 				startActivity(intent);
 			}
 		});
-		
+
 		new BackgroundTask().execute();
 		if (!id.equals(selectedId)) {
 			new CheckFriendTask().execute();
@@ -161,10 +163,10 @@ public class UserProfileActivity extends SherlockActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		/*new BackgroundTask().execute();
-		if (!id.equals(selectedId)) {
-			new CheckFriendTask().execute();
-		}*/
+		/*
+		 * new BackgroundTask().execute(); if (!id.equals(selectedId)) { new
+		 * CheckFriendTask().execute(); }
+		 */
 	}
 
 	@Override
@@ -257,6 +259,7 @@ public class UserProfileActivity extends SherlockActivity implements
 			this.loadedDataSize = size;
 			this.notifyDataSetChanged();
 		}
+
 		@Override
 		public int getCount() {
 			return loadedDataSize;
@@ -412,10 +415,12 @@ public class UserProfileActivity extends SherlockActivity implements
 
 						new CheckFavoriteTask().execute(currentBubble.getId());
 						currentBubble.setFavorite(!currentBubble.isFavorite());
-						if (currentBubble.isFavorite()) {							
-							ivBubbleFavorite.setImageResource(R.drawable.icon_star);
+						if (currentBubble.isFavorite()) {
+							ivBubbleFavorite
+									.setImageResource(R.drawable.icon_star);
 						} else {
-							ivBubbleFavorite.setImageResource(R.drawable.icon_empty_star);
+							ivBubbleFavorite
+									.setImageResource(R.drawable.icon_empty_star);
 						}
 						break;
 					}
@@ -503,16 +508,16 @@ public class UserProfileActivity extends SherlockActivity implements
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("id", String.valueOf(id));
 			param.put("friendid", String.valueOf(selectedId));
-			//String ret = null;
+			// String ret = null;
 
 			try {
 				util.httpPostData(pageUrl, param);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 	}
-	
+
 	private class CheckFriendTask extends AsyncTask<String, Integer, Long> {
 		@Override
 		protected Long doInBackground(String... arg0) {
@@ -562,7 +567,7 @@ public class UserProfileActivity extends SherlockActivity implements
 			}
 		}
 	}
-	
+
 	private class CheckFavoriteTask extends AsyncTask<Long, Integer, Long> {
 		@Override
 		protected Long doInBackground(Long... arg0) {
@@ -587,23 +592,20 @@ public class UserProfileActivity extends SherlockActivity implements
 		}
 
 		private void checkFavorite(Long bubbleId) {
-			String pageUrl = Constant.SERVER_DOMAIN_URL
-					+ "/favorite";
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/favorite";
 
 			HttpPostUtil util = new HttpPostUtil();
 
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("id", String.valueOf(id));
-			param.put("bubbleid",
-					String.valueOf(bubbleId));
-			
+			param.put("bubbleid", String.valueOf(bubbleId));
+
 			try {
 				util.httpPostData(pageUrl, param);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			
 		}
 	}
 
@@ -617,10 +619,10 @@ public class UserProfileActivity extends SherlockActivity implements
 
 		@Override
 		protected void onPostExecute(Long result) {
-			super.onPostExecute(result);		
+			super.onPostExecute(result);
 
 			adapter.changeData(bubbles, bubbles.size());
-			progressBar.setVisibility(View.INVISIBLE);			
+			progressBar.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
@@ -643,12 +645,12 @@ public class UserProfileActivity extends SherlockActivity implements
 				if (userImage != null) {
 					ivUserProfile.setImageBitmap(userImage);
 				}
-				
+
 				llBody.setVisibility(View.VISIBLE);
 			} else {
 				adapter.changeData(bubbles, values[0]);
-				
-				new BackgroundPhotoTask().execute(values[0]-1);
+
+				new BackgroundPhotoTask().execute(values[0] - 1);
 			}
 		}
 
@@ -667,7 +669,7 @@ public class UserProfileActivity extends SherlockActivity implements
 
 				userInfo.setImage(bmp);
 			}
-			
+
 			publishProgress(0);
 		}
 
@@ -711,11 +713,11 @@ public class UserProfileActivity extends SherlockActivity implements
 				}
 
 				bubbles.set(i, bubble);
-				publishProgress(i+1);
+				publishProgress(i + 1);
 			}
 		}
 	}
-	
+
 	private class BackgroundPhotoTask extends AsyncTask<Integer, Integer, Long> {
 		@Override
 		protected Long doInBackground(Integer... arg0) {
@@ -756,7 +758,7 @@ public class UserProfileActivity extends SherlockActivity implements
 							Base64.DEFAULT);
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
 							photoByte.length);
-					
+
 					if (bmp != null)
 						userInfo.setImage(bmp);
 				}

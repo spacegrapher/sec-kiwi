@@ -8,7 +8,7 @@ public class UserInfoXMLConverter {
 		String ret = addTag("user", content);
 		return ret;
 	}
-	
+
 	public static String addTag(String tag, String value) {
 		return ("<" + tag + ">" + value + "</" + tag + ">");
 	}

@@ -13,21 +13,21 @@ import com.kiwi.bubble.android.common.parser.ObjectParsers;
 public class BubbleData extends ModelBase {
 	private Long authorId;
 	private UserInfo authorInfo;
-	
+
 	private String text;
-	
+
 	private Bitmap photo;
-	
+
 	private Date postTime;
-	
+
 	private String geopoint;
-	
+
 	private List<Long> tag;
 	private List<BubbleTag> realTag;
-	
+
 	private List<BubbleComment> comments;
 	private int commentCount;
-	
+
 	private boolean isFavorite;
 
 	public BubbleData(Long id, String text) {
@@ -99,7 +99,7 @@ public class BubbleData extends ModelBase {
 	public void setTag(List<Long> tag) {
 		this.tag = tag;
 	}
-	
+
 	public List<BubbleTag> getRealTag() {
 		return realTag;
 	}
@@ -135,12 +135,13 @@ public class BubbleData extends ModelBase {
 	public static BubbleData getBubbleData(long id) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/detail";
 		DefaultHttpClient client = new DefaultHttpClient();
-		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
+
+		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id,
+				client);
 		List<BubbleData> bubbles = ObjectParsers.parseBubbleData(response);
-		
-		assert(bubbles.size() == 1);
-		
+
+		assert (bubbles.size() == 1);
+
 		return bubbles.get(0);
 	}
 }

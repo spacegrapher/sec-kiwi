@@ -38,7 +38,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kiwi.bubble.android.R;
-import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
@@ -50,7 +49,7 @@ import com.kiwi.bubble.android.member.UserPhotoActivity;
 import com.kiwi.bubble.android.member.UserProfileActivity;
 
 public class TagSearchActivity extends SherlockActivity {
-	//private static final int REQUEST_CODE_CREATE = 101;
+	// private static final int REQUEST_CODE_CREATE = 101;
 	private Long id;
 	private String strInputTag;
 	private ListView lvBubbleList;
@@ -134,6 +133,7 @@ public class TagSearchActivity extends SherlockActivity {
 			this.loadedDataSize = size;
 			this.notifyDataSetChanged();
 		}
+
 		@Override
 		public int getCount() {
 			return loadedDataSize;
@@ -312,7 +312,7 @@ public class TagSearchActivity extends SherlockActivity {
 						param.put("id", String.valueOf(id));
 						param.put("bubbleid",
 								String.valueOf(currentBubble.getId()));
-						
+
 						try {
 							util.httpPostData(pageUrl, param);
 						} catch (IOException e) {
@@ -345,7 +345,7 @@ public class TagSearchActivity extends SherlockActivity {
 			super.onPostExecute(result);
 			progressBar.setVisibility(View.INVISIBLE);
 			adapter.changeData(bubbles, bubbles.size());
-			
+
 		}
 
 		@Override
@@ -388,7 +388,7 @@ public class TagSearchActivity extends SherlockActivity {
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
 			adapter.changeData(bubbles, values[0]);
-			new BackgroundPhotoTask().execute(values[0]-1);
+			new BackgroundPhotoTask().execute(values[0] - 1);
 		}
 
 		private void updateListView() {
@@ -430,7 +430,7 @@ public class TagSearchActivity extends SherlockActivity {
 				bubble.setRealTag(bubbleTag);
 
 				bubbles.set(i, bubble);
-				publishProgress(i+1);
+				publishProgress(i + 1);
 			}
 		}
 	}

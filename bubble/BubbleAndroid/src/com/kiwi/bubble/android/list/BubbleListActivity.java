@@ -16,7 +16,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -81,9 +80,11 @@ public class BubbleListActivity extends SherlockActivity implements
 			getSupportActionBar().addTab(tab);
 		}
 		getSupportActionBar().setSelectedNavigationItem(0);
+		getSupportActionBar();
+		getSupportActionBar();
 		getSupportActionBar().setDisplayOptions(
-				getSupportActionBar().DISPLAY_USE_LOGO
-						| getSupportActionBar().DISPLAY_SHOW_HOME);
+				ActionBar.DISPLAY_USE_LOGO
+						| ActionBar.DISPLAY_SHOW_HOME);
 		getSupportActionBar().setLogo(R.drawable.bubble_logo);
 		bEnableTabListener = true;
 
@@ -97,7 +98,7 @@ public class BubbleListActivity extends SherlockActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//new BackgroundTask().execute();
+		// new BackgroundTask().execute();
 	}
 
 	@Override
@@ -150,8 +151,8 @@ public class BubbleListActivity extends SherlockActivity implements
 		if (resultCode == Activity.RESULT_OK) {
 			if (requestCode == REQUEST_CODE_CREATE) {
 				new BackgroundTask().execute();
-				Toast.makeText(BubbleListActivity.this, "버블이 생성되었습니다!", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(BubbleListActivity.this, "버블이 생성되었습니다!",
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -171,6 +172,7 @@ public class BubbleListActivity extends SherlockActivity implements
 			this.loadedDataSize = size;
 			this.notifyDataSetChanged();
 		}
+
 		@Override
 		public int getCount() {
 			return loadedDataSize;
@@ -354,10 +356,12 @@ public class BubbleListActivity extends SherlockActivity implements
 
 						new CheckFavoriteTask().execute(currentBubble.getId());
 						currentBubble.setFavorite(!currentBubble.isFavorite());
-						if (currentBubble.isFavorite()) {							
-							ivBubbleFavorite.setImageResource(R.drawable.icon_star);
+						if (currentBubble.isFavorite()) {
+							ivBubbleFavorite
+									.setImageResource(R.drawable.icon_star);
 						} else {
-							ivBubbleFavorite.setImageResource(R.drawable.icon_empty_star);
+							ivBubbleFavorite
+									.setImageResource(R.drawable.icon_empty_star);
 						}
 						break;
 					}
@@ -436,23 +440,20 @@ public class BubbleListActivity extends SherlockActivity implements
 		}
 
 		private void checkFavorite(Long bubbleId) {
-			String pageUrl = Constant.SERVER_DOMAIN_URL
-					+ "/favorite";
+			String pageUrl = Constant.SERVER_DOMAIN_URL + "/favorite";
 
 			HttpPostUtil util = new HttpPostUtil();
 
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("id", String.valueOf(id));
-			param.put("bubbleid",
-					String.valueOf(bubbleId));
-			
+			param.put("bubbleid", String.valueOf(bubbleId));
+
 			try {
 				util.httpPostData(pageUrl, param);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			
 		}
 	}
 
@@ -482,7 +483,7 @@ public class BubbleListActivity extends SherlockActivity implements
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
 			adapter.changeData(bubbles, values[0]);
-			new BackgroundPhotoTask().execute(values[0]-1);
+			new BackgroundPhotoTask().execute(values[0] - 1);
 		}
 
 		private void updateListView() {
@@ -530,7 +531,7 @@ public class BubbleListActivity extends SherlockActivity implements
 				}
 
 				bubbles.set(i, bubble);
-				publishProgress(i+1);
+				publishProgress(i + 1);
 			}
 		}
 	}
@@ -574,7 +575,7 @@ public class BubbleListActivity extends SherlockActivity implements
 							Base64.DEFAULT);
 					Bitmap bmp = BitmapFactory.decodeByteArray(photoByte, 0,
 							photoByte.length);
-					
+
 					if (bmp != null)
 						userInfo.setImage(bmp);
 				}

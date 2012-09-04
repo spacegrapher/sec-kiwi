@@ -16,15 +16,16 @@ public class BubbleDataImageJDOWrapper {
 			pm.close();
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public static List<BubbleDataImage> getImageByBubbleId(Long id) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
-        Query query = pm.newQuery(BubbleDataImage.class);
-        query.setFilter("bubbleId == inputId");
+
+		Query query = pm.newQuery(BubbleDataImage.class);
+		query.setFilter("bubbleId == inputId");
 		query.declareParameters("Long inputId");
-		
-        List<BubbleDataImage> ret = null;
+
+		List<BubbleDataImage> ret = null;
 		try {
 			ret = (List<BubbleDataImage>) query.execute(id);
 		} finally {

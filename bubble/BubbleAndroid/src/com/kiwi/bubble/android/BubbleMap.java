@@ -35,87 +35,88 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
 
-public class BubbleMap extends MapActivity implements LocationListener{
-	int latitude=37500000;
-	int longitude=127500000;
+public class BubbleMap extends MapActivity implements LocationListener {
+	int latitude = 37500000;
+	int longitude = 127500000;
 	MapView mapView;
 	MapController controller;
 	LocationManager manager;
 	Location curLocation;
 	String provider;
 	Geocoder coder;
-	String TAG="MapTestActivity";
+	String TAG = "MapTestActivity";
 	final static int QuestionDialog = 1;
 
-    
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.activity_map);
-		
-		Log.d("BubbleMap onCreate","1!!");
-		
-		mapView=(MapView)findViewById(R.id.mapView);
-		controller=mapView.getController();
+
+		Log.d("BubbleMap onCreate", "1!!");
+
+		mapView = (MapView) findViewById(R.id.mapView);
+		controller = mapView.getController();
 		mapView.setBuiltInZoomControls(true);
 		checkProvider();
 		coder = new Geocoder(getApplicationContext(), Locale.KOREA);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d("BubbleMap onResume","1!!");
+		Log.d("BubbleMap onResume", "1!!");
 		// 마지막으로 얻은 위치가 있으면 보기
-		Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		Location loc = manager
+				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		if (loc != null) {
-			Log.d("BubbleMap onResume last known locatio not null","1!!");
+			Log.d("BubbleMap onResume last known locatio not null", "1!!");
 			onLocationChanged(loc);
-			
-		}
-		else
-		{
-			Log.d("BubbleMap onResume last known locatio is null","1!!");
+
+		} else {
+			Log.d("BubbleMap onResume last known locatio is null", "1!!");
 		}
 		// 현재 위치가 변화하는 경우 메서드가 호출되도록 등록, 1초마다 5km 이동시
-		manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
-		
-		Log.d("BubbleMap onResume last known locatio after request location update","1!!");
+		manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5,
+				this);
+
+		Log.d("BubbleMap onResume last known locatio after request location update",
+				"1!!");
 		// 기지국으로 부터 위치정보를 업데이트 요청
-		//manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5, this);
+		// manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+		// 1000, 5, this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		// 위치 정보 통지 등록 취소
-		Log.d("BubbleMap onPause","1!!");
-        manager.removeUpdates(this);
-    }
-    
+		Log.d("BubbleMap onPause", "1!!");
+		manager.removeUpdates(this);
+	}
+
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
-	
+
 	// 지도상에 화살표 이미지와 텍스트 문자열을 표시한다.
 	public void setOverlay(GeoPoint p, String addr) {
-		Log.d("BubbleMap setOverlay","1!!");
-		Bitmap icon = BitmapFactory.decodeResource(
-					getResources(),R.drawable.position);
+		Log.d("BubbleMap setOverlay", "1!!");
+		Bitmap icon = BitmapFactory.decodeResource(getResources(),
+				R.drawable.position);
 		IconOverlay overlay = new IconOverlay(icon, p, addr);
 		List<Overlay> overlays = mapView.getOverlays();
-		overlays.clear();      // 위치가 이동되면 기존 overlay 정보는 제거
+		overlays.clear(); // 위치가 이동되면 기존 overlay 정보는 제거
 		overlays.add(overlay);
 	}
-	
+
 	// GeoCoder 를 이용하여 수신된 위치정보에 대한 주소를 찾아서 문자열로 반환
 	private String showLocationName(Location loc) {
 		double latitude = loc.getLatitude();
 		double longitude = loc.getLongitude();
-		
-		Log.d("BubbleMap showLocationName","1!!");
-		
+
+		Log.d("BubbleMap showLocationName", "1!!");
+
 		StringBuffer buff = new StringBuffer();
 		try {
 			List<Address> addrs = coder.getFromLocation(latitude, longitude, 1);
@@ -126,7 +127,7 @@ public class BubbleMap extends MapActivity implements LocationListener{
 					buff.append(addr.getAddressLine(i));
 					buff.append(" ");
 				}
-				//buff.append("\n");
+				// buff.append("\n");
 			}
 		} catch (IOException e) {
 			Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
@@ -136,30 +137,32 @@ public class BubbleMap extends MapActivity implements LocationListener{
 
 	// 가장 베스트하게 사용가능한 Provider 를 검색
 	public void checkProvider() {
-		
-		Log.d("BubbleMap checkProvider","1!!");
-		
-		manager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		Criteria cta=new Criteria();
-		cta.setAccuracy(Criteria.ACCURACY_FINE);		// 정확도
-		cta.setPowerRequirement(Criteria.POWER_HIGH);	// 전원 소비량 
-		cta.setAltitudeRequired(false);					// 고도, 높이 값을 얻어 올지를 결정 
-		cta.setSpeedRequired(true);						// 속도 
-		cta.setCostAllowed(false);						// 위치 정보를 얻어 오는데 들어가는 금전적 비용 
-		provider=manager.getBestProvider(cta, true);
+
+		Log.d("BubbleMap checkProvider", "1!!");
+
+		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		Criteria cta = new Criteria();
+		cta.setAccuracy(Criteria.ACCURACY_FINE); // 정확도
+		cta.setPowerRequirement(Criteria.POWER_HIGH); // 전원 소비량
+		cta.setAltitudeRequired(false); // 고도, 높이 값을 얻어 올지를 결정
+		cta.setSpeedRequired(true); // 속도
+		cta.setCostAllowed(false); // 위치 정보를 얻어 오는데 들어가는 금전적 비용
+		provider = manager.getBestProvider(cta, true);
 	}
 
 	// 위치정보가 갱신되면 호출
 	public void onLocationChanged(Location location) {
-		
-		Log.d("BubbleMap onLocationChanged","1!!");
-		
-		GeoPoint gp = new GeoPoint((int)(location.getLatitude()*1E6),
-								(int)(location.getLongitude()*1E6));
+
+		Log.d("BubbleMap onLocationChanged", "1!!");
+
+		GeoPoint gp = new GeoPoint((int) (location.getLatitude() * 1E6),
+				(int) (location.getLongitude() * 1E6));
 		controller.animateTo(gp);
 		curLocation = location;
-		String strloc = String.format("위도:%f 경도:%f 속도:%f", 
-				(float)location.getLatitude(), (float)location.getLongitude(), (float)(location.getSpeed()*3.6));
+		String strloc = String.format("위도:%f 경도:%f 속도:%f",
+				(float) location.getLatitude(),
+				(float) location.getLongitude(),
+				(float) (location.getSpeed() * 3.6));
 		setOverlay(gp, strloc);
 	}
 
@@ -183,25 +186,23 @@ public class BubbleMap extends MapActivity implements LocationListener{
 		String addr;
 		int mOffsetX;
 		int mOffsetY;
-		
-		
 
 		IconOverlay(Bitmap icon, GeoPoint initial, String addr) {
-			Log.d("BubbleMap IconOverlay","1!!");
-			
+			Log.d("BubbleMap IconOverlay", "1!!");
+
 			mIcon = icon;
 			mOffsetX = 0 - icon.getWidth() / 2 + 5;
-			mOffsetY = 0;    //-icon.getHeight();
+			mOffsetY = 0; // -icon.getHeight();
 			mPoint = initial;
-			this.addr=addr;
+			this.addr = addr;
 		}
 
 		// 지도를 탭하면 호출
 		@Override
 		public boolean onTap(GeoPoint point, MapView mapView) {
 			mPoint = point;
-			
-			Log.d("BubbleMap onTap","1!!");
+
+			Log.d("BubbleMap onTap", "1!!");
 			return super.onTap(point, mapView);
 		}
 
@@ -209,80 +210,84 @@ public class BubbleMap extends MapActivity implements LocationListener{
 		@Override
 		public void draw(Canvas canvas, MapView mapView, boolean shadow) {
 			super.draw(canvas, mapView, shadow);
-			
-			Log.d("BubbleMap draw","1!!");
+
+			Log.d("BubbleMap draw", "1!!");
 			if (!shadow) {
 				// 지도상의 위치와 그린의 Canvas의 좌표 변환
 				Projection projection = mapView.getProjection();
 				Point point = new Point();
-				Paint paint=new Paint();
+				Paint paint = new Paint();
 				paint.setAntiAlias(true);
 				paint.setShadowLayer(10, 0, 0, Color.GRAY);
-				paint.setTextSize(14);   
+				paint.setTextSize(14);
 				paint.setColor(Color.RED);
 				projection.toPixels(mPoint, point);
-				canvas.drawText(addr, point.x-20, point.y+50, paint);
+				canvas.drawText(addr, point.x - 20, point.y + 50, paint);
 				point.offset(mOffsetX, mOffsetY);
 				// 아이콘 그리기
 				canvas.drawBitmap(mIcon, point.x, point.y, null);
 			}
 		}
-	}//IconOverlay??
-	
+	}// IconOverlay??
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		Log.d("BubbleMap onCreateOptionsMenu","1!!");
-		menu.add(0,1,0,"프로그램 소개");
-		menu.add(0,2,0,"현재위치").setIcon(R.drawable.green_dot);
-		menu.add(0,3,0,"주소보기");
-		menu.add(0,4,0,"종료");
+		Log.d("BubbleMap onCreateOptionsMenu", "1!!");
+		menu.add(0, 1, 0, "프로그램 소개");
+		menu.add(0, 2, 0, "현재위치").setIcon(R.drawable.green_dot);
+		menu.add(0, 3, 0, "주소보기");
+		menu.add(0, 4, 0, "종료");
 
 		return true;
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
-		Log.d("BubbleMap onOptionsItemSelected","1!!");
-		
+
+		Log.d("BubbleMap onOptionsItemSelected", "1!!");
+
 		switch (item.getItemId()) {
 		case 1:
-    		new AlertDialog.Builder(this)
-    		.setTitle("프로그램 소개")
-    		.setMessage("안드로이드 학습을 위하여 만든 어플입니다.\n" +
-    				"소스코드가 공개되어 있으며 자유롭게 사용하실수 있습니다.\n" +
-    					"http://neueziel.blog.me")
-    		.setIcon(R.drawable.icon)
-    		.setPositiveButton("닫기", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				}
-			})
-    		.show();
+			new AlertDialog.Builder(this)
+					.setTitle("프로그램 소개")
+					.setMessage(
+							"안드로이드 학습을 위하여 만든 어플입니다.\n"
+									+ "소스코드가 공개되어 있으며 자유롭게 사용하실수 있습니다.\n"
+									+ "http://neueziel.blog.me")
+					.setIcon(R.drawable.icon)
+					.setPositiveButton("닫기",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+								}
+							}).show();
 			return true;
 		case 2:
 			if (curLocation != null) {
 				onLocationChanged(curLocation);
 			}
-			return true;	
+			return true;
 		case 3:
 			if (curLocation != null)
-				Toast.makeText(this, showLocationName(curLocation), Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, showLocationName(curLocation),
+						Toast.LENGTH_SHORT).show();
 			else
 				Toast.makeText(this, "GPS 연결안됨", Toast.LENGTH_SHORT).show();
-			return true;	
+			return true;
 		case 4:
 			finish();
 			System.exit(0);
-			return true;			
+			return true;
 		}
 		return false;
 	}
-	
+
 	// Back 버튼을 누르면 선택 다이얼로그 창을 띄움
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
-		Log.d("BubbleMap onKeyDown","1!!");
-		
+
+		Log.d("BubbleMap onKeyDown", "1!!");
+
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:
 			showDialog(QuestionDialog);
@@ -294,30 +299,29 @@ public class BubbleMap extends MapActivity implements LocationListener{
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
-	// 버튼이 눌렸을때 다이얼로그 창을 띄움
-    protected Dialog onCreateDialog(int id) {
-    	
-    	Log.d("BubbleMap onCreateDialog","1!!");
-    	
-    	switch (id) {
-    	case QuestionDialog:
-    		return new AlertDialog.Builder(BubbleMap.this)
-			.setTitle("질문")
-			.setMessage("프로그램을 종료하시겠습니까?")
-			.setPositiveButton("종료", mClick)
-			.setNegativeButton("취소", mClick)
-			.create();
-    	}
-    	return null;
-    }
 
- // 다이얼로그 창에서 버튼을 눌렀을때 처리, 종료버튼을 누르면 프로그램 종료
+	// 버튼이 눌렸을때 다이얼로그 창을 띄움
+	protected Dialog onCreateDialog(int id) {
+
+		Log.d("BubbleMap onCreateDialog", "1!!");
+
+		switch (id) {
+		case QuestionDialog:
+			return new AlertDialog.Builder(BubbleMap.this).setTitle("질문")
+					.setMessage("프로그램을 종료하시겠습니까?")
+					.setPositiveButton("종료", mClick)
+					.setNegativeButton("취소", mClick).create();
+		}
+		return null;
+	}
+
+	// 다이얼로그 창에서 버튼을 눌렀을때 처리, 종료버튼을 누르면 프로그램 종료
 	DialogInterface.OnClickListener mClick = new DialogInterface.OnClickListener() {
+		@SuppressWarnings("deprecation")
 		public void onClick(DialogInterface dialog, int whichButton) {
-			
-			Log.d("BubbleMap onClick","1!!");
-			
+
+			Log.d("BubbleMap onClick", "1!!");
+
 			if (whichButton == DialogInterface.BUTTON1) {
 				finish();
 				System.exit(0);
@@ -325,5 +329,5 @@ public class BubbleMap extends MapActivity implements LocationListener{
 			}
 		}
 	};
-	
+
 }

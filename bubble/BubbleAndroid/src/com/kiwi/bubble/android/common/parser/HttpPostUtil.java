@@ -61,7 +61,8 @@ public class HttpPostUtil {
 
 	private HttpPost makeHttpPost(Map<String, String> param, String url) {
 		HttpPost request = new HttpPost(url);
-		request.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
+		request.getParams().setBooleanParameter(
+				CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 		Vector<NameValuePair> nameValue = new Vector<NameValuePair>();
 
 		if (param != null) {

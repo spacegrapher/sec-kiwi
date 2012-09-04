@@ -11,17 +11,15 @@ import com.kiwi.bubble.appengine.server.ModelBase;
 public class BubbleComment extends ModelBase {
 	@Persistent
 	private Long bubbleId;
-	
+
 	@Persistent
 	private Long authorId;
-	
+
 	@Persistent
 	private String text;
-	
+
 	@Persistent
 	private Date postTime;
-	
-	
 
 	public BubbleComment(Long bubbleId, Long authorId, String text) {
 		super();
@@ -61,7 +59,5 @@ public class BubbleComment extends ModelBase {
 	public void setPostTime(Date postTime) {
 		this.postTime = postTime;
 	}
-	
-	
-	
+
 }

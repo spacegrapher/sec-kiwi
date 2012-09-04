@@ -13,6 +13,7 @@ import com.kiwi.bubble.appengine.server.bubbledata.BubbleData;
 import com.kiwi.bubble.appengine.server.bubbledata.BubbleDataJDOWrapper;
 import com.kiwi.bubble.appengine.server.bubbledata.BubbleDataXMLConverter;
 
+@SuppressWarnings("serial")
 public class TagSearchServlet extends HttpServlet {
 
 	@Override
@@ -20,38 +21,36 @@ public class TagSearchServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String str = req.getParameter("tag");
 		List<BubbleTag> bubbleTag = null;
-		
+
 		String[] tags = null;
 		List<Long> tagIdList = new ArrayList<Long>();
-		
+
 		if (str == null) {
 			bubbleTag = BubbleTagJDOWrapper.getAllTags();
 			tagIdList.add(bubbleTag.get(0).getId());
 		} else {
 			tags = str.split(",");
-			for(int i=0; i<tags.length; i++) {
+			for (int i = 0; i < tags.length; i++) {
 				bubbleTag = BubbleTagJDOWrapper.getTagByText(tags[i]);
 				tagIdList.add(bubbleTag.get(0).getId());
-			}			
+			}
 		}
-		
-		//String ret = BubbleTagXMLConverter.convertTagListToXml(bubbleTag);
-		
-		//List<BubbleData> bubbleData = BubbleDataJDOWrapper.getBubbleByTag(bubbleTag.get(0).getId());
-		List<BubbleData> bubbleData = BubbleDataJDOWrapper.getBubbleByTags(tagIdList);
+
+		List<BubbleData> bubbleData = BubbleDataJDOWrapper
+				.getBubbleByTags(tagIdList);
 		String ret = BubbleDataXMLConverter.convertDataListToXml(bubbleData);
-		
+
 		resp.setContentType("text/xml");
 		resp.setHeader("Cache-Control", "no-cache");
 		resp.setCharacterEncoding("utf-8");
-		
+
 		resp.getWriter().write(ret);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
+		super.doPost(req, resp);
 	}
 
 }

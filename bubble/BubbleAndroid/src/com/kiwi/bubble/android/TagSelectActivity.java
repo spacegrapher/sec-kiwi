@@ -58,8 +58,8 @@ public class TagSelectActivity extends SherlockActivity {
 	private KillReceiver mKillReceiver;
 
 	/* +GPS+ */
-	//private LocationListener locListenD;
-	//private Button buttonLocation;
+	// private LocationListener locListenD;
+	// private Button buttonLocation;
 	public TextView tvLatitude;
 	public TextView tvLongitude;
 	public Location loc;
@@ -233,7 +233,7 @@ public class TagSelectActivity extends SherlockActivity {
 		}
 
 		Log.d("GetLocation", "1-1!!");
-		//Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		// Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
 		Log.d("GetLocation", "2!!");
 
@@ -250,21 +250,19 @@ public class TagSelectActivity extends SherlockActivity {
 
 	}
 
-	/*private class DispLocListener implements LocationListener {
-		public void onLocationChanged(Location location) {
-			tvLatitude.setText(Double.toString(location.getLatitude()));
-			tvLongitude.setText(Double.toString(location.getLongitude()));
-		}
-
-		public void onProviderDisabled(String provider) {
-		}
-
-		public void onProviderEnabled(String provider) {
-		}
-
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-		}
-	}*/
+	/*
+	 * private class DispLocListener implements LocationListener { public void
+	 * onLocationChanged(Location location) {
+	 * tvLatitude.setText(Double.toString(location.getLatitude()));
+	 * tvLongitude.setText(Double.toString(location.getLongitude())); }
+	 * 
+	 * public void onProviderDisabled(String provider) { }
+	 * 
+	 * public void onProviderEnabled(String provider) { }
+	 * 
+	 * public void onStatusChanged(String provider, int status, Bundle extras) {
+	 * } }
+	 */
 
 	private final class KillReceiver extends BroadcastReceiver {
 		@Override
@@ -275,12 +273,12 @@ public class TagSelectActivity extends SherlockActivity {
 
 	private void updateSelectedTextView() {
 		String text = new String();
-		
-		if(selectedTagList.size() == 0) {
+
+		if (selectedTagList.size() == 0) {
 			tvSelectedTag.setText("");
 			return;
 		}
-		
+
 		int[] start = new int[selectedTagList.size()];
 		int[] end = new int[selectedTagList.size()];
 		start[0] = 0;

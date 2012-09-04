@@ -8,18 +8,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.kiwi.bubble.android.common.parser.HttpGetUtil;
 import com.kiwi.bubble.android.common.parser.ObjectParsers;
 
-
 public class BubbleComment extends ModelBase {
 	private Long bubbleId;
-	
+
 	private Long authorId;
 	private UserInfo authorInfo;
-	
+
 	private String text;
-	
+
 	private Date postTime;
-	
-	
 
 	public BubbleComment(Long bubbleId, Long authorId, String text) {
 		super();
@@ -67,15 +64,17 @@ public class BubbleComment extends ModelBase {
 	public void setPostTime(Date postTime) {
 		this.postTime = postTime;
 	}
-	
+
 	public static List<BubbleComment> getCommentData(long id) {
 		String pageUrl = Constant.SERVER_DOMAIN_URL + "/comment";
 		DefaultHttpClient client = new DefaultHttpClient();
-		
-		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id, client);
-		
-		List<BubbleComment> comments = ObjectParsers.parseBubbleComment(response);
-		
+
+		String response = HttpGetUtil.doGetWithResponse(pageUrl + "?id=" + id,
+				client);
+
+		List<BubbleComment> comments = ObjectParsers
+				.parseBubbleComment(response);
+
 		return comments;
-	}	
+	}
 }

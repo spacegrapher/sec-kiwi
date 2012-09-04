@@ -11,19 +11,19 @@ public class BubbleTag extends ModelBase {
 	public static final int TAG_TYPE_TEXT = 0;
 	public static final int TAG_TYPE_USER = 1;
 	public static final int TAG_TYPE_LOCATION = 2;
-	
+
 	@Persistent
 	private int type;
-	
+
 	@Persistent
 	private String text;
-	
+
 	@Persistent
 	private long user;
-	
+
 	@Persistent
 	private GeoPt location;
-	
+
 	@Persistent
 	private int count;
 
@@ -66,6 +66,5 @@ public class BubbleTag extends ModelBase {
 		setType(TAG_TYPE_LOCATION);
 		this.location = location;
 	}
-	
-	
+
 }

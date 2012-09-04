@@ -63,9 +63,11 @@ public class ExploreActivity extends SherlockActivity implements
 			getSupportActionBar().addTab(tab);
 		}
 		getSupportActionBar().setSelectedNavigationItem(1);
+		getSupportActionBar();
+		getSupportActionBar();
 		getSupportActionBar().setDisplayOptions(
-				getSupportActionBar().DISPLAY_USE_LOGO
-						| getSupportActionBar().DISPLAY_SHOW_HOME);
+				ActionBar.DISPLAY_USE_LOGO
+						| ActionBar.DISPLAY_SHOW_HOME);
 		getSupportActionBar().setLogo(R.drawable.bubble_logo);
 		bEnableTabListener = true;
 
@@ -173,8 +175,8 @@ public class ExploreActivity extends SherlockActivity implements
 		if (resultCode == Activity.RESULT_OK) {
 			if (requestCode == REQUEST_CODE_CREATE) {
 				onClickRefresh(null);
-				Toast.makeText(ExploreActivity.this, "버블이 생성되었습니다!", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(ExploreActivity.this, "버블이 생성되었습니다!",
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}

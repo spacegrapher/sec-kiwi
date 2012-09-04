@@ -6,7 +6,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import com.kiwi.bubble.appengine.server.PMF;
-import com.kiwi.bubble.appengine.server.bubbledata.BubbleData;
 
 public class BubbleCommentJDOWrapper {
 	public static void insertComment(BubbleComment data) {
@@ -17,22 +16,23 @@ public class BubbleCommentJDOWrapper {
 			pm.close();
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public static List<BubbleComment> getBubbleByBubbleId(Long id) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
+
 		Query query = pm.newQuery(BubbleComment.class);
 		query.setFilter("bubbleId == inputId");
 		query.declareParameters("Long inputId");
 		query.setOrdering("postTime asc");
-		
+
 		List<BubbleComment> ret = null;
 		try {
 			ret = (List<BubbleComment>) query.execute(id);
 		} finally {
 			query.closeAll();
 		}
-		
+
 		return ret;
 	}
 }

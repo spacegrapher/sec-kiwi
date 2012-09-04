@@ -2,13 +2,10 @@ package com.kiwi.bubble.appengine.server.userinfo;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 
 @SuppressWarnings("serial")
 public class SignupServlet extends HttpServlet {
@@ -26,16 +23,18 @@ public class SignupServlet extends HttpServlet {
 		String email = req.getParameter("email");
 		String name = req.getParameter("name");
 		String password = req.getParameter("password");
-		
+
 		UserInfo userInfo = new UserInfo(email, name, password);
 		UserInfoJDOWrapper.insertUser(userInfo);
-		
-		//UserInfoImage userInfoImage = new UserInfoImage(userInfo.getId(), null);
-		//UserInfoImageJDOWrapper.insertImage(userInfoImage);
-		
-		//String msg = "Your email: " + userInfo.getEmail() + "\nYour name: " + userInfo.getName();
-		//System.out.println("[SignupServlet] " + msg);
-		//resp.getWriter().print(msg);
+
+		// UserInfoImage userInfoImage = new UserInfoImage(userInfo.getId(),
+		// null);
+		// UserInfoImageJDOWrapper.insertImage(userInfoImage);
+
+		// String msg = "Your email: " + userInfo.getEmail() + "\nYour name: " +
+		// userInfo.getName();
+		// System.out.println("[SignupServlet] " + msg);
+		// resp.getWriter().print(msg);
 	}
 
 }

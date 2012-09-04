@@ -94,7 +94,7 @@ public class BubbleCreateActivity extends SherlockActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, OPTIONS_MENU_POST, 0, "Post").setShowAsAction(
 				MenuItem.SHOW_AS_ACTION_IF_ROOM
-				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+						| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
 		return true;
 	}
@@ -240,9 +240,9 @@ public class BubbleCreateActivity extends SherlockActivity {
 		};
 
 		new AlertDialog.Builder(this).setTitle("사진 선택")
-		.setPositiveButton("카메라", cameraListener)
-		.setNeutralButton("갤러리", albumListener)
-		.setNegativeButton("취소", cancelListener).show();
+				.setPositiveButton("카메라", cameraListener)
+				.setNeutralButton("갤러리", albumListener)
+				.setNegativeButton("취소", cancelListener).show();
 	}
 
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {

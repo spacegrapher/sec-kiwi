@@ -54,11 +54,14 @@ public class MainActivity extends Activity {
 		String strPassword = editTextPassword.getText().toString();
 
 		if (strEmail.isEmpty()) {
-			Toast.makeText(MainActivity.this, "이메일 주소를 입력하세요", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.this, "이메일 주소를 입력하세요",
+					Toast.LENGTH_SHORT).show();
 		} else if (strPassword.isEmpty()) {
-			Toast.makeText(MainActivity.this, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.this, "비밀번호를 입력하세요", Toast.LENGTH_SHORT)
+					.show();
 		} else {
-			new BackgroundTask().execute(strEmail, new String(tea.encrypt(strPassword.getBytes())));
+			new BackgroundTask().execute(strEmail,
+					new String(tea.encrypt(strPassword.getBytes())));
 		}
 	}
 
@@ -73,7 +76,8 @@ public class MainActivity extends Activity {
 
 		if (resultCode == Activity.RESULT_OK) {
 			if (requestCode == REQUEST_CODE_SIGNUP) {
-				Toast.makeText(MainActivity.this, "계정이 생성되었습니다", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainActivity.this, "계정이 생성되었습니다",
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -86,7 +90,7 @@ public class MainActivity extends Activity {
 		protected Long doInBackground(String... arg0) {
 			resultStr = new String();
 			String pageUrl = Constant.SERVER_DOMAIN_URL;
-			
+
 			HttpPostUtil util = new HttpPostUtil();
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("email", arg0[0]);
@@ -96,7 +100,7 @@ public class MainActivity extends Activity {
 				resultStr = util.httpPostData(pageUrl, param);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
+			}
 
 			return null;
 		}
@@ -106,7 +110,8 @@ public class MainActivity extends Activity {
 			super.onPostExecute(result);
 			progressDialog.hide();
 			if (resultStr.isEmpty()) {
-				Toast.makeText(MainActivity.this, "로그인 정보가 맞지 않습니다", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainActivity.this, "로그인 정보가 맞지 않습니다",
+						Toast.LENGTH_SHORT).show();
 			} else {
 				Intent intent = new Intent(MainActivity.this,
 						BubbleListActivity.class);

@@ -22,15 +22,18 @@ public class HttpGetUtil {
 	// HERE YOU JUST NEED TO PASS IN:
 	// 1) THE URL YOU WANT TO MAKE THE REQUEST TO
 	// 2) THE HTTP CLIENT YOU INITIATED (FROM ABOVE)
-	public static String doGetWithResponse(String mUrl, DefaultHttpClient httpClient) {
+	public static String doGetWithResponse(String mUrl,
+			DefaultHttpClient httpClient) {
 		String ret = null;
 		HttpResponse response = null;
 
 		HttpGet getMethod = new HttpGet(mUrl);
-		getMethod.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
+		getMethod.getParams().setBooleanParameter(
+				CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 		try {
 			response = httpClient.execute(getMethod);
-			//Log.i(LOG_TAG, "STATUS CODE: " + String.valueOf(response.getStatusLine().getStatusCode()));
+			// Log.i(LOG_TAG, "STATUS CODE: " +
+			// String.valueOf(response.getStatusLine().getStatusCode()));
 			if (null != response) {
 				// helper method to convert HTTP response to String
 				ret = getResponseBody(response);
@@ -63,21 +66,21 @@ public class HttpGetUtil {
 		return response_text;
 	}
 
-
-	public static String _getResponseBody(final HttpEntity entity) throws IOException, ParseException {
-		if (entity == null) { 
-			throw new IllegalArgumentException("HTTP entity may not be null"); 
-			}
+	public static String _getResponseBody(final HttpEntity entity)
+			throws IOException, ParseException {
+		if (entity == null) {
+			throw new IllegalArgumentException("HTTP entity may not be null");
+		}
 
 		InputStream instream = entity.getContent();
 
-		if (instream == null) { 
-			return ""; 
-			}
-		if (entity.getContentLength() > Integer.MAX_VALUE) { 
+		if (instream == null) {
+			return "";
+		}
+		if (entity.getContentLength() > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException(
-				"HTTP entity too large to be buffered in memory"); 
-			}
+					"HTTP entity too large to be buffered in memory");
+		}
 
 		String charset = getContentCharSet(entity);
 
@@ -102,10 +105,11 @@ public class HttpGetUtil {
 		return buffer.toString();
 	}
 
-	public static String getContentCharSet(final HttpEntity entity) throws ParseException {
-		if (entity == null) { 
-			throw new IllegalArgumentException("HTTP entity may not be null"); 
-			}
+	public static String getContentCharSet(final HttpEntity entity)
+			throws ParseException {
+		if (entity == null) {
+			throw new IllegalArgumentException("HTTP entity may not be null");
+		}
 
 		String charset = null;
 

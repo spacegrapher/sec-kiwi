@@ -1,6 +1,5 @@
 package com.kiwi.bubble.android.member;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +7,8 @@ import java.util.Map;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap.CompressFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -31,7 +28,7 @@ public class SignupActivity extends Activity {
 
 	public void onClickCreateAccount(View v) {
 		TEA tea = new TEA(Constant.TEA_ENCRYPT_KEY.getBytes());
-		
+
 		EditText editTextEmail = (EditText) findViewById(R.id.editTextSignupEmail);
 		EditText editTextName = (EditText) findViewById(R.id.editTextSignupName);
 		EditText editTextPassword = (EditText) findViewById(R.id.editTextSignupPassword);
@@ -42,19 +39,19 @@ public class SignupActivity extends Activity {
 				.toString().getBytes()));
 
 		if (strEmail.isEmpty()) {
-			Toast.makeText(SignupActivity.this, "이메일 주소를 입력해 주세요", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(SignupActivity.this, "이메일 주소를 입력해 주세요",
+					Toast.LENGTH_SHORT).show();
 		} else if (strName.isEmpty()) {
-			Toast.makeText(SignupActivity.this, "이름을 입력해 주세요", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(SignupActivity.this, "이름을 입력해 주세요",
+					Toast.LENGTH_SHORT).show();
 		} else if (strPassword.isEmpty()) {
-			Toast.makeText(SignupActivity.this, "비밀번호를 입력해 주세요", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(SignupActivity.this, "비밀번호를 입력해 주세요",
+					Toast.LENGTH_SHORT).show();
 		} else {
 			new BackgroundTask().execute(strEmail, strName, strPassword);
 		}
 	}
-	
+
 	private class BackgroundTask extends AsyncTask<String, Integer, Long> {
 		private ProgressDialog progressDialog;
 
@@ -87,7 +84,7 @@ public class SignupActivity extends Activity {
 
 		private void signupAccount(String email, String name, String password) {
 			String pageUrl = Constant.SERVER_DOMAIN_URL + "/signup";
-			
+
 			HttpPostUtil util = new HttpPostUtil();
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("email", email);

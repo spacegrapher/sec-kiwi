@@ -15,15 +15,15 @@ public class BubbleDataImage extends ModelBase {
 	@Persistent
 	private Long bubbleId;
 
-    @Persistent
-    private Blob content;
-    
-    public BubbleDataImage(Long id, Blob content) {
-        this.bubbleId = id;
-        this.content = content;
-    }
+	@Persistent
+	private Blob content;
 
-    public Long getBubbleId() {
+	public BubbleDataImage(Long id, Blob content) {
+		this.bubbleId = id;
+		this.content = content;
+	}
+
+	public Long getBubbleId() {
 		return bubbleId;
 	}
 
@@ -31,11 +31,11 @@ public class BubbleDataImage extends ModelBase {
 		this.bubbleId = bubbleId;
 	}
 
-    public Blob getContent() {
-        return content;
-    }
+	public Blob getContent() {
+		return content;
+	}
 
-    public void setContent(Blob content) {
-        this.content = content;
-    }
+	public void setContent(Blob content) {
+		this.content = content;
+	}
 }

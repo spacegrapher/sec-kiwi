@@ -15,34 +15,37 @@ import com.google.appengine.api.datastore.Blob;
 
 @SuppressWarnings("serial")
 public class BubbleDataImageServlet extends HttpServlet {
-	
-    @Override
+
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-    	Long bubbleId = Long.valueOf(req.getParameter("bubbleid"));
-    	String strImage = req.getParameter("image");
-    	
-    	Blob imageBlob = new Blob(strImage.getBytes());
-        BubbleDataImage imageObject = new BubbleDataImage(bubbleId, imageBlob);
-        
-        // persist image
-        BubbleDataImageJDOWrapper.insertImage(imageObject);
-        
-        // respond to query
-        resp.setContentType("text/plain");
-        resp.getOutputStream().write("OK!".getBytes());
-    }
-
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		Long bubbleId = Long.valueOf(req.getParameter("bubbleid"));
-		
-		List<BubbleDataImage> imageObject = BubbleDataImageJDOWrapper.getImageByBubbleId(bubbleId);
-        
+		String strImage = req.getParameter("image");
+
+		Blob imageBlob = new Blob(strImage.getBytes());
+		BubbleDataImage imageObject = new BubbleDataImage(bubbleId, imageBlob);
+
+		// persist image
+		BubbleDataImageJDOWrapper.insertImage(imageObject);
+
+		// respond to query
 		resp.setContentType("text/plain");
-		
-		if(imageObject.size() > 0)
-			resp.getOutputStream().write(imageObject.get(0).getContent().getBytes());
+		resp.getOutputStream().write("OK!".getBytes());
+	}
+
+	public void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		Long bubbleId = Long.valueOf(req.getParameter("bubbleid"));
+
+		List<BubbleDataImage> imageObject = BubbleDataImageJDOWrapper
+				.getImageByBubbleId(bubbleId);
+
+		resp.setContentType("text/plain");
+
+		if (imageObject.size() > 0)
+			resp.getOutputStream().write(
+					imageObject.get(0).getContent().getBytes());
 		else
 			resp.getOutputStream().write("".getBytes());
-    }
+	}
 }
