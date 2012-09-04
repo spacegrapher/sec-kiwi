@@ -43,7 +43,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kiwi.bubble.android.ExploreActivity;
 import com.kiwi.bubble.android.R;
 import com.kiwi.bubble.android.TagSelectActivity;
-import com.kiwi.bubble.android.common.BubbleComment;
 import com.kiwi.bubble.android.common.BubbleData;
 import com.kiwi.bubble.android.common.BubbleTag;
 import com.kiwi.bubble.android.common.Constant;
@@ -411,24 +410,13 @@ public class UserProfileActivity extends SherlockActivity implements
 						ivBubbleFavorite.setBackgroundColor(0);
 						ivBubbleFavorite.invalidate();
 
-						String pageUrl = Constant.SERVER_DOMAIN_URL
-								+ "/favorite";
-
-						HttpPostUtil util = new HttpPostUtil();
-
-						Map<String, String> param = new HashMap<String, String>();
-						param.put("id", String.valueOf(id));
-						param.put("bubbleid",
-								String.valueOf(currentBubble.getId()));
-						
-						try {
-							util.httpPostData(pageUrl, param);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-
+						new CheckFavoriteTask().execute(currentBubble.getId());
 						currentBubble.setFavorite(!currentBubble.isFavorite());
-						adapter.notifyDataSetChanged();
+						if (currentBubble.isFavorite()) {							
+							ivBubbleFavorite.setImageResource(R.drawable.icon_star);
+						} else {
+							ivBubbleFavorite.setImageResource(R.drawable.icon_empty_star);
+						}
 						break;
 					}
 
@@ -572,6 +560,50 @@ public class UserProfileActivity extends SherlockActivity implements
 			} else {
 				isFriend = false;
 			}
+		}
+	}
+	
+	private class CheckFavoriteTask extends AsyncTask<Long, Integer, Long> {
+		@Override
+		protected Long doInBackground(Long... arg0) {
+			checkFavorite(arg0[0]);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Long result) {
+			super.onPostExecute(result);
+			adapter.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+
+		private void checkFavorite(Long bubbleId) {
+			String pageUrl = Constant.SERVER_DOMAIN_URL
+					+ "/favorite";
+
+			HttpPostUtil util = new HttpPostUtil();
+
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("id", String.valueOf(id));
+			param.put("bubbleid",
+					String.valueOf(bubbleId));
+			
+			try {
+				util.httpPostData(pageUrl, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			
 		}
 	}
 
